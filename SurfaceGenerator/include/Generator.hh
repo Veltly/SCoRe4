@@ -17,15 +17,16 @@ namespace Surface{
 class SurfaceGenerator {
 inline  G4VSolid* GetSolid() const;
 inline  std::vector<SurfaceDescription> GetSurface() const;
-  G4bool GenerateSurface();
+  void GenerateSurface();
   
 private:
-  G4bool Assemble();
-  G4bool Calculate();
-  G4bool GenerateDescription();
+  void Assemble();
+  void Calculate();
+  void GenerateDescription();
 
   G4VSolid* fSolidhandle{nullptr};
   std::vector<SurfaceDescription> fSurface;
+  Describer fDescriber;
 };
 
 } // namespace SGenerator

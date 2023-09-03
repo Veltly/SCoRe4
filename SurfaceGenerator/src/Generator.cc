@@ -10,10 +10,25 @@
 #include "../include/Describer.hh"
 #include "../include/Generator.hh"
 
-G4bool SURFACE::SurfaceGenerator::GenerateSurface() {
+void Surface::SurfaceGenerator::GenerateSurface() {
   GenerateDescription();
   Assemble();
   Calculate();
-  return true;
 }
 
+void Surface::SurfaceGenerator::Assemble(){
+  auto description = fDescriber.GetSolidDescription();
+  Surface::Assembler Assembler;
+  Assembler.SetDescription(description);
+  Assembler.Assemble();
+  fSolidhandle = Assembler.GetSolid();
+}
+
+void Surface::SurfaceGenerator::Calculate(){
+
+
+}
+
+void Surface::SurfaceGenerator::GenerateDescription(){
+  fDescriber.Generate();
+}
