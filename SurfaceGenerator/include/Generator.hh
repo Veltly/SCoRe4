@@ -6,6 +6,9 @@
 //
 //
 
+#ifndef SURFACE_SURFACEGENERATOR
+#define SURFACE_SURFACEGENERATOR
+
 #include "Assembler.hh"
 #include "Calculator.hh"
 #include "Describer.hh"
@@ -15,6 +18,7 @@
 namespace Surface{
 
 class SurfaceGenerator {
+public:
 inline  G4VSolid* GetSolid() const;
 inline  std::vector<SurfaceDescription> GetSurface() const;
   void GenerateSurface();
@@ -30,3 +34,4 @@ private:
 };
 
 } // namespace SGenerator
+#endif

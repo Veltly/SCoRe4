@@ -7,22 +7,18 @@
 //
 
 #include "../include/SurfaceSource.hh"
-#include "../include/SurfaceSourceMessenger.hh"
 
 #include "G4Event.hh"
 #include "G4GeneralParticleSource.hh"
 
 Surface::SurfaceSource::SurfaceSource()
-    : fParticleGenerator(new G4GeneralParticleSource),
-      Messenger(new SurfaceSourceMessenger(this)) {}
+    : fParticleGenerator(new G4GeneralParticleSource) {
+  fFacetStore = Locator::GetFacetStore();
+}
 
 Surface::SurfaceSource::~SurfaceSource() {
   delete fParticleGenerator;
   fParticleGenerator = nullptr;
-}
-
-void Surface::SurfaceSource::SetFacetStore(Surface::FacetStore &aFacetStore) {
-  fFacetStore = aFacetStore;
 }
 
 void Surface::SurfaceSource::GeneratePrimaryVertex(G4Event *argEvent) {
