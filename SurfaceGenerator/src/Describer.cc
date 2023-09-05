@@ -29,7 +29,7 @@ void Surface::Describer::Generate() {
 }
 
 G4Transform3D
-GetTransformation(const Surface::RectangleDivider::Rectangle &aRectangle) {
+Surface::Describer::GetTransformation(const Surface::RectangleDivider::Rectangle &aRectangle) {
   G4double X_Translate{(aRectangle.maxX + aRectangle.minX) / 2.};
   G4double Y_Translate{(aRectangle.maxY + aRectangle.minY) / 2.};
   G4ThreeVector translate{X_Translate, Y_Translate, 0};

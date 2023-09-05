@@ -81,3 +81,7 @@ void Surface::FacetStore::DrawFacets() {
   UI->ApplyCommand("/vis/set/colour");
   UI->ApplyCommand("/vis/verbose");
 }
+
+void Surface::FacetStore::AppendToFacetVector(const G4TriangularFacet& aFacet){
+  fFacetVector.push_back((aFacet));
+}

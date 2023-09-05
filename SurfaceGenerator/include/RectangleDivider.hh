@@ -1,12 +1,13 @@
-/*
- * RectangleDivider.hh
- *
- *  Created on: May 14, 2023
- *      Author: cgruner
- */
+//
+//
+//
+//
+//  author: C.Gruener
+//
+//
 
-#ifndef INCLUDE_RECTANGLEDIVIDER_HH_
-#define INCLUDE_RECTANGLEDIVIDER_HH_
+#ifndef SURFACE_RECTANGLEDIVIDER
+#define SURFACE_RECTANGLEDIVIDER
 
 #include "G4String.hh"
 #include <vector>
@@ -40,6 +41,6 @@ private:
   std::vector<Rectangle> fRectangle;
   std::vector<G4double> fFraction;
 };
-} // namespace surface
+} // namespace Surface
 
 #endif /* INCLUDE_RECTANGLEDIVIDER_HH_ */

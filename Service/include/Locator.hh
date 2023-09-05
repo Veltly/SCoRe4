@@ -14,13 +14,12 @@
 
 #include "../../SurfaceGenerator/include/FacetStore.hh"
 namespace Surface {
-
 class Locator {
 public:
-  static FacetStore &GetFacetStore() { return fFacetStore; }
+  static Surface::FacetStore &GetFacetStore() { return fFacetStore; }
 
 private:
-  static FacetStore fFacetStore;
+  static Surface::FacetStore fFacetStore;
 };
 } // namespace Surface
 #endif

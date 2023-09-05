@@ -26,7 +26,6 @@ private:
   };
 
 public:
-  FacetStore();
   void CloseFacetStore();
   G4ThreeVector GetRandomPoint() const;
   void AppendToFacetVector(const G4TriangularFacet&);
