@@ -26,6 +26,8 @@ private:
   void GeneratePyramide();
   void GenerateBump();
   void GeneratePeak();
+  G4double FunctionBump(const G4double aNextHeight, const G4double aBaseside);
+  G4double FunctionPeak(const G4double aNextHeight, const G4double aBaseside);
   
   Spikeform fSpikeform;
   G4double fWidth_X;

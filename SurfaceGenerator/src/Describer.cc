@@ -9,6 +9,7 @@
 #include "../include/Describer.hh"
 #include "../include/Spike.hh"
 #include "../include/RectangleDivider.hh"
+#include <Randomize.hh>
 #include <G4RotationMatrix.hh>
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
@@ -66,6 +67,34 @@ void Surface::Describer::AppendDescriptionAtPosition(
 }
 
 std::vector<Surface::SolidDescription> Surface::Describer::GetStandardPyramid(
+    const Surface::RectangleDivider::Rectangle &aRectangle) {
+  G4double Width_X{aRectangle.maxX - aRectangle.minX};
+  G4double Width_Y{aRectangle.maxY - aRectangle.minY};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X, Width_Y,
+                       fMeanHeight, 1};
+  return Spike.GetSpikeDescription();
+}
+
+std::vector<Surface::SolidDescription> Surface::Describer::GetUniformPyramid(
+    const Surface::RectangleDivider::Rectangle &aRectangle) {
+  G4double Width_X{aRectangle.maxX - aRectangle.minX};
+  G4double Width_Y{aRectangle.maxY - aRectangle.minY};
+  G4double height = G4RandGauss::shoot(fMeanHeight,fHeightDeviation);
+  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X, Width_Y,
+                       height, 1};
+  return Spike.GetSpikeDescription();
+}
+
+std::vector<Surface::SolidDescription> Surface::Describer::GetBump(
+    const Surface::RectangleDivider::Rectangle &aRectangle) {
+  G4double Width_X{aRectangle.maxX - aRectangle.minX};
+  G4double Width_Y{aRectangle.maxY - aRectangle.minY};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X, Width_Y,
+                       fMeanHeight, 1};
+  return Spike.GetSpikeDescription();
+}
+
+std::vector<Surface::SolidDescription> Surface::Describer::GetPeak(
     const Surface::RectangleDivider::Rectangle &aRectangle) {
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};

@@ -23,8 +23,8 @@ namespace Surface {
 class Assembler {
 public:
   void Assemble();
-  G4VSolid *GetSolid();
-  void SetDescription(Description &aDescription);
+  inline G4VSolid *GetSolid()const { return fSolid;};
+  inline void SetDescription(Description &aDescription){ fDescription = aDescription;};
 
 private:
   void AddToFacetStore(const G4VSolid&, const G4Transform3D&, const std::vector<G4int>&);

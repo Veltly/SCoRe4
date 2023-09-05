@@ -6,9 +6,9 @@
 //
 //
 #include "../include/Assembler.hh"
-#include "../../Service/Locator.hh"
-#include "../include/Storage.hh"
+#include "../../Service/include/Locator.hh"
 #include "../include/FacetStore.hh"
+#include "../include/Storage.hh"
 #include <G4Box.hh>
 #include <G4MultiUnion.hh>
 #include <G4ThreeVector.hh>
