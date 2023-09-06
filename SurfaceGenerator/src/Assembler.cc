@@ -30,23 +30,23 @@ void Surface::Assembler::Assemble() {
 }
 
 void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
-  auto FacetStore = Locator::GetTesting();
-//  G4VSolid *newSolid = GetSingleSolid(aDescription);
-//  G4Polyhedron polyhedron{*newSolid->CreatePolyhedron()};
-//  polyhedron.Transform(aDescription.Transform);
-//  G4int NVertices;
-//  G4Point3D Vertices[4];
-//  for (auto FacetIndex : aDescription.OuterSurface) {
-//    polyhedron.GetFacet(FacetIndex, NVertices, Vertices);
-//    std::vector<G4ThreeVector> Tmp_Vertices;
-//    for (G4int i = 0; i < NVertices; ++i) {
-//      Tmp_Vertices.emplace_back(
-//          G4ThreeVector{Vertices[i].x(), Vertices[i].y(), Vertices[i].z()});
-//      FacetStore.AppendToFacetVector(G4TriangularFacet{
-//          Tmp_Vertices[0], Tmp_Vertices[1], Tmp_Vertices[2], ABSOLUTE});
-//    }
-//    delete newSolid;
-//  }
+  auto FacetStore = Surface::Locator::GetFacetStore();
+  G4VSolid *newSolid = GetSingleSolid(aDescription);
+  G4Polyhedron polyhedron{*newSolid->CreatePolyhedron()};
+  polyhedron.Transform(aDescription.Transform);
+  G4int NVertices;
+  G4Point3D Vertices[4];
+  for (auto FacetIndex : aDescription.OuterSurface) {
+    polyhedron.GetFacet(FacetIndex, NVertices, Vertices);
+    std::vector<G4ThreeVector> Tmp_Vertices;
+    for (G4int i = 0; i < NVertices; ++i) {
+      Tmp_Vertices.emplace_back(
+          G4ThreeVector{Vertices[i].x(), Vertices[i].y(), Vertices[i].z()});
+      FacetStore.AppendToFacetVector(G4TriangularFacet{
+          Tmp_Vertices[0], Tmp_Vertices[1], Tmp_Vertices[2], ABSOLUTE});
+    }
+    delete newSolid;
+  }
 }
 
 G4VSolid *
