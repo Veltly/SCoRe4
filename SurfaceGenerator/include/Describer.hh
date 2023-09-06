@@ -23,8 +23,8 @@ public:
 
   void SetSpikeWidth_X(G4double);
   void SetSpikeWidth_Y(G4double);
-  void SetSpikeNr_X(G4int);
-  void SetSpikeNr_Y(G4int);
+  void SetNrSpike_X(G4int);
+  void SetNrSpike_Y(G4int);
   void SetMeanHeight(G4double);
   void SetHeightDeviation(G4double);
   void SetSpikeform(Spikeform);
