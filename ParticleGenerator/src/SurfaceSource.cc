@@ -7,17 +7,14 @@
 //
 
 #include "../include/SurfaceSource.hh"
-
+#include "../include/SurfaceSourceMessenger.hh"
 #include "G4Event.hh"
 #include "G4GeneralParticleSource.hh"
 
 Surface::SurfaceSource::SurfaceSource()
-    : fParticleGenerator(new G4GeneralParticleSource) {
+    : fMessenger(new SurfaceSourceMessenger(this)), fParticleGenerator(new G4GeneralParticleSource) {
   fFacetStore = Locator::GetFacetStore();
   fFacetStore.CloseFacetStore();
-  if(fShowSurface){
-    ShowSurface();
-  }
 }
 
 Surface::SurfaceSource::~SurfaceSource() {
@@ -39,6 +36,12 @@ void Surface::SurfaceSource::ShowSurface(){
   fFacetStore.DrawFacets();
 }
 
+void Surface::SurfaceSource::LogSurface(){
+  fFacetStore.LogFacetStore("FacetStore.csv");
+}
+
 void Surface::SurfaceSource::SetOptionShowSurface(G4bool aOption){
   fShowSurface = aOption;
+  ShowSurface();
+  LogSurface();
 }

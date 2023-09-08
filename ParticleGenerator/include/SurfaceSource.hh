@@ -11,6 +11,7 @@
 
 #include "../../Service/include/Locator.hh"
 #include "../../SurfaceGenerator/include/FacetStore.hh"
+#include "SurfaceSourceMessenger.hh"
 #include "G4VPrimaryGenerator.hh"
 
 class G4Event;
@@ -32,8 +33,9 @@ public:
   void GeneratePrimaryVertex(G4Event *argEvent);
   void ShowSurface();
   void SetOptionShowSurface(G4bool);
-
+  void LogSurface();
 private:
+  Surface::SurfaceSourceMessenger *fMessenger;
   G4GeneralParticleSource *fParticleGenerator;
   Surface::FacetStore fFacetStore;
   G4bool fShowSurface{false};

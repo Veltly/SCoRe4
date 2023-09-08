@@ -33,7 +33,7 @@ void Surface::Assembler::Assemble() {
 }
 
 void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
-  auto FacetStore = Surface::Locator::GetFacetStore();
+  auto &FacetStore = Surface::Locator::GetFacetStore();
   G4VSolid *newSolid = GetSingleSolid(aDescription);
   G4Polyhedron polyhedron{*newSolid->CreatePolyhedron()};
   polyhedron.Transform(aDescription.Transform);

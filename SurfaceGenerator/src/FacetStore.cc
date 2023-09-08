@@ -7,6 +7,7 @@
 //
 
 #include "../include/FacetStore.hh"
+#include <CGAL/Kernel/Wutils.h>
 #include <G4ThreeVector.hh>
 #include <G4TriangularFacet.hh>
 #include <G4UIcommand.hh>
@@ -82,10 +83,34 @@ void Surface::FacetStore::DrawFacets() {
   UI->ApplyCommand("/vis/verbose");
 }
 
+void Surface::FacetStore::LogFacetStore(G4String&& aFilename)const {
+  LogFacetStore(aFilename);
+}
+
 void Surface::FacetStore::AppendToFacetVector(G4TriangularFacet *aFacet) {
   G4cout << "wants to add facet with:" << G4endl;
   G4cout << " ----> Vertex 0: " << aFacet->GetVertex(0) << G4endl;
   G4cout << " ----> Vertex 1: " << aFacet->GetVertex(1) << G4endl;
   G4cout << " ----> Vertex 2: " << aFacet->GetVertex(2) << G4endl;
   fFacetVector.push_back(aFacet);
+}
+
+void Surface::FacetStore::LogFacetStore(G4String& aFilename) const{
+if(aFilename == ""){
+    return;
+  }
+  std::fstream out;
+  out.open(aFilename, std::ios_base::app);
+  if(!out.is_open()){
+    G4cout << "File not open" << G4endl;
+    return;
+  }
+for(size_t i = 0; i < fFacetVector.size(); ++i){
+    auto *face = fFacetVector.at(i);
+  out << face->GetVertex(0) << " , ";
+  out << face->GetVertex(1) << " , ";
+  out << face->GetVertex(2) << " , ";
+  out << fFacetProbability.at(i) << "\n";
+  }
+  out.close();
 }

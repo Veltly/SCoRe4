@@ -31,6 +31,8 @@ public:
   void AppendToFacetVector(G4TriangularFacet*);
   void DrawFacets();
   inline G4bool GetIsStoreClosed() const { return fClosed;};
+  void LogFacetStore(G4String& aFilename) const;
+  void LogFacetStore(G4String&& aFilename) const;
 
 private:
   void CalculateFacetProbability();
