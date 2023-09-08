@@ -14,6 +14,7 @@
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
 #include <G4Trd.hh>
+#include <G4TriangularFacet.hh>
 #include <G4VFacet.hh>
 #include <string>
 
@@ -27,6 +28,8 @@ void Surface::Assembler::Assemble() {
     AssembledSolid->AddNode(*newSolid, transform);
     AddToFacetStore(description);
   }
+  fSolid = AssembledSolid;
+  fLogger.WriteDebugInfo("finished assemble");
 }
 
 void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
@@ -42,11 +45,17 @@ void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
     for (G4int i = 0; i < NVertices; ++i) {
       Tmp_Vertices.emplace_back(
           G4ThreeVector{Vertices[i].x(), Vertices[i].y(), Vertices[i].z()});
-      FacetStore.AppendToFacetVector(G4TriangularFacet{
-          Tmp_Vertices[0], Tmp_Vertices[1], Tmp_Vertices[2], ABSOLUTE});
     }
-    delete newSolid;
+    for (G4int i = 0; i < NVertices; ++i) {
+      FacetStore.AppendToFacetVector(new G4TriangularFacet{
+          Tmp_Vertices[0], Tmp_Vertices[1], Tmp_Vertices[2], ABSOLUTE});
+      if (NVertices == 4) {
+        FacetStore.AppendToFacetVector(new G4TriangularFacet{
+            Tmp_Vertices[0], Tmp_Vertices[2], Tmp_Vertices[3], ABSOLUTE});
+      }
+    }
   }
+  delete newSolid;
 }
 
 G4VSolid *
@@ -73,25 +82,26 @@ G4VSolid *Surface::Assembler::GetTrd(const SolidDescription &aDescription) {
   G4double pXBottom{aDescription.Volumeparameter.at(0)};
   G4double pXTop{aDescription.Volumeparameter.at(1)};
   G4double pYBottom{aDescription.Volumeparameter.at(2)};
-  G4double pYTop{aDescription.Volumeparameter.at(2)};
-  G4double pHeight{aDescription.Volumeparameter.at(2)};
+  G4double pYTop{aDescription.Volumeparameter.at(3)};
+  G4double pHeight{aDescription.Volumeparameter.at(4)};
   G4Trd *newTrd =
       new G4Trd{SolidName, pXBottom, pXTop, pYBottom, pYTop, pHeight};
   return newTrd;
 }
 
-G4String Surface::Assembler::GenerateSolidName(const SolidDescription& aDescription){
+G4String
+Surface::Assembler::GenerateSolidName(const SolidDescription &aDescription) {
   G4String name;
-  for(G4double string:aDescription.Volumeparameter){
-    name += string;
+  for (G4double string : aDescription.Volumeparameter) {
+    name += std::to_string(string);
     name += "_";
   }
   G4ThreeVector translation{aDescription.Transform.getTranslation()};
-  name += translation.getX();
+  name += std::to_string(translation.getX());
   name += "_";
-  name += translation.getY();
+  name += std::to_string(translation.getY());
   name += "_";
-  name += translation.getZ();
+  name += std::to_string(translation.getZ());
   name += "_";
   return name;
 }

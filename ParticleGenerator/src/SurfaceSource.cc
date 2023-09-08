@@ -14,6 +14,10 @@
 Surface::SurfaceSource::SurfaceSource()
     : fParticleGenerator(new G4GeneralParticleSource) {
   fFacetStore = Locator::GetFacetStore();
+  fFacetStore.CloseFacetStore();
+  if(fShowSurface){
+    ShowSurface();
+  }
 }
 
 Surface::SurfaceSource::~SurfaceSource() {
@@ -29,4 +33,12 @@ void Surface::SurfaceSource::GeneratePrimaryVertex(G4Event *argEvent) {
     argEvent->GetPrimaryVertex(i)->SetPosition(randomPoint.x(), randomPoint.y(),
                                                randomPoint.z());
   }
+}
+
+void Surface::SurfaceSource::ShowSurface(){
+  fFacetStore.DrawFacets();
+}
+
+void Surface::SurfaceSource::SetOptionShowSurface(G4bool aOption){
+  fShowSurface = aOption;
 }

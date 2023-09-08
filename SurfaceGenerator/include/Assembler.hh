@@ -10,6 +10,8 @@
 #define SURFACE_ASSEMBLER
 
 #include "Storage.hh"
+#include "FacetStore.hh"
+#include "../../Service/include/Logger.hh"
 #include <G4Box.hh>
 #include <G4Transform3D.hh>
 #include <G4Trd.hh>
@@ -35,7 +37,7 @@ private:
   G4String GenerateSolidName(const SolidDescription&);
   G4VSolid *fSolid;
   Description fDescription;
-
+  Surface::Logger fLogger{"Assembler", 3};
 };
 
 } // namespace Surface

@@ -34,8 +34,8 @@ private:
   G4double fWidth_Y;
   G4double fHeight;
   G4int fNLayer;
-  const G4double fWidthTop_X{1e-12};
-  const G4double fWidthTop_Y{1e-12};
+  const G4double fWidthTop_X{1e-6};
+  const G4double fWidthTop_Y{1e-6};
   std::vector<Surface::SolidDescription> fSpikeDescription{};
 
 };

@@ -28,14 +28,14 @@ private:
 public:
   void CloseFacetStore();
   G4ThreeVector GetRandomPoint() const;
-  void AppendToFacetVector(const G4TriangularFacet&);
+  void AppendToFacetVector(G4TriangularFacet*);
   void DrawFacets();
   inline G4bool GetIsStoreClosed() const { return fClosed;};
 
 private:
   void CalculateFacetProbability();
   FacetEdges GetFacetLines(const G4TriangularFacet&);
-  std::vector<G4TriangularFacet> fFacetVector;
+  std::vector<G4TriangularFacet*> fFacetVector;
   std::vector<G4double> fFacetProbability;
   G4bool fClosed{false};
 };

@@ -11,14 +11,18 @@
 
 #include "RectangleDivider.hh"
 #include "Storage.hh"
+#include "../../Service/include/Logger.hh"
 #include <G4Transform3D.hh>
 
 namespace Surface {
+class DescriberMessenger;
 
 class Describer {
+public:
   enum class Spikeform { StandardPyramide, UniformPyramide, Bump, Peak };
 
 public:
+  Describer() noexcept;
   void Generate();
 
   void SetSpikeWidth_X(G4double);
@@ -28,7 +32,7 @@ public:
   void SetMeanHeight(G4double);
   void SetHeightDeviation(G4double);
   void SetSpikeform(Spikeform);
-
+  G4String GetInfoDescription() const;
   std::vector<SolidDescription> GetSolidDescription() const;
   inline G4double GetSurfaceWidth_X() const {
     return fSpikeWidth_X * fNSpike_X;
@@ -58,6 +62,8 @@ private:
   Surface::RectangleDivider GetRectangle();
   void AppendDescriptionAtPosition(std::vector<SolidDescription> &,
                                    const G4Transform3D &);
+
+  Surface::DescriberMessenger *fMessenger;
   Spikeform fOptionSpikeform{Describer::Spikeform::StandardPyramide};
   G4double fSpikeWidth_X{1};
   G4double fSpikeWidth_Y{1};
@@ -67,6 +73,7 @@ private:
   G4double fHeightDeviation{1};
   G4int fNLayer{1};
   std::vector<SolidDescription> fDescription;
+  Surface::Logger fLogger{"Describer", 3};
 };
 } // namespace Surface
 #endif

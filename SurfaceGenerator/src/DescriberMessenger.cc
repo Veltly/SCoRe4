@@ -28,7 +28,7 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetSpikeWidth_X =
       new G4UIcmdWithADoubleAndUnit("/geometry/surface/setSpikeWidth_X", this);
-  fCmdSetSpikeWidth_X->AvailableForStates(G4State_PreInit, G4State_Init);
+  fCmdSetSpikeWidth_X->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdSetSpikeWidth_X->SetGuidance(
       "Control width of spike in X direction (value is the half edge)");
   fCmdSetSpikeWidth_X->SetDefaultValue(0.005);
@@ -36,7 +36,7 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetSpikeWidth_Y =
       new G4UIcmdWithADoubleAndUnit("/geometry/surface/setSpikeWidth_Y", this);
-  fCmdSetSpikeWidth_Y->AvailableForStates(G4State_PreInit, G4State_Init);
+  fCmdSetSpikeWidth_Y->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdSetSpikeWidth_Y->SetGuidance(
       "Control width of spike in Y direction (value is the half edge)");
   fCmdSetSpikeWidth_Y->SetDefaultValue(0.005);
@@ -44,19 +44,19 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetNrSpike_X =
       new G4UIcmdWithAnInteger("/geometry/surface/setNrSpike_X", this);
-  fCmdSetNrSpike_X->AvailableForStates(G4State_PreInit, G4State_Init);
+  fCmdSetNrSpike_X->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdSetNrSpike_X->SetGuidance("Control the number of spikes in X direction");
   fCmdSetNrSpike_X->SetDefaultValue(1);
 
   fCmdSetNrSpike_Y =
       new G4UIcmdWithAnInteger("/geometry/surface/setNrSpike_Y", this);
-  fCmdSetNrSpike_Y->AvailableForStates(G4State_PreInit, G4State_Init);
+  fCmdSetNrSpike_Y->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdSetNrSpike_X->SetGuidance("Control the number of spikes in Y direction");
   fCmdSetNrSpike_Y->SetDefaultValue(1);
 
   fCmdSetMeanHeight =
       new G4UIcmdWithADoubleAndUnit("/geometry/surface/setMeanHeight", this);
-  fCmdSetMeanHeight->AvailableForStates(G4State_PreInit, G4State_Init);
+  fCmdSetMeanHeight->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdSetMeanHeight->SetGuidance(
       "Control the mean height of spikes. If no deviation of spikes i "
       "happening, all spikes have the mean height");
@@ -65,7 +65,7 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetHeightDeviation = new G4UIcmdWithADoubleAndUnit(
       "/geometry/surface/setHeightDeviation", this);
-  fCmdSetHeightDeviation->AvailableForStates(G4State_PreInit, G4State_Init);
+  fCmdSetHeightDeviation->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdSetHeightDeviation->SetGuidance(
       "Control the deviation from mean Height of spikes. Only used for "
       "specific spikeforms");
@@ -73,7 +73,7 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetSpikeform =
       new G4UIcmdWithAString("/geometry/surface/setSpikeform", this);
-  fCmdSetSpikeform->AvailableForStates(G4State_PreInit, G4State_Init);
+  fCmdSetSpikeform->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdSetSpikeform->SetGuidance(
       "Control the form of the spikes, all have similar form");
   fCmdSetSpikeform->SetDefaultValue("Standard");
@@ -102,14 +102,31 @@ Surface::DescriberMessenger::~DescriberMessenger() {
 }
 
 void Surface::DescriberMessenger::SetNewValue(G4UIcommand *command,
-                                                          G4String newValues) {
+                                              G4String newValues) {
   if (command == fCmdSetSpikeWidth_X) {
-    fDescriber->SetSpikeWidth_X(fCmdSetSpikeWidth_X->GetNewDoubleValue(newValues));
+    fDescriber->SetSpikeWidth_X(
+        fCmdSetSpikeWidth_X->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetSpikeWidth_Y) {
-    fDescriber->SetSpikeWidth_Y(fCmdSetSpikeWidth_Y->GetNewDoubleValue(newValues));
+    fDescriber->SetSpikeWidth_Y(
+        fCmdSetSpikeWidth_Y->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetNrSpike_X) {
     fDescriber->SetNrSpike_X(fCmdSetNrSpike_X->GetNewIntValue(newValues));
   } else if (command == fCmdSetNrSpike_Y) {
     fDescriber->SetNrSpike_Y(fCmdSetNrSpike_Y->GetNewIntValue(newValues));
-}
+  } else if (command == fCmdSetMeanHeight) {
+    fDescriber->SetMeanHeight(fCmdSetMeanHeight->GetNewDoubleValue(newValues));
+  } else if (command == fCmdSetHeightDeviation) {
+    fDescriber->SetHeightDeviation(
+        fCmdSetHeightDeviation->GetNewDoubleValue(newValues));
+  } else if (command == fCmdSetSpikeform) {
+    if (newValues == "StandardPyramide") {
+      fDescriber->SetSpikeform(Surface::Describer::Spikeform::StandardPyramide);
+    } else if (newValues == "UniformPyramide") {
+      fDescriber->SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+    } else if (newValues == "Bump") {
+      fDescriber->SetSpikeform(Surface::Describer::Spikeform::Bump);
+    } else if (newValues == "Peak") {
+      fDescriber->SetSpikeform(Surface::Describer::Spikeform::Peak);
+    }
+  }
 }
