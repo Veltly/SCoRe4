@@ -45,8 +45,8 @@ void Surface::Spike::GeneratePyramide() {
   G4ThreeVector MidPoint{0, 0, fHeight};
   description.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
   description.OuterSurface = std::vector<G4int>{
-      1, 2, 3, 4,
-      5}; // All Facets except bottom (Facet 0) is defined as outer surface
+      2, 3, 4,
+      5, 6}; // All Facets except bottom (Facet 1) is defined as outer surface
   fSpikeDescription.emplace_back(std::move(description));
 }
 

@@ -36,12 +36,7 @@ void Surface::SurfaceSource::ShowSurface(){
   fFacetStore.DrawFacets();
 }
 
-void Surface::SurfaceSource::LogSurface(){
-  fFacetStore.LogFacetStore("FacetStore.csv");
+void Surface::SurfaceSource::LogSurface(G4String& aFilename){
+  fFacetStore.LogFacetStore(aFilename);
 }
 
-void Surface::SurfaceSource::SetOptionShowSurface(G4bool aOption){
-  fShowSurface = aOption;
-  ShowSurface();
-  LogSurface();
-}

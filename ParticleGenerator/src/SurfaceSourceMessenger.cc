@@ -22,17 +22,22 @@
 
 Surface::SurfaceSourceMessenger::SurfaceSourceMessenger(
 	Surface::SurfaceSource *source) :
-	Source(source), Directory(nullptr), CmdVerbose(nullptr), CmdShowSurface(nullptr){
+	Source(source), Directory(nullptr), CmdVerbose(nullptr), CmdShowSurface(nullptr), CmdLogSurface(nullptr){
 	//As the messenger class is instantiated by the PrimaryGeneratorSource, the pointer Source can not be NULL, hence no test needed.
 
 	Directory = new G4UIdirectory("/SurfaceSource/");
 	Directory->SetGuidance("Controls the particle source.");
 	/** @todo Specify the state for which the commands are available. **/
 
-	CmdShowSurface = new G4UIcmdWithABool("/SurfaceSource/ShowSurface", this);
+	CmdShowSurface = new G4UIcmdWithoutParameter("/SurfaceSource/ShowSurface", this);
 	CmdShowSurface->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
 	CmdShowSurface->SetGuidance("Set if contaminated Surface should be drawn.");
-	CmdShowSurface->SetDefaultValue(false);
+	
+	CmdLogSurface = new G4UIcmdWithAString("/SurfaceSource/ShowSurface", this);
+	CmdLogSurface->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+	CmdLogSurface->SetGuidance("Set if contaminated Surface should be writen to file.");
+	CmdLogSurface->SetDefaultValue("SurfaceLog.csv");
+
   }
 
 Surface::SurfaceSourceMessenger::~SurfaceSourceMessenger() {
@@ -47,6 +52,8 @@ Surface::SurfaceSourceMessenger::~SurfaceSourceMessenger() {
 void Surface::SurfaceSourceMessenger::SetNewValue(G4UIcommand* command,
 		G4String newValues) {
   if (command == CmdShowSurface){
-		Source->SetOptionShowSurface(CmdShowSurface->GetNewBoolValue(newValues));
+		Source->ShowSurface();
+	} else if (command == CmdLogSurface){
+		Source->LogSurface(newValues);
 	}
 }

@@ -13,6 +13,8 @@
 #include <G4UIcommand.hh>
 #include <G4UImanager.hh>
 #include <Randomize.hh>
+#include <iostream>
+#include <iomanip>
 
 void Surface::FacetStore::CloseFacetStore() {
   if (GetIsStoreClosed()) {
@@ -49,10 +51,11 @@ G4ThreeVector Surface::FacetStore::GetRandomPoint() const {
 Surface::FacetStore::FacetEdges
 Surface::FacetStore::GetFacetLines(const G4TriangularFacet &aFacet) {
   G4String (*toStr)(G4double) = G4UIcommand::ConvertToString;
-  G4String edgeAB, edgeBC, edgeCA;
+  G4String edgeAB, edgeBC, edgeCA, edgeAMid;
   auto vertexA = aFacet.GetVertex(0);
   auto vertexB = aFacet.GetVertex(1);
   auto vertexC = aFacet.GetVertex(2);
+  auto vertexMid = (vertexB + vertexC)/2.;
   edgeAB = toStr(vertexA.getX()) + " " + toStr(vertexA.getY()) + " " +
            toStr(vertexA.getZ()) + " " + toStr(vertexB.getX()) + " " +
            toStr(vertexB.getY()) + " " + toStr(vertexB.getZ()) + " mm";
@@ -62,7 +65,10 @@ Surface::FacetStore::GetFacetLines(const G4TriangularFacet &aFacet) {
   edgeCA = toStr(vertexC.getX()) + " " + toStr(vertexC.getY()) + " " +
            toStr(vertexC.getZ()) + " " + toStr(vertexA.getX()) + " " +
            toStr(vertexA.getY()) + " " + toStr(vertexA.getZ()) + " mm";
-  return {edgeAB, edgeBC, edgeCA};
+  edgeAMid = toStr(vertexA.getX()) + " " + toStr(vertexA.getY()) + " " +
+           toStr(vertexA.getZ()) + " " + toStr(vertexMid.getX()) + " " +
+           toStr(vertexMid.getY()) + " " + toStr(vertexMid.getZ()) + " mm";
+  return {edgeAB, edgeBC, edgeCA, edgeAMid};
 }
 
 void Surface::FacetStore::DrawFacets() {
@@ -76,6 +82,9 @@ void Surface::FacetStore::DrawFacets() {
     UI->ApplyCommand("/vis/scene/add/line " + edges.edgeAB);
     UI->ApplyCommand("/vis/scene/add/line " + edges.edgeBC);
     UI->ApplyCommand("/vis/scene/add/line " + edges.edgeCA);
+    UI->ApplyCommand("/vis/set/colour 0 1 1");
+    UI->ApplyCommand("/vis/scene/add/line " + edges.edgeAMid);
+    UI->ApplyCommand("/vis/set/colour 1 0 0");
   }
 
   UI->ApplyCommand("/vis/set/lineWidth");
@@ -88,10 +97,6 @@ void Surface::FacetStore::LogFacetStore(G4String&& aFilename)const {
 }
 
 void Surface::FacetStore::AppendToFacetVector(G4TriangularFacet *aFacet) {
-  G4cout << "wants to add facet with:" << G4endl;
-  G4cout << " ----> Vertex 0: " << aFacet->GetVertex(0) << G4endl;
-  G4cout << " ----> Vertex 1: " << aFacet->GetVertex(1) << G4endl;
-  G4cout << " ----> Vertex 2: " << aFacet->GetVertex(2) << G4endl;
   fFacetVector.push_back(aFacet);
 }
 
@@ -107,10 +112,18 @@ if(aFilename == ""){
   }
 for(size_t i = 0; i < fFacetVector.size(); ++i){
     auto *face = fFacetVector.at(i);
-  out << face->GetVertex(0) << " , ";
-  out << face->GetVertex(1) << " , ";
-  out << face->GetVertex(2) << " , ";
-  out << fFacetProbability.at(i) << "\n";
+  out << std::fixed << std::setprecision(10) << face->GetVertex(0) << " , ";
+  out << std::fixed << std::setprecision(10) << face->GetVertex(1) << " , ";
+  out << std::fixed << std::setprecision(10) << face->GetVertex(2) << " , ";
+  out << std::fixed << std::setprecision(10) << fFacetProbability.at(i) << "\n";
   }
   out.close();
+}
+
+std::vector<G4TriangularFacet*>::const_iterator Surface::FacetStore::GetIterBegin() const{
+  return fFacetVector.cbegin();
+}
+
+std::vector<G4TriangularFacet*>::const_iterator Surface::FacetStore::GetIterEnd() const{
+  return fFacetVector.cend();
 }

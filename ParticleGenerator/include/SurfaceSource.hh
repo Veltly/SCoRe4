@@ -32,13 +32,11 @@ public:
   ~SurfaceSource();
   void GeneratePrimaryVertex(G4Event *argEvent);
   void ShowSurface();
-  void SetOptionShowSurface(G4bool);
-  void LogSurface();
+  void LogSurface(G4String& aFilename);
 private:
   Surface::SurfaceSourceMessenger *fMessenger;
   G4GeneralParticleSource *fParticleGenerator;
   Surface::FacetStore fFacetStore;
-  G4bool fShowSurface{false};
 };
 } // namespace Surface
 #endif // SURFACE_SURFACESOURCE

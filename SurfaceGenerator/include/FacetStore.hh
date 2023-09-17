@@ -10,6 +10,7 @@
 
 #include <G4ThreeVector.hh>
 #include <vector>
+#include <iterator>
 #include <G4TriangularFacet.hh>
 
 namespace Surface {
@@ -22,7 +23,7 @@ namespace Surface {
 class FacetStore {
 private:
   struct FacetEdges{
-    G4String edgeAB, edgeBC, edgeCA;
+    G4String edgeAB, edgeBC, edgeCA, edgeAMid;
   };
 
 public:
@@ -33,6 +34,8 @@ public:
   inline G4bool GetIsStoreClosed() const { return fClosed;};
   void LogFacetStore(G4String& aFilename) const;
   void LogFacetStore(G4String&& aFilename) const;
+  std::vector<G4TriangularFacet*>::const_iterator GetIterBegin()const;
+  std::vector<G4TriangularFacet*>::const_iterator GetIterEnd()const;
 
 private:
   void CalculateFacetProbability();

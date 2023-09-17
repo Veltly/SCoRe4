@@ -46,13 +46,11 @@ void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
       Tmp_Vertices.emplace_back(
           G4ThreeVector{Vertices[i].x(), Vertices[i].y(), Vertices[i].z()});
     }
-    for (G4int i = 0; i < NVertices; ++i) {
+    FacetStore.AppendToFacetVector(new G4TriangularFacet{
+        Tmp_Vertices[0], Tmp_Vertices[1], Tmp_Vertices[2], ABSOLUTE});
+    if (NVertices == 4) {
       FacetStore.AppendToFacetVector(new G4TriangularFacet{
-          Tmp_Vertices[0], Tmp_Vertices[1], Tmp_Vertices[2], ABSOLUTE});
-      if (NVertices == 4) {
-        FacetStore.AppendToFacetVector(new G4TriangularFacet{
-            Tmp_Vertices[0], Tmp_Vertices[2], Tmp_Vertices[3], ABSOLUTE});
-      }
+          Tmp_Vertices[0], Tmp_Vertices[2], Tmp_Vertices[3], ABSOLUTE});
     }
   }
   delete newSolid;

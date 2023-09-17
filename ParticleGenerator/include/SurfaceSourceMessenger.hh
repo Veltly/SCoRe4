@@ -40,7 +40,8 @@ private:
 	Surface::SurfaceSource *Source;
 	G4UIdirectory *Directory;
 	G4UIcmdWithAnInteger *CmdVerbose;
-	G4UIcmdWithABool *CmdShowSurface;
+	G4UIcmdWithoutParameter *CmdShowSurface;
+	G4UIcmdWithAString *CmdLogSurface;
 };
 }
 
