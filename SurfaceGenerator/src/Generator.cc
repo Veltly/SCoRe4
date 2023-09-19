@@ -9,6 +9,7 @@
 #include "../include/Calculator.hh"
 #include "../include/Describer.hh"
 #include "../include/Generator.hh"
+#include "../../Service/include/Locator.hh"
 #include <G4MultiUnion.hh>
 Surface::SurfaceGenerator::SurfaceGenerator() noexcept{
   fLogger.WriteInfo("initialized");
@@ -33,8 +34,8 @@ void Surface::SurfaceGenerator::Assemble(){
 
 void Surface::SurfaceGenerator::Calculate(){
   fLogger.WriteDebugInfo("calling calculate");
-
-
+  Calculator calculator{Locator::GetFacetStore()};
+  calculator.PrintSurfaceInformation();
 }
 
 void Surface::SurfaceGenerator::GenerateDescription(){
