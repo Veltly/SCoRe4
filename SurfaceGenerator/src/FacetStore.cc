@@ -7,14 +7,14 @@
 //
 
 #include "../include/FacetStore.hh"
-#include <CGAL/Kernel/Wutils.h>
+// #include <CGAL/Kernel/Wutils.h>
 #include <G4ThreeVector.hh>
 #include <G4TriangularFacet.hh>
 #include <G4UIcommand.hh>
 #include <G4UImanager.hh>
 #include <Randomize.hh>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 void Surface::FacetStore::CloseFacetStore() {
   if (GetIsStoreClosed()) {
@@ -55,7 +55,7 @@ Surface::FacetStore::GetFacetLines(const G4TriangularFacet &aFacet) {
   auto vertexA = aFacet.GetVertex(0);
   auto vertexB = aFacet.GetVertex(1);
   auto vertexC = aFacet.GetVertex(2);
-  auto vertexMid = (vertexB + vertexC)/2.;
+  auto vertexMid = (vertexB + vertexC) / 2.;
   edgeAB = toStr(vertexA.getX()) + " " + toStr(vertexA.getY()) + " " +
            toStr(vertexA.getZ()) + " " + toStr(vertexB.getX()) + " " +
            toStr(vertexB.getY()) + " " + toStr(vertexB.getZ()) + " mm";
@@ -66,8 +66,8 @@ Surface::FacetStore::GetFacetLines(const G4TriangularFacet &aFacet) {
            toStr(vertexC.getZ()) + " " + toStr(vertexA.getX()) + " " +
            toStr(vertexA.getY()) + " " + toStr(vertexA.getZ()) + " mm";
   edgeAMid = toStr(vertexA.getX()) + " " + toStr(vertexA.getY()) + " " +
-           toStr(vertexA.getZ()) + " " + toStr(vertexMid.getX()) + " " +
-           toStr(vertexMid.getY()) + " " + toStr(vertexMid.getZ()) + " mm";
+             toStr(vertexA.getZ()) + " " + toStr(vertexMid.getX()) + " " +
+             toStr(vertexMid.getY()) + " " + toStr(vertexMid.getZ()) + " mm";
   return {edgeAB, edgeBC, edgeCA, edgeAMid};
 }
 
@@ -92,7 +92,7 @@ void Surface::FacetStore::DrawFacets() {
   UI->ApplyCommand("/vis/verbose");
 }
 
-void Surface::FacetStore::LogFacetStore(G4String&& aFilename)const {
+void Surface::FacetStore::LogFacetStore(G4String &&aFilename) const {
   LogFacetStore(aFilename);
 }
 
@@ -100,30 +100,33 @@ void Surface::FacetStore::AppendToFacetVector(G4TriangularFacet *aFacet) {
   fFacetVector.push_back(aFacet);
 }
 
-void Surface::FacetStore::LogFacetStore(G4String& aFilename) const{
-if(aFilename == ""){
+void Surface::FacetStore::LogFacetStore(G4String &aFilename) const {
+  if (aFilename == "") {
     return;
   }
   std::fstream out;
   out.open(aFilename, std::ios_base::app);
-  if(!out.is_open()){
+  if (!out.is_open()) {
     G4cout << "File not open" << G4endl;
     return;
   }
-for(size_t i = 0; i < fFacetVector.size(); ++i){
+  for (size_t i = 0; i < fFacetVector.size(); ++i) {
     auto *face = fFacetVector.at(i);
-  out << std::fixed << std::setprecision(10) << face->GetVertex(0) << " , ";
-  out << std::fixed << std::setprecision(10) << face->GetVertex(1) << " , ";
-  out << std::fixed << std::setprecision(10) << face->GetVertex(2) << " , ";
-  out << std::fixed << std::setprecision(10) << fFacetProbability.at(i) << "\n";
+    out << std::fixed << std::setprecision(10) << face->GetVertex(0) << " , ";
+    out << std::fixed << std::setprecision(10) << face->GetVertex(1) << " , ";
+    out << std::fixed << std::setprecision(10) << face->GetVertex(2) << " , ";
+    out << std::fixed << std::setprecision(10) << fFacetProbability.at(i)
+        << "\n";
   }
   out.close();
 }
 
-std::vector<G4TriangularFacet*>::const_iterator Surface::FacetStore::GetIterBegin() const{
+std::vector<G4TriangularFacet *>::const_iterator
+Surface::FacetStore::GetIterBegin() const {
   return fFacetVector.cbegin();
 }
 
-std::vector<G4TriangularFacet*>::const_iterator Surface::FacetStore::GetIterEnd() const{
+std::vector<G4TriangularFacet *>::const_iterator
+Surface::FacetStore::GetIterEnd() const {
   return fFacetVector.cend();
 }

@@ -316,9 +316,9 @@ G4double Surface::Calculator::IntegrationRoutine(
   OrderVertices(aVertices);
   ShiftToZero(aVertices);
   ShiftToMean(aVertices);
-  FunctionParameter FunctionParameter = GetFunctionParameter(aVertices);
-  TransformFunctionparameter(FunctionParameter, aVertices);
-  return GetTrafoDeterminant(aVertices) * aIntegration(FunctionParameter);
+  FunctionParameter parameter = GetFunctionParameter(aVertices);
+  TransformFunctionparameter(parameter, aVertices);
+  return GetTrafoDeterminant(aVertices) * aIntegration(parameter);
 }
 
 G4bool Surface::Calculator::IsIntersected(Vertices &aVertices) {
@@ -408,10 +408,10 @@ void Surface::Calculator::PrintSurfaceInformation() {
   G4cout << "\n\n" << G4endl;
 }
 
-void Surface::Calculator::TransformFunctionparameter(FunctionParameter& aFuncParameter, const Vertices& aVertices){
+void Surface::Calculator::TransformFunctionparameter(
+    FunctionParameter &aFuncParameter, const Vertices &aVertices) {
   G4double b = aFuncParameter.b;
   G4double c = aFuncParameter.c;
   aFuncParameter.b = b * aVertices.p2.x() + c * aVertices.p2.y();
   aFuncParameter.c = b * aVertices.p3.x() + c * aVertices.p3.y();
 }
-

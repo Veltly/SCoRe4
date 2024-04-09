@@ -7,12 +7,14 @@
 //
 
 #include "../include/SurfaceSource.hh"
+#include "../../Service/include/Locator.hh"
 #include "../include/SurfaceSourceMessenger.hh"
 #include "G4Event.hh"
 #include "G4GeneralParticleSource.hh"
 
 Surface::SurfaceSource::SurfaceSource()
-    : fMessenger(new SurfaceSourceMessenger(this)), fParticleGenerator(new G4GeneralParticleSource) {
+    : fMessenger(new SurfaceSourceMessenger(this)),
+      fParticleGenerator(new G4GeneralParticleSource) {
   fFacetStore = Locator::GetFacetStore();
   fFacetStore.CloseFacetStore();
 }
@@ -32,11 +34,8 @@ void Surface::SurfaceSource::GeneratePrimaryVertex(G4Event *argEvent) {
   }
 }
 
-void Surface::SurfaceSource::ShowSurface(){
-  fFacetStore.DrawFacets();
-}
+void Surface::SurfaceSource::ShowSurface() { fFacetStore.DrawFacets(); }
 
-void Surface::SurfaceSource::LogSurface(G4String& aFilename){
+void Surface::SurfaceSource::LogSurface(G4String &aFilename) {
   fFacetStore.LogFacetStore(aFilename);
 }
-

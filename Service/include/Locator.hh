@@ -18,7 +18,7 @@ namespace Surface {
 class Locator {
 public:
   static Surface::FacetStore &GetFacetStore() { return fFacetStore; }
-  static Surface::Logger &GetLogger() { return fLogger;}
+  static Surface::Logger &GetLogger() { return fLogger; }
 
 private:
   static Surface::FacetStore fFacetStore;

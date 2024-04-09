@@ -9,9 +9,9 @@
 #define SURFACE_FACETSTORE
 
 #include <G4ThreeVector.hh>
-#include <vector>
-#include <iterator>
 #include <G4TriangularFacet.hh>
+#include <iterator>
+#include <vector>
 
 namespace Surface {
 
@@ -22,27 +22,27 @@ namespace Surface {
  */
 class FacetStore {
 private:
-  struct FacetEdges{
+  struct FacetEdges {
     G4String edgeAB, edgeBC, edgeCA, edgeAMid;
   };
 
 public:
   void CloseFacetStore();
   G4ThreeVector GetRandomPoint() const;
-  void AppendToFacetVector(G4TriangularFacet*);
+  void AppendToFacetVector(G4TriangularFacet *);
   void DrawFacets();
-  inline G4bool GetIsStoreClosed() const { return fClosed;};
-  void LogFacetStore(G4String& aFilename) const;
-  void LogFacetStore(G4String&& aFilename) const;
-  std::vector<G4TriangularFacet*>::const_iterator GetIterBegin()const;
-  std::vector<G4TriangularFacet*>::const_iterator GetIterEnd()const;
+  inline G4bool GetIsStoreClosed() const { return fClosed; };
+  void LogFacetStore(G4String &aFilename) const;
+  void LogFacetStore(G4String &&aFilename) const;
+  std::vector<G4TriangularFacet *>::const_iterator GetIterBegin() const;
+  std::vector<G4TriangularFacet *>::const_iterator GetIterEnd() const;
 
 private:
   void CalculateFacetProbability();
-  FacetEdges GetFacetLines(const G4TriangularFacet&);
-  std::vector<G4TriangularFacet*> fFacetVector;
+  FacetEdges GetFacetLines(const G4TriangularFacet &);
+  std::vector<G4TriangularFacet *> fFacetVector;
   std::vector<G4double> fFacetProbability;
   G4bool fClosed{false};
 };
-} //namespace Surface
+} // namespace Surface
 #endif // SURFACE_FACETSTORE

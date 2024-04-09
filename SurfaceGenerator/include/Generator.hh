@@ -9,11 +9,10 @@
 #ifndef SURFACE_SURFACEGENERATOR
 #define SURFACE_SURFACEGENERATOR
 
+#include "../../Service/include/Logger.hh"
 #include "Assembler.hh"
-#include "Calculator.hh"
 #include "Describer.hh"
 #include "Storage.hh"
-#include "../../Service/include/Logger.hh"
 #include <G4VSolid.hh>
 
 namespace Surface {

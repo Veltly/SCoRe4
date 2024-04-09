@@ -10,7 +10,7 @@
 #ifndef G4SURFACE_SOLIDDESCRIPTION
 #define G4SURFACE_SOLIDDESCRIPTION
 
-#include "Printable.hh"
+// #include "Printable.hh"
 #include <G4Transform3D.hh>
 #include <G4TriangularFacet.hh>
 #include <G4Types.hh>
@@ -25,15 +25,15 @@ struct SolidDescription {
   G4Transform3D Transform;
   std::vector<int> OuterSurface;
 };
-}
+} // namespace Surface
 #endif
 
 #ifndef G4SURFACE_SURFACEDESCRIPTION
 #define G4SURFACE_SURFACEDESCRIPTION
-namespace Surface{
+namespace Surface {
 struct SurfaceDescription {
   int SpikeNr;
   G4TriangularFacet facet;
 };
-}
+} // namespace Surface
 #endif

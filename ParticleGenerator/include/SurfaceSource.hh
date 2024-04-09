@@ -9,10 +9,9 @@
 #ifndef SURFACE_SURFACESOURCE
 #define SURFACE_SURFACESOURCE
 
-#include "../../Service/include/Locator.hh"
 #include "../../SurfaceGenerator/include/FacetStore.hh"
-#include "SurfaceSourceMessenger.hh"
 #include "G4VPrimaryGenerator.hh"
+#include "SurfaceSourceMessenger.hh"
 
 class G4Event;
 class G4Navigator;
@@ -32,7 +31,8 @@ public:
   ~SurfaceSource();
   void GeneratePrimaryVertex(G4Event *argEvent);
   void ShowSurface();
-  void LogSurface(G4String& aFilename);
+  void LogSurface(G4String &aFilename);
+
 private:
   Surface::SurfaceSourceMessenger *fMessenger;
   G4GeneralParticleSource *fParticleGenerator;
