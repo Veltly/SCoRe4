@@ -29,7 +29,7 @@ void Surface::SurfaceGenerator::Assemble() {
   Assembler.SetDescription(description);
   Assembler.Assemble();
   fSolidhandle = Assembler.GetSolid();
-  G4MultiUnion *test = static_cast<G4MultiUnion *>(Assembler.GetSolid());
+  G4MultiUnion *test = static_cast<G4MultiUnion *>(fSolidhandle);
   fLogger.WriteDebugInfo(test->GetNumberOfSolids());
 }
 
