@@ -21,14 +21,15 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
       fCmdSetHeightDeviation(NULL), fCmdSetSpikeform(NULL) {
   fDirectory = new G4UIdirectory("/geometry/");
   fDirectory->SetGuidance("Controls the implemented geometry.");
-  fDirectory1 = new G4UIdirectory("/geometry/Surface/");
+  fDirectory1 = new G4UIdirectory("/geometry/surface/");
   fDirectory1->SetGuidance("Controls the implemented surface geometry.");
 
   G4String delimiter = " ";
 
   fCmdSetSpikeWidth_X =
       new G4UIcmdWithADoubleAndUnit("/geometry/surface/setSpikeWidth_X", this);
-  fCmdSetSpikeWidth_X->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+  fCmdSetSpikeWidth_X->AvailableForStates(G4State_PreInit, G4State_Init,
+                                          G4State_Idle);
   fCmdSetSpikeWidth_X->SetGuidance(
       "Control width of spike in X direction (value is the half edge)");
   fCmdSetSpikeWidth_X->SetDefaultValue(0.005);
@@ -36,7 +37,8 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetSpikeWidth_Y =
       new G4UIcmdWithADoubleAndUnit("/geometry/surface/setSpikeWidth_Y", this);
-  fCmdSetSpikeWidth_Y->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+  fCmdSetSpikeWidth_Y->AvailableForStates(G4State_PreInit, G4State_Init,
+                                          G4State_Idle);
   fCmdSetSpikeWidth_Y->SetGuidance(
       "Control width of spike in Y direction (value is the half edge)");
   fCmdSetSpikeWidth_Y->SetDefaultValue(0.005);
@@ -44,19 +46,22 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetNrSpike_X =
       new G4UIcmdWithAnInteger("/geometry/surface/setNrSpike_X", this);
-  fCmdSetNrSpike_X->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+  fCmdSetNrSpike_X->AvailableForStates(G4State_PreInit, G4State_Init,
+                                       G4State_Idle);
   fCmdSetNrSpike_X->SetGuidance("Control the number of spikes in X direction");
   fCmdSetNrSpike_X->SetDefaultValue(1);
 
   fCmdSetNrSpike_Y =
       new G4UIcmdWithAnInteger("/geometry/surface/setNrSpike_Y", this);
-  fCmdSetNrSpike_Y->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+  fCmdSetNrSpike_Y->AvailableForStates(G4State_PreInit, G4State_Init,
+                                       G4State_Idle);
   fCmdSetNrSpike_X->SetGuidance("Control the number of spikes in Y direction");
   fCmdSetNrSpike_Y->SetDefaultValue(1);
 
   fCmdSetMeanHeight =
       new G4UIcmdWithADoubleAndUnit("/geometry/surface/setMeanHeight", this);
-  fCmdSetMeanHeight->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+  fCmdSetMeanHeight->AvailableForStates(G4State_PreInit, G4State_Init,
+                                        G4State_Idle);
   fCmdSetMeanHeight->SetGuidance(
       "Control the mean height of spikes. If no deviation of spikes i "
       "happening, all spikes have the mean height");
@@ -65,7 +70,8 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetHeightDeviation = new G4UIcmdWithADoubleAndUnit(
       "/geometry/surface/setHeightDeviation", this);
-  fCmdSetHeightDeviation->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+  fCmdSetHeightDeviation->AvailableForStates(G4State_PreInit, G4State_Init,
+                                             G4State_Idle);
   fCmdSetHeightDeviation->SetGuidance(
       "Control the deviation from mean Height of spikes. Only used for "
       "specific spikeforms");
@@ -73,7 +79,8 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
   fCmdSetSpikeform =
       new G4UIcmdWithAString("/geometry/surface/setSpikeform", this);
-  fCmdSetSpikeform->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
+  fCmdSetSpikeform->AvailableForStates(G4State_PreInit, G4State_Init,
+                                       G4State_Idle);
   fCmdSetSpikeform->SetGuidance(
       "Control the form of the spikes, all have similar form");
   fCmdSetSpikeform->SetDefaultValue("Standard");
