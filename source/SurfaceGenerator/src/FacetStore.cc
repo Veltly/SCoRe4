@@ -49,7 +49,7 @@ G4ThreeVector Surface::FacetStore::GetRandomPoint() const {
 }
 
 Surface::FacetStore::FacetEdges
-Surface::FacetStore::GetFacetLines(const G4TriangularFacet &aFacet) {
+Surface::FacetStore::GetFacetLines(const G4TriangularFacet &aFacet) const {
   G4String (*toStr)(G4double) = G4UIcommand::ConvertToString;
   G4String edgeAB, edgeBC, edgeCA, edgeAMid;
   auto vertexA = aFacet.GetVertex(0);
@@ -92,7 +92,7 @@ void Surface::FacetStore::DrawFacets() {
   UI->ApplyCommand("/vis/verbose");
 }
 
-void Surface::FacetStore::LogFacetStore(G4String &&aFilename) const {
+void Surface::FacetStore::LogFacetStore(const G4String &&aFilename) const {
   LogFacetStore(aFilename);
 }
 
@@ -100,7 +100,7 @@ void Surface::FacetStore::AppendToFacetVector(G4TriangularFacet *aFacet) {
   fFacetVector.push_back(aFacet);
 }
 
-void Surface::FacetStore::LogFacetStore(G4String &aFilename) const {
+void Surface::FacetStore::LogFacetStore(const G4String &aFilename) const {
   if (aFilename == "") {
     return;
   }

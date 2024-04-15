@@ -87,9 +87,9 @@ include_directories(${Geant4_INCLUDE_DIR})
 add_definitions(${Geant4_DEFINITIONS})
 
 # For public headers
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/source)
 # Private header are in the same directories as the cc-files
-include_directories(${CMAKE_SOURCE_DIR}/src)
+# include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set(PROJECT_MAIN_LIST Surface.cc)
 foreach(PROJECT_MAIN ${PROJECT_MAIN_LIST})

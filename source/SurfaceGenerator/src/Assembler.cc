@@ -20,6 +20,8 @@
 
 using Volumetype = Surface::SolidDescription::Solid;
 
+Surface::Assembler::Assembler() : fLogger({"Assembler", 3}){};
+
 void Surface::Assembler::Assemble() {
   G4MultiUnion *AssembledSolid = new G4MultiUnion;
   for (const auto &description : fDescription) {

@@ -9,10 +9,12 @@
 #ifndef SURFACE_DESCRIBER
 #define SURFACE_DESCRIBER
 
+#include "../../Service/include/Logger.hh"
 #include "RectangleDivider.hh"
 #include "Storage.hh"
-#include "../../Service/include/Logger.hh"
 #include <G4Transform3D.hh>
+
+using Rectangle = Surface::RectangleDivider::Rectangle;
 
 namespace Surface {
 class DescriberMessenger;
@@ -48,23 +50,18 @@ public:
   inline G4double GetHeightDeviation() const { return fHeightDeviation; };
 
 private:
-  std::vector<Surface::SolidDescription>
-  GetSpikeDescription(const Surface::RectangleDivider::Rectangle &);
-  std::vector<Surface::SolidDescription>
-  GetStandardPyramid(const Surface::RectangleDivider::Rectangle &);
-  std::vector<Surface::SolidDescription>
-  GetUniformPyramid(const Surface::RectangleDivider::Rectangle &);
-  std::vector<Surface::SolidDescription>
-  GetBump(const Surface::RectangleDivider::Rectangle &);
-  std::vector<Surface::SolidDescription>
-  GetPeak(const Surface::RectangleDivider::Rectangle &);
-  G4Transform3D GetTransformation(const Surface::RectangleDivider::Rectangle &);
+  std::vector<SolidDescription> GetSpikeDescription(const Rectangle &);
+  std::vector<SolidDescription> GetStandardPyramid(const Rectangle &);
+  std::vector<SolidDescription> GetUniformPyramid(const Rectangle &);
+  std::vector<SolidDescription> GetBump(const Rectangle &);
+  std::vector<SolidDescription> GetPeak(const Rectangle &);
+  G4Transform3D GetTransformation(const Rectangle &);
   Surface::RectangleDivider GetRectangle();
   void AppendDescriptionAtPosition(std::vector<SolidDescription> &,
                                    const G4Transform3D &);
 
   Surface::DescriberMessenger *fMessenger;
-  Spikeform fOptionSpikeform{Describer::Spikeform::StandardPyramide};
+  Spikeform fOptionSpikeform{Spikeform::StandardPyramide};
   G4double fSpikeWidth_X{1};
   G4double fSpikeWidth_Y{1};
   G4int fNSpike_X{1};
@@ -73,7 +70,7 @@ private:
   G4double fHeightDeviation{1};
   G4int fNLayer{1};
   std::vector<SolidDescription> fDescription;
-  Surface::Logger fLogger{"Describer", 3};
+  Surface::Logger fLogger;
 };
 } // namespace Surface
 #endif

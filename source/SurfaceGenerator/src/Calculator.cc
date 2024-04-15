@@ -13,16 +13,7 @@
 
 Surface::Calculator::Calculator(Surface::FacetStore &aFacetStore) {
   fFacetStore = aFacetStore;
-  MeanHeight = 0;
-  ProjectedSurface = CalcProjectedSurface();
-  MeanHeight = CalcMeanHeight();
-  Sv = CalcSv();
-  Sp = CalcSp();
-  Sz = CalcSz();
-  Sq = CalcSq();
-  Sa = CalcSa();
-  Sku = CalcSku();
-  Ssk = CalcSsk();
+  Recalculate();
 };
 
 void Surface::Calculator::Recalculate() {
@@ -391,7 +382,7 @@ G4ThreeVector Surface::Calculator::GetHighestVertex(const Vertices &aVertices) {
   return HighestVertex;
 }
 
-void Surface::Calculator::PrintSurfaceInformation() {
+void Surface::Calculator::PrintSurfaceInformation() const {
   G4cout << G4endl;
   G4cout << "**************************************************" << G4endl;
   G4cout << "************** Surface  Information **************" << G4endl;

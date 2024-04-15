@@ -16,25 +16,40 @@
 #include <G4VSolid.hh>
 
 namespace Surface {
-
+///
+/// Controls generation a solid volume which represents a patch of rough
+/// surface. A handle to this volume can be received to place it as a physical
+/// volume in simulation. Furthermore a FacetStore which references to the outer
+/// surface of the volume will be generated.
 class SurfaceGenerator {
 public:
   SurfaceGenerator() noexcept;
+  ///
+  /// Returns handle to solid
   inline G4VSolid *GetSolid() const { return fSolidhandle; };
-  inline std::vector<SurfaceDescription> GetSurface() const {
-    return fSurface;
-  };
+
+  ///
+  /// Generates solid
   void GenerateSurface();
 
 private:
+  inline std::vector<SurfaceDescription> GetSurface() const {
+    return fSurface;
+  };
+  ///
+  /// Calls and executes Assembler to generate a Solid based on description
   void Assemble();
+  ///
+  /// Calls calculator to get SurfaceParameters
   void Calculate();
+  ///
+  /// Calls Describer to generate description of surface
   void GenerateDescription();
 
-  G4VSolid *fSolidhandle{nullptr};
-  std::vector<SurfaceDescription> fSurface;
-  Describer fDescriber;
-  Surface::Logger fLogger{"SurfaceGenerator", 3};
+  G4VSolid *fSolidhandle;                   ///< Pointer to final solid
+  std::vector<SurfaceDescription> fSurface; ///< stores description of surface
+  Describer fDescriber;                     ///< describes surface
+  Surface::Logger fLogger;
 };
 
 } // namespace Surface

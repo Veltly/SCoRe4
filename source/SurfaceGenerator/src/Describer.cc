@@ -18,7 +18,7 @@
 #include <vector>
 
 Surface::Describer::Describer() noexcept
-    : fMessenger(new DescriberMessenger(this)) {
+    : fMessenger(new DescriberMessenger(this)), fLogger({"Describer", 3}) {
   fLogger.WriteInfo("initialized");
 };
 
@@ -78,8 +78,8 @@ std::vector<Surface::SolidDescription> Surface::Describer::GetStandardPyramid(
     const Surface::RectangleDivider::Rectangle &aRectangle) {
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};
-  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X/2., Width_Y/2.,
-                       fMeanHeight, 1};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X / 2.,
+                       Width_Y / 2., fMeanHeight, 1};
   return Spike.GetSpikeDescription();
 }
 
@@ -88,8 +88,8 @@ std::vector<Surface::SolidDescription> Surface::Describer::GetUniformPyramid(
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};
   G4double height = G4RandGauss::shoot(fMeanHeight, fHeightDeviation);
-  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X/2., Width_Y/2.,
-                       height, 1};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X / 2.,
+                       Width_Y / 2., height, 1};
   return Spike.GetSpikeDescription();
 }
 
@@ -97,8 +97,8 @@ std::vector<Surface::SolidDescription> Surface::Describer::GetBump(
     const Surface::RectangleDivider::Rectangle &aRectangle) {
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};
-  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X/2., Width_Y/2.,
-                       fMeanHeight, 1};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X / 2.,
+                       Width_Y / 2., fMeanHeight, 1};
   return Spike.GetSpikeDescription();
 }
 
@@ -106,8 +106,8 @@ std::vector<Surface::SolidDescription> Surface::Describer::GetPeak(
     const Surface::RectangleDivider::Rectangle &aRectangle) {
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};
-  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X/2., Width_Y/2.,
-                       fMeanHeight, 1};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X / 2.,
+                       Width_Y / 2., fMeanHeight, 1};
   return Spike.GetSpikeDescription();
 }
 
@@ -155,25 +155,25 @@ G4String Surface::Describer::GetInfoDescription() const {
   for (auto &description : fDescription) {
     G4String VolumeType;
     switch (description.Volumetype) {
-      case Surface::SolidDescription::Solid::Box:
-        VolumeType = "Box";
+    case Surface::SolidDescription::Solid::Box:
+      VolumeType = "Box";
       break;
-      case Surface::SolidDescription::Solid::Trd:
+    case Surface::SolidDescription::Solid::Trd:
       VolumeType = "Trd";
       break;
     }
     stream << "VolumeType: " << VolumeType << "\n";
     stream << "Volumeparameter: ";
-    for(auto& value:description.Volumeparameter){
+    for (auto &value : description.Volumeparameter) {
       stream << value << ", ";
     }
     stream << "\n";
     stream << "Outer surface: ";
-    for(auto& value:description.OuterSurface){
+    for (auto &value : description.OuterSurface) {
       stream << value << ", ";
     }
     stream << "\n";
   }
-  
+
   return stream.str();
 }
