@@ -23,8 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// G4Voxelizer_Green is based on G4Voxelizer.
-// Only a few changes in comparison to the original class
+// G4Voxelizer_Green
 //
 // Class description:
 //
@@ -32,21 +31,25 @@
 // used in G4TessellatedSolid and G4MultiUnion.
 
 // 19.10.12 Marek Gayer, created
-// 15.04.24 Christoph Gruener, added small changes
+// 16.04.24 Christoph Gruener, added maxBoundary
 // --------------------------------------------------------------------
 #ifndef G4VOXELIZER_GREEN_HH
 #define G4VOXELIZER_GREEN_HH
 
+#include <G4ThreeVector.hh>
 #include <map>
 #include <string>
 #include <vector>
 
 #include "G4Box.hh"
+#include "G4MultiUnion.hh"
 #include "G4RotationMatrix.hh"
 #include "G4SurfBits.hh"
 #include "G4Transform3D.hh"
 #include "G4VFacet.hh"
 #include "G4VSolid.hh"
+
+namespace Surface {
 
 struct G4VoxelBox {
   G4ThreeVector hlen; // half length of the box
@@ -67,7 +70,7 @@ public:
   void Voxelize(std::vector<G4VSolid *> &solids,
                 std::vector<G4Transform3D> &transforms);
   void Voxelize(std::vector<G4VFacet *> &facets);
-
+  void Voxelize(G4MultiUnion *munion);
   void DisplayVoxelLimits() const;
   void DisplayBoundaries();
   void DisplayListNodes() const;
@@ -156,6 +159,10 @@ public:
 
   static G4int GetDefaultVoxelsCount();
 
+  void SetMaxBoundary(G4ThreeVector aBoundary);
+
+  inline G4ThreeVector GetMaxBoundary() const { return fMaxBoundary; };
+
 private:
   class G4VoxelComparator {
   public:
@@ -171,6 +178,7 @@ private:
     }
   };
 
+private:
   void BuildEmpty();
 
   G4String GetCandidatesAsString(const G4SurfBits &bits) const;
@@ -247,8 +255,10 @@ private:
   G4double fTolerance;
 
   G4SurfBits fEmpty;
+
+  G4ThreeVector fMaxBoundary;
 };
 
 #include "G4Voxelizer_Green.icc"
-
+} // namespace Surface
 #endif
