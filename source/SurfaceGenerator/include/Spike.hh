@@ -16,9 +16,11 @@ namespace Surface {
 
 class Spike {
 public:
-  enum class Spikeform{Pyramid, Bump, Peak};
+  enum class Spikeform { Pyramid, Bump, Peak };
+
 public:
-  Spike(Spikeform, G4double aWidth_X, G4double aWidth_Y, G4double aHeight, G4int aNLayer);
+  Spike(Spikeform, G4double aWidth_X, G4double aWidth_Y, G4double aHeight,
+        G4int aNLayer);
   std::vector<Surface::SolidDescription> GetSpikeDescription();
 
 private:
@@ -28,7 +30,7 @@ private:
   void GeneratePeak();
   G4double FunctionBump(const G4double aNextHeight, const G4double aBaseside);
   G4double FunctionPeak(const G4double aNextHeight, const G4double aBaseside);
-  
+
   Spikeform fSpikeform;
   G4double fWidth_X;
   G4double fWidth_Y;
@@ -37,7 +39,6 @@ private:
   const G4double fWidthTop_X{1e-6};
   const G4double fWidthTop_Y{1e-6};
   std::vector<Surface::SolidDescription> fSpikeDescription{};
-
 };
 } // namespace Surface
 #endif

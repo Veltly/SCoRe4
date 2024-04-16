@@ -34,6 +34,7 @@ public:
   void SetMeanHeight(G4double);
   void SetHeightDeviation(G4double);
   void SetSpikeform(Spikeform);
+  void SetNLayer(G4int);
   G4String GetInfoDescription() const;
   std::vector<SolidDescription> GetSolidDescription() const;
   inline G4double GetSurfaceWidth_X() const {
@@ -48,6 +49,7 @@ public:
   inline G4int GetSpikeNr_Y() const { return fNSpike_Y; };
   inline G4double GetMeanHeight() const { return fMeanHeight; };
   inline G4double GetHeightDeviation() const { return fHeightDeviation; };
+  inline G4int GetNLayer() const { return fNLayer; };
 
 private:
   std::vector<SolidDescription> GetSpikeDescription(const Rectangle &);

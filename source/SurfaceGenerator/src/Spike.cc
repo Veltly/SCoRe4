@@ -45,21 +45,71 @@ void Surface::Spike::GeneratePyramide() {
   G4ThreeVector MidPoint{0, 0, fHeight};
   description.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
   description.OuterSurface = std::vector<G4int>{
-      2, 3, 4,
-      5, 6}; // All Facets except bottom (Facet 1) is defined as outer surface
+      2, 3, 4, 5,
+      6}; // All Facets except bottom (Facet 1) is defined as outer surface
   fSpikeDescription.emplace_back(std::move(description));
 }
 
 void Surface::Spike::GenerateBump() {
-  for (G4int i = 0; i < fNLayer; ++i) {
+  G4double deltaHeight = fHeight / fNLayer;
+  G4double base_X = fWidth_X;
+  G4double base_Y = fWidth_Y;
+  for (G4int i = 1; i < fNLayer; ++i) {
+    G4double currentTop = i * deltaHeight;
+    G4double top_X = FunctionBump(currentTop, fWidth_X);
+    G4double top_Y = FunctionBump(currentTop, fWidth_Y);
     SolidDescription LayerDescription;
     LayerDescription.Volumetype = SolidDescription::Solid::Trd;
-    LayerDescription.Volumeparameter = std::vector<G4double>{};
+    LayerDescription.Volumeparameter =
+        std::vector<G4double>{base_X, top_X, base_Y, top_Y, deltaHeight / 2.};
+    G4ThreeVector MidPoint{0, 0, currentTop - deltaHeight / 2.};
+    LayerDescription.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
+    LayerDescription.OuterSurface = std::vector<G4int>{2, 3, 4, 5};
+    base_X = top_X;
+    base_Y = top_Y;
+    fSpikeDescription.emplace_back(std::move(LayerDescription));
   }
+  // Top
+  SolidDescription LastLayer;
+
+  LastLayer.Volumetype = SolidDescription::Solid::Trd;
+  LastLayer.Volumeparameter = std::vector<G4double>{
+      base_X, fWidthTop_X, base_Y, fWidthTop_Y, deltaHeight / 2.};
+  G4ThreeVector MidPoint{0, 0, fHeight - deltaHeight / 2.};
+  LastLayer.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
+  LastLayer.OuterSurface = std::vector<G4int>{2, 3, 4, 5, 6};
+  fSpikeDescription.emplace_back(std::move(LastLayer));
 };
 
 void Surface::Spike::GeneratePeak() {
-  // not included yet
+  G4double deltaHeight = fHeight / fNLayer;
+  G4double base_X = fWidth_X;
+  G4double base_Y = fWidth_Y;
+  for (G4int i = 1; i < fNLayer; ++i) {
+    G4double currentTop = i * deltaHeight;
+    G4double top_X = FunctionPeak(currentTop, fWidth_X);
+    G4double top_Y = FunctionPeak(currentTop, fWidth_Y);
+    SolidDescription LayerDescription;
+    LayerDescription.Volumetype = SolidDescription::Solid::Trd;
+    LayerDescription.Volumeparameter =
+        std::vector<G4double>{base_X, top_X, base_Y, top_Y, deltaHeight / 2.};
+    G4ThreeVector MidPoint{0, 0, currentTop - deltaHeight / 2.};
+    LayerDescription.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
+    LayerDescription.OuterSurface = std::vector<G4int>{2, 3, 4, 5};
+    base_X = top_X;
+    base_Y = top_Y;
+    fSpikeDescription.emplace_back(std::move(LayerDescription));
+  }
+  // Top
+  SolidDescription LastLayer;
+
+  LastLayer.Volumetype = SolidDescription::Solid::Trd;
+  LastLayer.Volumeparameter = std::vector<G4double>{
+      base_X, fWidthTop_X, base_Y, fWidthTop_Y, deltaHeight / 2.};
+  G4ThreeVector MidPoint{0, 0, fHeight - deltaHeight / 2.};
+  LastLayer.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
+  LastLayer.OuterSurface = std::vector<G4int>{2, 3, 4, 5, 6};
+  fSpikeDescription.emplace_back(std::move(LastLayer));
 }
 
 G4double Surface::Spike::FunctionBump(const G4double aNextHeight,

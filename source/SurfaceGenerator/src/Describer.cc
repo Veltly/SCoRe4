@@ -88,6 +88,9 @@ std::vector<Surface::SolidDescription> Surface::Describer::GetUniformPyramid(
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};
   G4double height = G4RandGauss::shoot(fMeanHeight, fHeightDeviation);
+  if (height <= 0.) {
+    height = 1e-6;
+  }
   Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X / 2.,
                        Width_Y / 2., height, 1};
   return Spike.GetSpikeDescription();
@@ -97,8 +100,8 @@ std::vector<Surface::SolidDescription> Surface::Describer::GetBump(
     const Surface::RectangleDivider::Rectangle &aRectangle) {
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};
-  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X / 2.,
-                       Width_Y / 2., fMeanHeight, 1};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Bump, Width_X / 2.,
+                       Width_Y / 2., fMeanHeight, fNLayer};
   return Spike.GetSpikeDescription();
 }
 
@@ -106,8 +109,8 @@ std::vector<Surface::SolidDescription> Surface::Describer::GetPeak(
     const Surface::RectangleDivider::Rectangle &aRectangle) {
   G4double Width_X{aRectangle.maxX - aRectangle.minX};
   G4double Width_Y{aRectangle.maxY - aRectangle.minY};
-  Surface::Spike Spike{Surface::Spike::Spikeform::Pyramid, Width_X / 2.,
-                       Width_Y / 2., fMeanHeight, 1};
+  Surface::Spike Spike{Surface::Spike::Spikeform::Peak, Width_X / 2.,
+                       Width_Y / 2., fMeanHeight, fNLayer};
   return Spike.GetSpikeDescription();
 }
 
@@ -144,6 +147,8 @@ void Surface::Describer::SetSpikeform(
     Surface::Describer::Spikeform aSpikeform) {
   fOptionSpikeform = aSpikeform;
 }
+
+void Surface::Describer::SetNLayer(G4int aNLayer) { fNLayer = aNLayer; }
 
 std::vector<Surface::SolidDescription>
 Surface::Describer::GetSolidDescription() const {

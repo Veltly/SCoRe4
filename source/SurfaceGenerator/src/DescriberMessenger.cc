@@ -84,6 +84,12 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
   fCmdSetSpikeform->SetGuidance(
       "Control the form of the spikes, all have similar form");
   fCmdSetSpikeform->SetDefaultValue("Standard");
+
+  fCmdSetNLayer = new G4UIcmdWithAnInteger("/geometry/surface/setNLayer", this);
+  fCmdSetNLayer->AvailableForStates(G4State_PreInit, G4State_Init,
+                                    G4State_Idle);
+  fCmdSetNLayer->SetGuidance("Control the number of layers in Z direction");
+  fCmdSetNLayer->SetDefaultValue(1);
 }
 
 Surface::DescriberMessenger::~DescriberMessenger() {
@@ -101,6 +107,8 @@ Surface::DescriberMessenger::~DescriberMessenger() {
   fCmdSetHeightDeviation = NULL;
   delete fCmdSetSpikeform;
   fCmdSetSpikeform = NULL;
+  delete fCmdSetNLayer;
+  fCmdSetNLayer = NULL;
   delete fDirectory;
   fDirectory = NULL;
   delete fDirectory1;
@@ -125,6 +133,8 @@ void Surface::DescriberMessenger::SetNewValue(G4UIcommand *command,
   } else if (command == fCmdSetHeightDeviation) {
     fDescriber->SetHeightDeviation(
         fCmdSetHeightDeviation->GetNewDoubleValue(newValues));
+  } else if (command == fCmdSetNLayer) {
+    fDescriber->SetNLayer(fCmdSetNLayer->GetNewIntValue(newValues));
   } else if (command == fCmdSetSpikeform) {
     if (newValues == "StandardPyramide") {
       fDescriber->SetSpikeform(Surface::Describer::Spikeform::StandardPyramide);
