@@ -1,0 +1,81 @@
+// Author C.Gruener
+// Date 24-05-21
+// File DetectorConstruction
+
+#include "DetectorConstruction.hh"
+
+#include "../../src/SurfaceGenerator/include/Generator.hh"
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4NistManager.hh"
+#include "G4PVPlacement.hh"
+#include "G4RunManager.hh"
+#include "G4SystemOfUnits.hh"
+
+DetectorConstruction::DetectorConstruction()
+    : G4VUserDetectorConstruction(), fScoringVolume(0) {}
+
+DetectorConstruction::~DetectorConstruction() {}
+
+G4VPhysicalVolume *DetectorConstruction::Construct() {
+  // Get nist material manager
+  G4NistManager *nist = G4NistManager::Instance();
+
+  G4bool checkOverlaps = true;
+
+  //
+  // World
+  //
+  G4double world_sizeXY = 30 * cm;
+  G4double world_sizeZ = 30 * cm;
+  G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
+
+  G4Box *solidWorld = new G4Box("World", // its name
+                                0.5 * world_sizeXY, 0.5 * world_sizeXY,
+                                0.5 * world_sizeZ); // its size
+
+  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, // its solid
+                                                    world_mat,  // its material
+                                                    "World");   // its name
+
+  G4VPhysicalVolume *physWorld =
+      new G4PVPlacement(0,               // no rotation
+                        G4ThreeVector(), // at (0,0,0)
+                        logicWorld,      // its logical volume
+                        "World",         // its name
+                        0,               // its mother  volume
+                        false,           // no boolean operation
+                        0,               // copy number
+                        checkOverlaps);  // overlaps checking
+
+  //
+  // Box
+  //
+  //
+  G4double box_sizeXY = 2 * cm;
+  G4double box_sizeZ = 1 * cm;
+  G4Material *box_mat = nist->FindOrBuildMaterial("G4_SI");
+  G4Box *solidBox = new G4Box("TestBox", // its name
+                              0.5 * box_sizeXY, 0.5 * box_sizeXY,
+                              0.5 * box_sizeZ); // its size
+
+  G4LogicalVolume *logicBox = new G4LogicalVolume(solidBox,   // its solid
+                                                  box_mat,    // its material
+                                                  "TestBox"); // its name
+
+  new G4PVPlacement(0,               // no rotation
+                    G4ThreeVector(), // at (0,0,0)
+                    logicBox,        // its logical volume
+                    "TestBox",       // its name
+                    logicWorld,      // its mother  volume
+                    false,           // no boolean operation
+                    0,               // copy number
+                    checkOverlaps);  // overlaps checking
+
+  fScoringVolume = logicBox;
+
+  //
+  // always return the physical World
+  //
+  return physWorld;
+}
