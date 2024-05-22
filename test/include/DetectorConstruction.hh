@@ -30,9 +30,9 @@
 #ifndef DetectorConstruction_h
 #define DetectorConstruction_h 1
 
+#include "../../src/SurfaceGenerator/include/Generator.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
-
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 
@@ -49,6 +49,9 @@ public:
 
 protected:
   G4LogicalVolume *fScoringVolume;
+
+private:
+  Surface::SurfaceGenerator fSurfaceGenerator;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

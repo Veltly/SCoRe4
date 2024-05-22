@@ -4,6 +4,7 @@
 
 #include "DetectorConstruction.hh"
 
+#include "../../src/Service/include/G4Voxelizer_Green.hh"
 #include "../../src/SurfaceGenerator/include/Generator.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
@@ -11,9 +12,16 @@
 #include "G4PVPlacement.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
+#include "ParticleGenerator/include/SurfaceSource.hh"
+#include "SurfaceGenerator/include/Describer.hh"
+#include <G4MultiUnion.hh>
+#include <G4RotationMatrix.hh>
+#include <G4ThreeVector.hh>
+#include <G4Transform3D.hh>
 
 DetectorConstruction::DetectorConstruction()
-    : G4VUserDetectorConstruction(), fScoringVolume(0) {}
+    : G4VUserDetectorConstruction(), fScoringVolume(0),
+      fSurfaceGenerator(Surface::SurfaceGenerator()) {}
 
 DetectorConstruction::~DetectorConstruction() {}
 
@@ -21,13 +29,13 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // Get nist material manager
   G4NistManager *nist = G4NistManager::Instance();
 
-  G4bool checkOverlaps = true;
+  G4bool checkOverlaps = false;
 
   //
   // World
   //
-  G4double world_sizeXY = 30 * cm;
-  G4double world_sizeZ = 30 * cm;
+  G4double world_sizeXY = 1 * m;
+  G4double world_sizeZ = 1 * m;
   G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
   G4Box *solidWorld = new G4Box("World", // its name
@@ -73,6 +81,81 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                     checkOverlaps);  // overlaps checking
 
   fScoringVolume = logicBox;
+
+  //
+  // Subworld to place patch of Rough surface
+  //
+  //
+  G4double subworld_sizeXY = 1 * cm;
+  G4double subworld_sizeZ = 1 * cm;
+  G4ThreeVector subworldPlacement{40 * cm, 40 * cm, 40 * cm};
+  G4Material *subworld_mat = nist->FindOrBuildMaterial("G4_AIR");
+  G4Box *solidSubworld = new G4Box("Subworld", // its name
+                                   0.5 * subworld_sizeXY, 0.5 * subworld_sizeXY,
+                                   0.5 * subworld_sizeZ); // its size
+
+  G4LogicalVolume *logicSubworld =
+      new G4LogicalVolume(solidSubworld, // its solid
+                          subworld_mat,  // its material
+                          "Subworld");   // its name
+
+  new G4PVPlacement(0,                 // no rotation
+                    subworldPlacement, //
+                    logicSubworld,     // its logical volume
+                    "Subworld",        // its name
+                    logicWorld,        // its mother  volume
+                    false,             // no boolean operation
+                    0,                 // copy number
+                    checkOverlaps);    // overlaps checking
+
+  ///////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////
+  //
+  //
+  // Patch of rough surface
+  //
+  //
+
+  G4Material *roughness_mat = box_mat;
+  //
+  // Basis
+  //
+  //
+
+  G4double basis_sizeXY = 2 * mm;
+  G4double basis_sizeZ = 1 * mm;
+  G4Box *solidBasis = new G4Box("Basis", 0.5 * basis_sizeXY, 0.5 * basis_sizeXY,
+                                0.5 * basis_sizeZ);
+
+  G4ThreeVector basisPlacement{0., 0., -basis_sizeZ * 0.5};
+  G4RotationMatrix basisRotation{G4RotationMatrix()};
+  G4Transform3D basisTransform(basisRotation, basisPlacement);
+  //
+  // Roughness
+  //
+  //
+  Surface::Describer describer = fSurfaceGenerator.GetDescriber();
+  describer.SetNrSpike_X(2);
+  fSurfaceGenerator.GenerateSurface();
+  G4MultiUnion *solidRoughness =
+      static_cast<G4MultiUnion *>(fSurfaceGenerator.GetSolid());
+
+  solidRoughness->AddNode(*solidBasis, basisTransform);
+
+  //
+  // Voxelize
+  //
+  //
+  Surface::G4Voxelizer_Green &voxelizer =
+      (Surface::G4Voxelizer_Green &)solidRoughness->GetVoxels();
+  voxelizer.SetMaxBoundary({10, 10, 2});
+  voxelizer.Voxelize(solidRoughness);
+
+  G4LogicalVolume *logicRoughness =
+      new G4LogicalVolume(solidRoughness, roughness_mat, "Roughness");
+  new G4PVPlacement(NULL, G4ThreeVector(), logicRoughness, "Roughness",
+                    logicSubworld, 0, 0, checkOverlaps);
 
   //
   // always return the physical World

@@ -10,7 +10,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/test/include/*.hh)
 
 add_executable(SurfaceTest surface_testsetup.cc ${sources} ${headers})
 
-target_link_libraries(SurfaceTest ${Geant4_LIBRARIES})
+target_link_libraries(SurfaceTest ${Geant4_LIBRARIES} surface_lib)
 
 file(COPY ${PROJECT_SOURCE_DIR}/test/macros
      DESTINATION ${PROJECT_BINARY_DIR}/test/)

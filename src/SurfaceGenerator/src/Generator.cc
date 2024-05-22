@@ -12,7 +12,8 @@
 #include "../include/Describer.hh"
 #include <G4MultiUnion.hh>
 Surface::SurfaceGenerator::SurfaceGenerator() noexcept
-    : fSolidhandle(nullptr), fLogger({"SurfaceGenerator", 3}) {
+    : fSolidhandle(nullptr), fDescriber(Surface::Describer()),
+      fLogger({"SurfaceGenerator", 3}) {
   fLogger.WriteInfo("initialized");
 }
 
