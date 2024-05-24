@@ -13,6 +13,7 @@
 #include "Assembler.hh"
 #include "Describer.hh"
 #include "Storage.hh"
+#include <G4Transform3D.hh>
 #include <G4VSolid.hh>
 
 namespace Surface {
@@ -33,6 +34,7 @@ public:
   void GenerateSurface();
 
   inline Describer &GetDescriber() { return fDescriber; };
+  void SetSurfaceTransformation(G4ThreeVector &transform);
 
 private:
   inline std::vector<SurfaceDescription> GetSurface() const {
@@ -50,7 +52,7 @@ private:
 
   G4VSolid *fSolidhandle;                   ///< Pointer to final solid
   std::vector<SurfaceDescription> fSurface; ///< stores description of surface
-  Describer *fDescriber;                    ///< describes surface
+  Describer fDescriber;                     ///< describes surface
   Surface::Logger fLogger;
 };
 

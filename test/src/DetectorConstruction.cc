@@ -62,7 +62,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   G4double box_sizeXY = 2 * cm;
   G4double box_sizeZ = 1 * cm;
-  G4Material *box_mat = nist->FindOrBuildMaterial("G4_SI");
+  G4Material *box_mat = nist->FindOrBuildMaterial("G4_Si");
   G4Box *solidBox = new G4Box("TestBox", // its name
                               0.5 * box_sizeXY, 0.5 * box_sizeXY,
                               0.5 * box_sizeZ); // its size
@@ -71,16 +71,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                                                   box_mat,    // its material
                                                   "TestBox"); // its name
 
-  new G4PVPlacement(0,               // no rotation
-                    G4ThreeVector(), // at (0,0,0)
-                    logicBox,        // its logical volume
-                    "TestBox",       // its name
-                    logicWorld,      // its mother  volume
-                    false,           // no boolean operation
-                    0,               // copy number
-                    checkOverlaps);  // overlaps checking
-
-  fScoringVolume = logicBox;
+  //  new G4PVPlacement(0,               // no rotation
+  //                    G4ThreeVector(), // at (0,0,0)
+  //                    logicBox,        // its logical volume
+  //                    "TestBox",       // its name
+  //                    logicWorld,      // its mother  volume
+  //                    false,           // no boolean operation
+  //                    0,               // copy number
+  //                    checkOverlaps);  // overlaps checking
 
   //
   // Subworld to place patch of Rough surface
@@ -135,8 +133,17 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // Roughness
   //
   //
-  Surface::Describer describer = fSurfaceGenerator.GetDescriber();
+  // Set options for roughness
+  Surface::Describer &describer = fSurfaceGenerator.GetDescriber();
   describer.SetNrSpike_X(2);
+  describer.SetNrSpike_Y(2);
+  describer.SetSpikeWidth_X(0.5 * mm);
+  describer.SetSpikeWidth_Y(0.5 * mm);
+  describer.SetMeanHeight(0.5 * mm);
+  describer.SetNLayer(1);
+  describer.SetHeightDeviation(0.1 * mm);
+  describer.SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+
   fSurfaceGenerator.GenerateSurface();
   G4MultiUnion *solidRoughness =
       static_cast<G4MultiUnion *>(fSurfaceGenerator.GetSolid());
@@ -157,6 +164,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   new G4PVPlacement(NULL, G4ThreeVector(), logicRoughness, "Roughness",
                     logicSubworld, 0, 0, checkOverlaps);
 
+  fSurfaceGenerator.SetSurfaceTransformation(subworldPlacement);
   //
   // always return the physical World
   //

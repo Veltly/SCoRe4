@@ -9,6 +9,7 @@
 #define SURFACE_FACETSTORE
 
 #include <G4ThreeVector.hh>
+#include <G4Transform3D.hh>
 #include <G4TriangularFacet.hh>
 #include <vector>
 
@@ -57,6 +58,9 @@ public:
   void LogFacetStore(const G4String &&aFilename) const;
   std::vector<G4TriangularFacet *>::const_iterator GetIterBegin() const;
   std::vector<G4TriangularFacet *>::const_iterator GetIterEnd() const;
+  void SetTransformation(const G4ThreeVector &transformation) {
+    fTransform = transformation;
+  };
 
 private:
   ///
@@ -78,6 +82,7 @@ private:
                          ///< total area.
   G4bool fClosed{false}; ///< Indicates if Facet Store is closed and facets can
                          ///< not be added anymore.
+  G4ThreeVector fTransform;
 };
 } // namespace Surface
 #endif // SURFACE_FACETSTORE

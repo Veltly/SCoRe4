@@ -13,6 +13,7 @@
 #include <G4UIcommand.hh>
 #include <G4UImanager.hh>
 #include <Randomize.hh>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 
@@ -42,9 +43,12 @@ G4ThreeVector Surface::FacetStore::GetRandomPoint() const {
   G4double random = G4UniformRand();
   for (size_t i = 0; i < fFacetProbability.size(); ++i) {
     if (random <= fFacetProbability[i]) {
-      return fFacetVector[i]->GetPointOnFace();
+      auto point = fFacetVector[i]->GetPointOnFace();
+      point = fTransform + point;
+      return point;
     }
   }
+  EXIT_FAILURE;
   return G4ThreeVector{0, 0, 0};
 }
 

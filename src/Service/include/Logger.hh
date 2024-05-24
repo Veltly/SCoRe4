@@ -8,8 +8,7 @@
 
 #ifndef SURFACE_LOGGER
 #define SURFACE_LOGGER
-#include "G4String.hh"
-
+#include <G4String.hh>
 namespace Surface {
 ///
 /// Logger Class to standardize logging
