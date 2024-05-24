@@ -9,6 +9,7 @@
 #ifndef SURFACE_LOCATOR
 #define SURFACE_LOCATOR
 
+#include "../../Portal/include/PortalStore.hh"
 #include "../../SurfaceGenerator/include/FacetStore.hh"
 #include "Logger.hh"
 namespace Surface {
@@ -28,10 +29,15 @@ public:
   /// Returns reference to Logger
   ///
   static Surface::Logger &GetLogger() { return fLogger; }
+  ///
+  /// Returns reference to PortalStore
+  ///
+  static Surface::PortalStore &GetPortalStore() { return fPortalStore; }
 
 private:
   static Surface::FacetStore fFacetStore;
   static Surface::Logger fLogger;
+  static Surface::PortalStore fPortalStore;
 };
 } // namespace Surface
 #endif
