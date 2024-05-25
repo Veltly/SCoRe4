@@ -11,7 +11,7 @@ namespace Surface {
 class SimplePortal : public VPortal {
 
 public:
-  void DoPortation(G4StepPoint &point);
+  void DoPortation(G4StepPoint *point);
 
 private:
   SimplePortal *otherPortal;

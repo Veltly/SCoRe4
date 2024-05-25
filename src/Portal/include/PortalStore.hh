@@ -11,9 +11,10 @@
 namespace Surface {
 
 class PortalStore : public std::vector<VPortal> {
+private: 
+  G4int FindPortal(G4VPhysicalVolume *volume);
 public:
   G4bool IsPortal(G4VPhysicalVolume *volume);
-  G4int FindPortal(G4VPhysicalVolume *volume);
   VPortal &GetPortal(G4VPhysicalVolume *volume);
 };
 } // namespace Surface
