@@ -1,21 +1,23 @@
-//Author: C.Gruener
-//Date: 24-05-25
-//File: PortalControl
-
+// Author: C.Gruener
+// Date: 24-05-25
+// File: PortalControl
 
 #ifndef PORTALCONTROL_HH
 #define PORTALCONTROL_HH
 
-#include "PortalStore.hh"
 #include "G4UserSteppingAction.hh"
-namespace Surface{
+#include "PortalStore.hh"
+#include <G4VPhysicalVolume.hh>
+namespace Surface {
 
-class PortalControl{
+class PortalControl {
 public:
   PortalControl();
-  void DoStep(G4Step *step);
+  void DoStep(const G4Step *step);
+  void DoPortation(G4StepPoint *stepPoint, G4VPhysicalVolume *volume);
+
 private:
   PortalStore &fPortalStore;
 };
-}
-#endif //PORTALCONTROL_HH
+} // namespace Surface
+#endif // PORTALCONTROL_HH

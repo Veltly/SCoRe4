@@ -24,34 +24,30 @@
 // ********************************************************************
 //
 //
-/// \file DetectorConstruction.hh
-/// \brief Definition of the DetectorConstruction class
+/// \file EventAction.hh
+/// \brief Definition of the EventAction class
 
-#ifndef DetectorConstruction_h
-#define DetectorConstruction_h 1
+#ifndef EventAction_h
+#define EventAction_h 1
 
-#include "../../src/SurfaceGenerator/include/Generator.hh"
-#include "G4VUserDetectorConstruction.hh"
+#include "G4UserEventAction.hh"
 #include "globals.hh"
-class G4VPhysicalVolume;
-class G4LogicalVolume;
 
-/// Detector construction class to define materials and geometry.
+class RunAction;
 
-class DetectorConstruction : public G4VUserDetectorConstruction {
+/// Event action class
+///
+
+class EventAction : public G4UserEventAction {
 public:
-  DetectorConstruction();
-  virtual ~DetectorConstruction();
+  EventAction(RunAction *runAction);
+  virtual ~EventAction();
 
-  virtual G4VPhysicalVolume *Construct();
-
-  G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
-
-protected:
-  G4LogicalVolume *fScoringVolume;
+  virtual void BeginOfEventAction(const G4Event *event);
+  virtual void EndOfEventAction(const G4Event *event);
 
 private:
-  Surface::SurfaceGenerator fSurfaceGenerator;
+  RunAction *fRunAction;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

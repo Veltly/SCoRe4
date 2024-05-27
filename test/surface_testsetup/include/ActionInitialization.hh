@@ -24,34 +24,25 @@
 // ********************************************************************
 //
 //
-/// \file PrimaryGeneratorAction.hh
-/// \brief Definition of the PrimaryGeneratorAction class
+/// \file ActionInitialization.hh
+/// \brief Definition of the ActionInitialization class
 
-#ifndef PrimaryGeneratorAction_h
-#define PrimaryGeneratorAction_h 1
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
 
-#include "../../src/ParticleGenerator/include/SurfaceSource.hh"
-#include "G4VUserPrimaryGeneratorAction.hh"
-#include "globals.hh"
+#include "G4VUserActionInitialization.hh"
 
-class G4Event;
-class G4Box;
+/// Action initialization class.
 
-/// The primary generator action class with particle gun.
-///
-/// The default kinematic is a 6 MeV gamma, randomly distribued
-/// in front of the phantom across 80% of the (X,Y) phantom size.
-
-class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
+class ActionInitialization : public G4VUserActionInitialization {
 public:
-  PrimaryGeneratorAction();
-  virtual ~PrimaryGeneratorAction();
+  ActionInitialization();
+  virtual ~ActionInitialization();
 
-  // method from the base class
-  virtual void GeneratePrimaries(G4Event *);
-
-private:
-  Surface::SurfaceSource *fSurfaceSource; // pointer a to G4 gun class
+  virtual void BuildForMaster() const;
+  virtual void Build() const;
 };
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

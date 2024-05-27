@@ -9,8 +9,11 @@
 #include "G4VPhysicalVolume.hh"
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
+#include <cstdlib>
 
 namespace Surface {
+
+enum class PortalType { SimplePortal };
 
 class VPortal {
 protected:
@@ -21,17 +24,23 @@ protected:
   G4ThreeVector TransformToGlobalCoordinate(const G4ThreeVector &vec);
 
 public:
-  VPortal(G4String, G4VPhysicalVolume *);
-  VPortal(G4String, G4VPhysicalVolume *, G4ThreeVector &globalCoord);
-  virtual void DoPortation(G4StepPoint *point);
-  void SetGlobalCoord(G4ThreeVector vec);
+  virtual void DoPortation(G4StepPoint *point) {
+    exit(EXIT_FAILURE); // Function must be overwritten
+  };
+  VPortal(G4String, G4VPhysicalVolume *, PortalType);
+  VPortal(G4String, G4VPhysicalVolume *, PortalType,
+          G4ThreeVector &globalCoord);
   // Getter
   inline G4VPhysicalVolume *GetVolume() const { return fVolume; };
   inline G4String GetName() const { return fName; }
+  inline PortalType GetPortalType() const { return fPortalType; };
+  // Setter
+  void SetGlobalCoord(G4ThreeVector vec);
 
 private:
   G4String fName;
   G4VPhysicalVolume *fVolume;
+  PortalType fPortalType;
   G4ThreeVector fGlobalCoord;
   G4bool fGlobalCoordSet;
 };

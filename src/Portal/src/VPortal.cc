@@ -8,13 +8,14 @@
 #include <G4VPhysicalVolume.hh>
 #include <cstdlib>
 
-Surface::VPortal::VPortal(G4String name, G4VPhysicalVolume *volume)
-    : fName(name), fVolume(volume), fGlobalCoordSet(false){};
+Surface::VPortal::VPortal(G4String name, G4VPhysicalVolume *volume,
+                          PortalType type)
+    : fName(name), fVolume(volume), fPortalType(type), fGlobalCoordSet(false){};
 
 Surface::VPortal::VPortal(G4String name, G4VPhysicalVolume *volume,
-                          G4ThreeVector &globalCoord)
-    : fName(name), fVolume(volume), fGlobalCoord(globalCoord),
-      fGlobalCoordSet(true){};
+                          PortalType type, G4ThreeVector &globalCoord)
+    : fName(name), fVolume(volume), fPortalType(type),
+      fGlobalCoord(globalCoord), fGlobalCoordSet(true){};
 
 G4ThreeVector Surface::VPortal::GetLocalCoordSystem(G4VPhysicalVolume *volume) {
   // To do: Implement routine to find global coordinate for given volume
