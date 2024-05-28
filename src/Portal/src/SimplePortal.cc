@@ -3,19 +3,22 @@
 // File: SimplePortal
 
 #include "../include/SimplePortal.hh"
+#include "Portal/include/VPortal.hh"
 #include <G4ThreeVector.hh>
+#include <G4VPhysicalVolume.hh>
 
 void Surface::SimplePortal::DoPortation(G4StepPoint *point) {
-  G4cout << "Startet portation\n";
   G4ThreeVector prePosition = point->GetPosition();
-  G4cout << "PrePosition: x: " << prePosition.x() << " y: " << prePosition.y()
-         << " z: " << prePosition.z() << "\n";
+  fLogger.WriteDebugInfo(std::stringstream()
+                         << "PrePosition: x: " << prePosition.x() << " y: "
+                         << prePosition.y() << " z: " << prePosition.z());
   G4ThreeVector tmpPosition = TransformToLocalCoordinate(prePosition);
   tmpPosition = TransformBetweenPortals(tmpPosition);
   G4ThreeVector postPosition =
       fOtherPortal->TransformToGlobalCoordinate(tmpPosition);
-  G4cout << "PostPosition: x: " << postPosition.x()
-         << " y: " << postPosition.y() << " z: " << postPosition.z() << "\n";
+  fLogger.WriteDebugInfo(std::stringstream()
+                         << "PostPosition: x: " << postPosition.x() << " y: "
+                         << postPosition.y() << " z: " << postPosition.z());
   point->SetPosition(postPosition);
 }
 
@@ -28,4 +31,8 @@ Surface::SimplePortal::TransformBetweenPortals(G4ThreeVector &vec) {
 
 void Surface::SimplePortal::SetOtherPortal(Surface::SimplePortal *otherPortal) {
   fOtherPortal = otherPortal;
+}
+
+void Surface::SimplePortal::SetVerbose(G4int verbose) {
+  fLogger.SetVerboseLvl(verbose);
 }

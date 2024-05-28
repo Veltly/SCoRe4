@@ -131,9 +131,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   Surface::PortalStore &portalStore = Surface::Locator::GetPortalStore();
   Surface::SimplePortal *portalEntrance =
-      new Surface::SimplePortal("Entrance", physPortal, portalPlacement);
+      new Surface::SimplePortal("Entrance", physPortal, portalPlacement, 3);
   Surface::SimplePortal *portalSubworld =
-      new Surface::SimplePortal("Subworld", physSubworld, subworldPlacement);
+      new Surface::SimplePortal("Subworld", physSubworld, subworldPlacement, 3);
   portalEntrance->SetOtherPortal(portalSubworld);
   portalSubworld->SetOtherPortal(portalEntrance);
   portalStore.push_back(portalEntrance);

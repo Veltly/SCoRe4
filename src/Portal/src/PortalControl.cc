@@ -4,6 +4,7 @@
 
 #include "../include/PortalControl.hh"
 #include "../../Service/include/Locator.hh"
+#include "../../Service/include/Logger.hh"
 #include "../include/VPortal.hh"
 #include "G4Step.hh"
 #include "G4StepStatus.hh"
@@ -11,8 +12,11 @@
 #include <G4StepPoint.hh>
 #include <G4VPhysicalVolume.hh>
 
-Surface::PortalControl::PortalControl()
-    : fPortalStore(Surface::Locator::GetPortalStore()) {}
+Surface::PortalControl::PortalControl(G4int verbose)
+    : fPortalStore(Surface::Locator::GetPortalStore()),
+      fLogger({"PortalControl", verbose}) {
+  fLogger.WriteInfo("PortalControl initialized");
+}
 
 void Surface::PortalControl::DoStep(const G4Step *step) {
   G4StepPoint *postStepPoint = step->GetPostStepPoint();
@@ -40,8 +44,11 @@ void Surface::PortalControl::DoPortation(G4StepPoint *stepPoint,
   switch (type) {
   case (PortalType::SimplePortal):
     SimplePortal *simplePortal = static_cast<SimplePortal *>(portal);
-    G4cout << "static cast working!\n";
-    G4cout << "Name of Portal is " << simplePortal->GetName() << "\n";
+    fLogger.WriteDebugInfo("Using SimplePortal " + simplePortal->GetName());
     simplePortal->DoPortation(stepPoint);
   }
+}
+
+void Surface::PortalControl::SetVerbose(G4int verbose) {
+  fLogger.SetVerboseLvl(verbose);
 }

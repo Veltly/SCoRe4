@@ -10,7 +10,6 @@
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
 #include <cstdlib>
-
 namespace Surface {
 
 enum class PortalType { SimplePortal };
@@ -36,6 +35,7 @@ public:
   inline PortalType GetPortalType() const { return fPortalType; };
   // Setter
   void SetGlobalCoord(G4ThreeVector vec);
+  void SetVerbose(G4int verbose);
 
 private:
   G4String fName;

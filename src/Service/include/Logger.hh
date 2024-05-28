@@ -22,11 +22,15 @@ public:
   void WriteError(G4String &&);
   void WriteDebugInfo(G4String &);
   void WriteDebugInfo(G4String &&);
+  void WriteDebugInfo(std::stringstream);
   void SetVerboseLvl(G4int aVerboseLvl);
 
 private:
   G4String fId;
   G4int fVerboseLvl;
+  G4int fVerboseError{0};
+  G4int fVerboseInfo{1};
+  G4int fVerboseDebugInfo{2};
 };
 } // namespace Surface
 #endif
