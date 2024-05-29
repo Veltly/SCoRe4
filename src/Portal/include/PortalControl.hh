@@ -16,6 +16,7 @@ public:
   PortalControl(G4int verbose = 3);
   void DoStep(const G4Step *step);
   void DoPortation(G4StepPoint *stepPoint, G4VPhysicalVolume *volume);
+  void DoPortation(const G4Step *step, G4VPhysicalVolume *volume);
   void SetVerbose(G4int verbose);
 
 private:

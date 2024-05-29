@@ -36,3 +36,19 @@ void Surface::SimplePortal::SetOtherPortal(Surface::SimplePortal *otherPortal) {
 void Surface::SimplePortal::SetVerbose(G4int verbose) {
   fLogger.SetVerboseLvl(verbose);
 }
+
+void Surface::SimplePortal::DoPortation(const G4Step *step) {
+  G4Track *point = step->GetTrack();
+  G4ThreeVector prePosition = point->GetPosition();
+  fLogger.WriteDebugInfo(std::stringstream()
+                         << "PrePosition: x: " << prePosition.x() << " y: "
+                         << prePosition.y() << " z: " << prePosition.z());
+  G4ThreeVector tmpPosition = TransformToLocalCoordinate(prePosition);
+  tmpPosition = TransformBetweenPortals(tmpPosition);
+  G4ThreeVector postPosition =
+      fOtherPortal->TransformToGlobalCoordinate(tmpPosition);
+  fLogger.WriteDebugInfo(std::stringstream()
+                         << "PostPosition: x: " << postPosition.x() << " y: "
+                         << postPosition.y() << " z: " << postPosition.z());
+  point->SetPosition(postPosition);
+}

@@ -7,6 +7,7 @@
 #define SIMPLE_PORTAL_HH
 #include "../../Service/include/Logger.hh"
 #include "VPortal.hh"
+#include <G4Step.hh>
 #include <G4ThreeVector.hh>
 #include <G4VPhysicalVolume.hh>
 
@@ -22,6 +23,7 @@ public:
       : VPortal(name, volume, PortalType::SimplePortal, vec),
         fLogger({"SimplePortal" + name, verbose}){};
   virtual void DoPortation(G4StepPoint *point) override;
+  void DoPortation(const G4Step *step);
   void SetOtherPortal(SimplePortal *otherPortal);
   void SetVerbose(G4int verbose);
 

@@ -37,12 +37,16 @@
 #include "G4Step.hh"
 
 #include "../../../src/Portal/include/PortalControl.hh"
+#include <G4ThreeVector.hh>
 
 SteppingAction::SteppingAction() : G4UserSteppingAction() {}
 
 SteppingAction::~SteppingAction() {}
 
 void SteppingAction::UserSteppingAction(const G4Step *step) {
-  std::cout << "DoStep() is called\n";
+  G4Track *track = step->GetTrack();
+  G4ThreeVector pos = track->GetPosition();
+  G4cout << "Trackposition: x: " << pos.x() << " y: " << pos.y()
+         << " z: " << pos.z() << "\n";
   fPortalControl.DoStep(step);
 }

@@ -15,9 +15,12 @@
 #include "G4SystemOfUnits.hh"
 #include "Portal/include/VPortal.hh"
 #include <G4MultiUnion.hh>
+#include <G4Region.hh>
 #include <G4RotationMatrix.hh>
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
+#include <G4UserLimits.hh>
+#include <cfloat>
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fScoringVolume(0) {}
@@ -138,6 +141,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   portalSubworld->SetOtherPortal(portalEntrance);
   portalStore.push_back(portalEntrance);
   portalStore.push_back(portalSubworld);
+
+  // set StepLimit
+
+  G4double maxStepsize = 0.1 * mm;
+  G4UserLimits *limit = new G4UserLimits(maxStepsize);
+  logicWorld->SetUserLimits(limit);
+  logicSubworld->SetUserLimits(limit);
+  logicPortal->SetUserLimits(limit);
   //
   // always return the physical World
   //

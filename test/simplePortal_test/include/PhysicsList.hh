@@ -8,7 +8,7 @@ class PhysicsList : public G4VModularPhysicsList {
 public:
   PhysicsList();
   ~PhysicsList(){};
-
+  void ConstructProcess();
   void SetCuts();
 };
 
