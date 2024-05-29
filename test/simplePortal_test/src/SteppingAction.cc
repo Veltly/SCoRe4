@@ -44,14 +44,5 @@ SteppingAction::SteppingAction() : G4UserSteppingAction() {}
 SteppingAction::~SteppingAction() {}
 
 void SteppingAction::UserSteppingAction(const G4Step *step) {
-  G4Track *track = step->GetTrack();
-  G4ThreeVector pos = track->GetPosition();
-  G4VPhysicalVolume *volume = step->GetPostStepPoint()->GetPhysicalVolume();
-  if (volume != nullptr) {
-    G4String name = volume->GetName();
-    G4cout << "Volume is: " << name << "\n";
-  }
-  G4cout << "Trackposition: x: " << pos.x() << " y: " << pos.y()
-         << " z: " << pos.z() << "\n";
   fPortalControl.DoStep(step);
 }

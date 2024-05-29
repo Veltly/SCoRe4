@@ -106,6 +106,8 @@
 /vis/geometry/set/colour World 0 0 1 1 .2
 # "Envelope" is transparent blue to represent water
 /vis/geometry/set/colour Subworld 0 0 0 1 .2
+/vis/geometry/set/colour Testobject 0 0 1 1 .4
+/vis/geometry/set/colour TestobjectOutside 0 0 1 1 .4
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
 /vis/geometry/set/colour Portal 0 0 0 1 .2

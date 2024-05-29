@@ -110,6 +110,29 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                         0,                 // copy number
                         checkOverlaps);    // overlaps checking
 
+  G4double testobject_XY = subworld_sizeXY * 0.2;
+  G4double testobject_Z = subworld_sizeZ * 0.2;
+  G4ThreeVector testobjectPlacement{0, 0, 0};
+  G4Material *testobject_mat = nist->FindOrBuildMaterial("G4_Si");
+  G4Box *solidTestobject = new G4Box("Testobject", 0.5 * testobject_XY,
+                                     0.5 * testobject_XY, 0.5 * testobject_Z);
+
+  G4LogicalVolume *logicTestobject =
+      new G4LogicalVolume(solidTestobject, testobject_mat, "Testobject");
+
+  new G4PVPlacement(0, testobjectPlacement, logicTestobject,
+                    "TestobjectInsideMiddle", logicSubworld, false, 0,
+                    checkOverlaps);
+  G4ThreeVector testobjectPlacementInsideUpper{0, 0, 0};
+  testobjectPlacementInsideUpper.setZ((subworld_sizeZ - testobject_Z) / 2.);
+  new G4PVPlacement(0, testobjectPlacementInsideUpper, logicTestobject,
+                    "TestobjectInsideUpper", logicSubworld, false, 0,
+                    checkOverlaps);
+  G4ThreeVector testobjectPlacementInsideLower{0, 0, 0};
+  testobjectPlacementInsideLower.setZ(-(subworld_sizeZ - testobject_Z) / 2.);
+  new G4PVPlacement(0, testobjectPlacementInsideLower, logicTestobject,
+                    "TestobjectInsideLower", logicSubworld, false, 0,
+                    checkOverlaps);
   //
   // Portal entrance
   //
@@ -132,6 +155,30 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   //
 
+  G4double testobjectB_XY = portal_sizeXY;
+  G4double testobjectB_Z = portal_sizeZ;
+  G4ThreeVector testobjectBPlacementLower = portalPlacement;
+  testobjectBPlacementLower.setZ(testobjectBPlacementLower.z() -
+                                 ((testobjectB_Z + portal_sizeZ) / 2.));
+  G4ThreeVector testobjectBPlacementUpper = portalPlacement;
+  testobjectBPlacementUpper.setZ(testobjectBPlacementUpper.z() +
+                                 ((testobjectB_Z + portal_sizeZ) / 2.));
+  G4Material *testobjectB_mat = nist->FindOrBuildMaterial("G4_Si");
+  G4Box *solidTestobjectB =
+      new G4Box("TestobjectOutside", 0.5 * testobjectB_XY, 0.5 * testobjectB_XY,
+                0.5 * testobjectB_Z);
+
+  G4LogicalVolume *logicTestobjectB = new G4LogicalVolume(
+      solidTestobjectB, testobjectB_mat, "TestobjectOutside");
+
+  new G4PVPlacement(0, testobjectBPlacementLower, logicTestobjectB,
+                    "TestobjectOutsideLower", logicWorld, false, 0,
+                    checkOverlaps);
+
+  new G4PVPlacement(0, testobjectBPlacementUpper, logicTestobjectB,
+                    "TestobjectOutsideUpper", logicWorld, false, 0,
+                    checkOverlaps);
+
   Surface::PortalStore &portalStore = Surface::Locator::GetPortalStore();
   Surface::SimplePortal *portalEntrance =
       new Surface::SimplePortal("Entrance", physPortal, portalPlacement, 3);
@@ -144,11 +191,13 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   // set StepLimit
 
-  G4double maxStepsize = 1 * mm;
+  G4double maxStepsize = 0.1 * mm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   logicWorld->SetUserLimits(limit);
   logicSubworld->SetUserLimits(limit);
   logicPortal->SetUserLimits(limit);
+  logicTestobject->SetUserLimits(limit);
+  logicTestobjectB->SetUserLimits(limit);
   //
   // always return the physical World
   //

@@ -7,12 +7,17 @@
 #include <G4VPhysicalVolume.hh>
 #include <algorithm>
 
-G4bool Surface::PortalStore::IsPortal(G4VPhysicalVolume *volume) {
+G4bool Surface::PortalStore::IsPortal(const G4VPhysicalVolume *volume) const {
   G4int portalIdx = FindPortal(volume);
   return portalIdx >= 0;
 }
 
-G4int Surface::PortalStore::FindPortal(G4VPhysicalVolume *volume) {
+G4bool
+Surface::PortalStore::IsNotPortal(const G4VPhysicalVolume *volume) const {
+  return !IsPortal(volume);
+}
+
+G4int Surface::PortalStore::FindPortal(const G4VPhysicalVolume *volume) const {
   for (size_t i = 0; i < this->size(); ++i) {
     if (this->at(i)->GetVolume() == volume) {
       return static_cast<G4int>(i);
@@ -21,7 +26,8 @@ G4int Surface::PortalStore::FindPortal(G4VPhysicalVolume *volume) {
   return -1;
 }
 
-Surface::VPortal *Surface::PortalStore::GetPortal(G4VPhysicalVolume *volume) {
+Surface::VPortal *
+Surface::PortalStore::GetPortal(const G4VPhysicalVolume *volume) const {
   G4int portalIdx = FindPortal(volume);
   return this->at(portalIdx);
 }

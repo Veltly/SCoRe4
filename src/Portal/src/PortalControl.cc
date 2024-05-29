@@ -9,6 +9,7 @@
 #include "G4Step.hh"
 #include "G4StepStatus.hh"
 #include "Portal/include/SimplePortal.hh"
+#include <G4LogicalVolume.hh>
 #include <G4StepPoint.hh>
 #include <G4ThreeVector.hh>
 #include <G4VPhysicalVolume.hh>
@@ -36,25 +37,18 @@ void Surface::PortalControl::DoStep(const G4Step *step) {
     if (preVolName != postVolName)
       checkPortation = true;
   }
-  if (checkPortation) {
+  if (checkPortation && !fJustPorted) {
     fLogger.WriteDebugInfo("Boundary reached!");
-    G4bool IsPorted = false;
     // postStep
-    G4VPhysicalVolume *volume = postStepPoint->GetPhysicalVolume();
-    fLogger.WriteDebugInfo("Volume of postStepPoint is: " + volume->GetName());
+    fLogger.WriteDebugInfo("Volume of postStepPoint is: " +
+                           postStepPoint->GetPhysicalVolume()->GetName());
     fLogger.WriteDebugInfo(
         "Volume of preStepPoint is: " +
         step->GetPreStepPoint()->GetPhysicalVolume()->GetName());
-    if (fPortalStore.IsPortal(volume)) {
-      // DoPortation(postStepPoint, volume);
-      DoPortation(step, volume);
-      IsPorted = true;
-    }
-    // preStep
-    volume = preStepPoint->GetPhysicalVolume();
-    if (!IsPorted && fPortalStore.IsPortal(volume)) {
-      // DoPortation(postStepPoint, volume);
-      DoPortation(step, volume);
+    if (EnterPortalCheck(step)) {
+      EnterPortal(step);
+    } else if (LeavePortalCheck(step)) {
+      LeavePortal(step);
     }
   }
   std::stringstream stream;
@@ -63,19 +57,6 @@ void Surface::PortalControl::DoStep(const G4Step *step) {
   stream << "PostStepPoint: x: " << post.x() << " y: " << post.y()
          << " z: " << post.z();
   fLogger.WriteDebugInfo(stream.str());
-}
-
-void Surface::PortalControl::DoPortation(G4StepPoint *stepPoint,
-                                         G4VPhysicalVolume *volume) {
-  VPortal *portal = fPortalStore.GetPortal(volume);
-  PortalType type = portal->GetPortalType();
-  switch (type) {
-  case (PortalType::SimplePortal):
-    SimplePortal *simplePortal = static_cast<SimplePortal *>(portal);
-    fLogger.WriteDebugInfo("Using SimplePortal " + simplePortal->GetName());
-    simplePortal->DoPortation(stepPoint);
-  }
-  fJustPorted = true;
 }
 
 void Surface::PortalControl::SetVerbose(G4int verbose) {
@@ -93,4 +74,42 @@ void Surface::PortalControl::DoPortation(const G4Step *step,
     simplePortal->DoPortation(step);
   }
   fJustPorted = true;
+}
+
+G4bool Surface::PortalControl::EnterPortalCheck(const G4Step *step) {
+  G4VPhysicalVolume *preVolume = step->GetPreStepPoint()->GetPhysicalVolume();
+  G4VPhysicalVolume *postVolume = step->GetPostStepPoint()->GetPhysicalVolume();
+  if (fPortalStore.IsNotPortal(postVolume)) {
+    return false;
+  }
+  G4LogicalVolume *motherOfPreLogVolume = preVolume->GetMotherLogical();
+  G4LogicalVolume *postLogVolume = postVolume->GetLogicalVolume();
+  if (motherOfPreLogVolume == postLogVolume) {
+    return false;
+  }
+  return true;
+}
+
+G4bool Surface::PortalControl::LeavePortalCheck(const G4Step *step) {
+  G4VPhysicalVolume *preVolume = step->GetPreStepPoint()->GetPhysicalVolume();
+  G4VPhysicalVolume *postVolume = step->GetPostStepPoint()->GetPhysicalVolume();
+  if (fPortalStore.IsNotPortal(preVolume)) {
+    return false;
+  }
+  G4LogicalVolume *preLogVolume = preVolume->GetLogicalVolume();
+  G4LogicalVolume *motherOfPostLogVolume = postVolume->GetMotherLogical();
+  if (preLogVolume == motherOfPostLogVolume) {
+    return false;
+  }
+  return true;
+}
+
+void Surface::PortalControl::EnterPortal(const G4Step *step) {
+  G4VPhysicalVolume *volume = step->GetPostStepPoint()->GetPhysicalVolume();
+  DoPortation(step, volume);
+}
+
+void Surface::PortalControl::LeavePortal(const G4Step *step) {
+  G4VPhysicalVolume *volume = step->GetPreStepPoint()->GetPhysicalVolume();
+  DoPortation(step, volume);
 }

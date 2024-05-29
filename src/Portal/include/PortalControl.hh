@@ -15,14 +15,19 @@ class PortalControl {
 public:
   PortalControl(G4int verbose = 3);
   void DoStep(const G4Step *step);
-  void DoPortation(G4StepPoint *stepPoint, G4VPhysicalVolume *volume);
   void DoPortation(const G4Step *step, G4VPhysicalVolume *volume);
+  void EnterPortal(const G4Step *step);
+  void LeavePortal(const G4Step *step);
+  G4bool EnterPortalCheck(const G4Step *step);
+  G4bool LeavePortalCheck(const G4Step *step);
   void SetVerbose(G4int verbose);
 
 private:
   PortalStore &fPortalStore;
   Logger fLogger;
   G4bool fJustPorted;
+  G4bool fInSubworld;
+  G4StepPoint fRecentStepPoint;
 };
 } // namespace Surface
 #endif // PORTALCONTROL_HH
