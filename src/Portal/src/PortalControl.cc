@@ -21,6 +21,10 @@ Surface::PortalControl::PortalControl(G4int verbose)
 }
 
 void Surface::PortalControl::DoStep(const G4Step *step) {
+  if (fJustPorted) {
+    fJustPorted = false;
+    return;
+  }
   G4StepPoint *postStepPoint = step->GetPostStepPoint();
   G4StepPoint *preStepPoint = step->GetPreStepPoint();
   G4VPhysicalVolume *prePhysVol = preStepPoint->GetPhysicalVolume();
@@ -71,6 +75,7 @@ void Surface::PortalControl::DoPortation(G4StepPoint *stepPoint,
     fLogger.WriteDebugInfo("Using SimplePortal " + simplePortal->GetName());
     simplePortal->DoPortation(stepPoint);
   }
+  fJustPorted = true;
 }
 
 void Surface::PortalControl::SetVerbose(G4int verbose) {
@@ -87,4 +92,5 @@ void Surface::PortalControl::DoPortation(const G4Step *step,
     fLogger.WriteDebugInfo("Using SimplePortal " + simplePortal->GetName());
     simplePortal->DoPortation(step);
   }
+  fJustPorted = true;
 }

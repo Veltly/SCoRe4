@@ -36,11 +36,12 @@ Surface::SimplePortal::TransformBetweenPortals(G4ThreeVector &vec) {
   G4VPhysicalVolume *otherVolume = fOtherPortal->GetVolume();
   G4ThreeVector pMin, pMax;
   volume->GetLogicalVolume()->GetSolid()->BoundingLimits(pMin, pMax);
-  G4double volumeZ = pMax.z() - pMin.z();
+  G4ThreeVector volumeDistance = pMax - pMin;
   otherVolume->GetLogicalVolume()->GetSolid()->BoundingLimits(pMin, pMax);
-  G4double otherVolumeZ = pMax.z() - pMin.z();
-  G4double vecZ = vec.z();
-  transformedVec.setZ(vecZ / volumeZ * otherVolumeZ);
+  G4ThreeVector otherVolumeDistance = pMax - pMin;
+  transformedVec.setX(vec.x() / volumeDistance.x() * otherVolumeDistance.x());
+  transformedVec.setY(vec.y() / volumeDistance.y() * otherVolumeDistance.y());
+  transformedVec.setZ(vec.z() / volumeDistance.z() * otherVolumeDistance.z());
 
   // Implement Transformation here
   return transformedVec;
@@ -81,13 +82,17 @@ void Surface::SimplePortal::UpdateTouchable(G4Track *track,
   G4SteppingManager *steppingManager = trackingManager->GetSteppingManager();
   G4Navigator *navigator = steppingManager->GetfNavigator();
   G4TouchableHandle tHandle = track->GetTouchableHandle();
+  G4TouchableHandle tNextHandle = track->GetNextTouchableHandle();
   G4VTouchable *touchableTrack = tHandle();
+  G4VTouchable *nextTouchableTrack = tNextHandle();
   G4ThreeVector direction = track->GetMomentumDirection();
-  navigator->LocateGlobalPointAndUpdateTouchable(newPosition, direction,
-                                                 touchableTrack, false);
-
-  // G4VTouchable *touchableStepPoint = stepPoint->GetTouchableHandle()();
   // navigator->LocateGlobalPointAndUpdateTouchable(newPosition, direction,
-  //                                                touchableStepPoint, false);
+  //                                                touchableTrack, false);
+  //  navigator->LocateGlobalPointAndUpdateTouchable(newPosition, direction,
+  //                                                 nextTouchableTrack, false);
+
+  G4VTouchable *touchableStepPoint = stepPoint->GetTouchableHandle()();
+  navigator->LocateGlobalPointAndUpdateTouchable(newPosition, direction,
+                                                 touchableStepPoint, false);
   // stepPoint->SetTouchableHandle(tHandle);
 }

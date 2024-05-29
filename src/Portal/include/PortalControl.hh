@@ -22,6 +22,7 @@ public:
 private:
   PortalStore &fPortalStore;
   Logger fLogger;
+  G4bool fJustPorted;
 };
 } // namespace Surface
 #endif // PORTALCONTROL_HH
