@@ -26,6 +26,8 @@ public:
   void DoPortation(const G4Step *step);
   void SetOtherPortal(SimplePortal *otherPortal);
   void SetVerbose(G4int verbose);
+  void UpdateTouchable(G4Track *track, G4StepPoint *stepPoint,
+                       G4ThreeVector &newPosition);
 
 private:
   SimplePortal *fOtherPortal;

@@ -89,7 +89,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   G4double subworld_sizeXY = 1 * cm;
   G4double subworld_sizeZ = 1 * cm;
-  G4ThreeVector subworldPlacement{40 * cm, 40 * cm, 40 * cm};
+  G4ThreeVector subworldPlacement{5 * cm, 5 * cm, 20 * cm};
   G4Material *subworld_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Box *solidSubworld = new G4Box("Subworld", // its name
                                    0.5 * subworld_sizeXY, 0.5 * subworld_sizeXY,
@@ -116,7 +116,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
 
   G4double portal_sizeXY = subworld_sizeXY;
-  G4double portal_sizeZ = subworld_sizeZ;
+  G4double portal_sizeZ = 2 * subworld_sizeZ;
   G4ThreeVector portalPlacement{0 * cm, 0 * cm, 10 * cm};
   G4Material *portal_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Box *solidPortal = new G4Box("Portal", 0.5 * portal_sizeXY,
@@ -144,7 +144,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   // set StepLimit
 
-  G4double maxStepsize = 0.1 * mm;
+  G4double maxStepsize = 1 * mm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   logicWorld->SetUserLimits(limit);
   logicSubworld->SetUserLimits(limit);

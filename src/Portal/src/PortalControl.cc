@@ -12,6 +12,7 @@
 #include <G4StepPoint.hh>
 #include <G4ThreeVector.hh>
 #include <G4VPhysicalVolume.hh>
+#include <sstream>
 
 Surface::PortalControl::PortalControl(G4int verbose)
     : fPortalStore(Surface::Locator::GetPortalStore()),
@@ -21,18 +22,33 @@ Surface::PortalControl::PortalControl(G4int verbose)
 
 void Surface::PortalControl::DoStep(const G4Step *step) {
   G4StepPoint *postStepPoint = step->GetPostStepPoint();
-  G4StepStatus stepStatus = postStepPoint->GetStepStatus();
-  if (stepStatus == G4StepStatus::fGeomBoundary) {
+  G4StepPoint *preStepPoint = step->GetPreStepPoint();
+  G4VPhysicalVolume *prePhysVol = preStepPoint->GetPhysicalVolume();
+  G4VPhysicalVolume *postPhysVol = postStepPoint->GetPhysicalVolume();
+  G4bool checkPortation = false;
+  if (postPhysVol != nullptr) {
+    G4String preVolName = prePhysVol->GetName();
+    G4String postVolName = postPhysVol->GetName();
+    if (preVolName != postVolName)
+      checkPortation = true;
+  }
+  if (checkPortation) {
+    fLogger.WriteDebugInfo("Boundary reached!");
+    G4bool IsPorted = false;
     // postStep
     G4VPhysicalVolume *volume = postStepPoint->GetPhysicalVolume();
+    fLogger.WriteDebugInfo("Volume of postStepPoint is: " + volume->GetName());
+    fLogger.WriteDebugInfo(
+        "Volume of preStepPoint is: " +
+        step->GetPreStepPoint()->GetPhysicalVolume()->GetName());
     if (fPortalStore.IsPortal(volume)) {
       // DoPortation(postStepPoint, volume);
       DoPortation(step, volume);
+      IsPorted = true;
     }
     // preStep
-    G4StepPoint *preStepPoint = step->GetPreStepPoint();
     volume = preStepPoint->GetPhysicalVolume();
-    if (fPortalStore.IsPortal(volume)) {
+    if (!IsPorted && fPortalStore.IsPortal(volume)) {
       // DoPortation(postStepPoint, volume);
       DoPortation(step, volume);
     }
