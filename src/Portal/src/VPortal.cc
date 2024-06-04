@@ -45,3 +45,7 @@ Surface::VPortal::TransformToGlobalCoordinate(const G4ThreeVector &vec) {
   G4ThreeVector coordinateOfVolume = GetLocalCoordSystem();
   return vec + coordinateOfVolume;
 }
+
+void Surface::VPortal::SetTrigger(G4VPhysicalVolume *volume) {
+  fTrigger = volume;
+}
