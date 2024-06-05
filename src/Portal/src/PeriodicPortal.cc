@@ -139,12 +139,22 @@ void Surface::PeriodicPortal::DoPeriodicTransform(G4ThreeVector &vec,
 
 void Surface::PeriodicPortal::TransformSubworldToPortal(G4ThreeVector &vec) {
   // TO DO: Implementation
+
   vec.setZ(TransformZBetweenPortals(vec.z()));
 }
 
 void Surface::PeriodicPortal::TransformPortalToSubworld(G4ThreeVector &vec) {
+  G4ThreeVector pMinVol, pMinOtherVol, pMax;
+  GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(pMinVol, pMax);
+  G4ThreeVector volumeDistance = pMax - pMinVol;
+  fOtherPortal->GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(
+      pMinOtherVol, pMax);
+  G4ThreeVector otherVolumeDistance = pMax - pMinOtherVol;
+  fCurrentNX = fMaxNX / 2. + vec.x() / otherVolumeDistance.x();
+  fCurrentNY = fMaxNY / 2. + vec.y() / otherVolumeDistance.y();
   // TO DO: Implementation
   // fOtherPortal->fCurrentX and Y must be set
+
   vec.setZ(TransformZBetweenPortals(vec.z()));
 }
 
