@@ -14,20 +14,20 @@
 #include <G4TouchableHandle.hh>
 #include <G4VPhysicalVolume.hh>
 
-void Surface::SimplePortal::DoPortation(G4StepPoint *point) {
-  G4ThreeVector prePosition = point->GetPosition();
-  fLogger.WriteDebugInfo(std::stringstream()
-                         << "PrePosition: x: " << prePosition.x() << " y: "
-                         << prePosition.y() << " z: " << prePosition.z());
-  G4ThreeVector tmpPosition = TransformToLocalCoordinate(prePosition);
-  tmpPosition = TransformBetweenPortals(tmpPosition);
-  G4ThreeVector postPosition =
-      fOtherPortal->TransformToGlobalCoordinate(tmpPosition);
-  fLogger.WriteDebugInfo(std::stringstream()
-                         << "PostPosition: x: " << postPosition.x() << " y: "
-                         << postPosition.y() << " z: " << postPosition.z());
-  point->SetPosition(postPosition);
-}
+// void Surface::SimplePortal::DoPortation(G4StepPoint *point) {
+//   G4ThreeVector prePosition = point->GetPosition();
+//   fLogger.WriteDebugInfo(std::stringstream()
+//                          << "PrePosition: x: " << prePosition.x() << " y: "
+//                          << prePosition.y() << " z: " << prePosition.z());
+//   G4ThreeVector tmpPosition = TransformToLocalCoordinate(prePosition);
+//   tmpPosition = TransformBetweenPortals(tmpPosition);
+//   G4ThreeVector postPosition =
+//       fOtherPortal->TransformToGlobalCoordinate(tmpPosition);
+//   fLogger.WriteDebugInfo(std::stringstream()
+//                          << "PostPosition: x: " << postPosition.x() << " y: "
+//                          << postPosition.y() << " z: " << postPosition.z());
+//   point->SetPosition(postPosition);
+// }
 
 G4ThreeVector
 Surface::SimplePortal::TransformBetweenPortals(G4ThreeVector &vec) {

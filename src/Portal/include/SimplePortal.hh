@@ -23,7 +23,7 @@ public:
       : VPortal(name, volume, PortalType::SimplePortal, vec),
         fLogger({"SimplePortal" + name, verbose}){};
   //  virtual void DoPortation(G4StepPoint *point) override;
-  void DoPortation(const G4Step *step);
+  virtual void DoPortation(const G4Step *step) override;
   void SetOtherPortal(SimplePortal *otherPortal);
   void SetVerbose(G4int verbose);
   void UpdateTouchable(G4Track *track, G4StepPoint *stepPoint,
