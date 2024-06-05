@@ -6,7 +6,6 @@
 #define VPORTAL_HH
 
 #include "G4Step.hh"
-#include "G4StepPoint.hh"
 #include "G4VPhysicalVolume.hh"
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
@@ -22,12 +21,12 @@ protected:
 
   G4ThreeVector TransformToLocalCoordinate(const G4ThreeVector &vec);
   G4ThreeVector TransformToGlobalCoordinate(const G4ThreeVector &vec);
+  void UpdatePosition(const G4Step *step, G4ThreeVector &newPosition);
+  void UpdatePositionMomentum(const G4Step *step, G4ThreeVector &newPosition,
+                              G4ThreeVector &newDirection);
 
 public:
-  // virtual void DoPortation(G4StepPoint *point) {
-  //   exit(EXIT_FAILURE); // Function must be overwritten
-  // };
-  virtual void DoPortation(const G4Step *step) {
+  virtual void DoPortation(const G4Step *) {
     exit(EXIT_FAILURE);
   }; // Function must be overwritten
   VPortal(G4String, G4VPhysicalVolume *, PortalType);

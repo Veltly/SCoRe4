@@ -2,7 +2,7 @@
 /gps/ene/mono 10 MeV
 /gps/direction 0 0 1
 
-/run/beamOn 1
+/run/beamOn 2
 
 #/gps/position 2 0 10
 #/gps/particle gamma

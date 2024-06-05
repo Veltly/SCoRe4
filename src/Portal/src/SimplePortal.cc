@@ -14,21 +14,6 @@
 #include <G4TouchableHandle.hh>
 #include <G4VPhysicalVolume.hh>
 
-// void Surface::SimplePortal::DoPortation(G4StepPoint *point) {
-//   G4ThreeVector prePosition = point->GetPosition();
-//   fLogger.WriteDebugInfo(std::stringstream()
-//                          << "PrePosition: x: " << prePosition.x() << " y: "
-//                          << prePosition.y() << " z: " << prePosition.z());
-//   G4ThreeVector tmpPosition = TransformToLocalCoordinate(prePosition);
-//   tmpPosition = TransformBetweenPortals(tmpPosition);
-//   G4ThreeVector postPosition =
-//       fOtherPortal->TransformToGlobalCoordinate(tmpPosition);
-//   fLogger.WriteDebugInfo(std::stringstream()
-//                          << "PostPosition: x: " << postPosition.x() << " y: "
-//                          << postPosition.y() << " z: " << postPosition.z());
-//   point->SetPosition(postPosition);
-// }
-
 G4ThreeVector
 Surface::SimplePortal::TransformBetweenPortals(G4ThreeVector &vec) {
   G4ThreeVector transformedVec = vec;
@@ -57,42 +42,20 @@ void Surface::SimplePortal::SetVerbose(G4int verbose) {
 
 void Surface::SimplePortal::DoPortation(const G4Step *step) {
   G4Track *track = step->GetTrack();
-  G4StepPoint *postStepPoint = step->GetPostStepPoint();
-  G4ThreeVector prePosition = track->GetPosition();
+  G4StepPoint *preStepPoint = step->GetPreStepPoint();
+  G4ThreeVector prePosition = preStepPoint->GetPosition();
   fLogger.WriteDebugInfo(std::stringstream()
                          << "PrePosition: x: " << prePosition.x() << " y: "
                          << prePosition.y() << " z: " << prePosition.z());
   G4ThreeVector tmpPosition = TransformToLocalCoordinate(prePosition);
+  // Transformation of position
   tmpPosition = TransformBetweenPortals(tmpPosition);
-  G4ThreeVector postPosition =
+  G4ThreeVector newPosition =
       fOtherPortal->TransformToGlobalCoordinate(tmpPosition);
+
   fLogger.WriteDebugInfo(std::stringstream()
-                         << "PostPosition: x: " << postPosition.x() << " y: "
-                         << postPosition.y() << " z: " << postPosition.z());
-  UpdateTouchable(track, postStepPoint, postPosition);
-  track->SetPosition(postPosition);
-  postStepPoint->SetPosition(postPosition);
-}
-
-void Surface::SimplePortal::UpdateTouchable(G4Track *track,
-                                            G4StepPoint *stepPoint,
-                                            G4ThreeVector &newPosition) {
-  G4EventManager *eventManager = G4EventManager::GetEventManager();
-  G4TrackingManager *trackingManager = eventManager->GetTrackingManager();
-  G4SteppingManager *steppingManager = trackingManager->GetSteppingManager();
-  G4Navigator *navigator = steppingManager->GetfNavigator();
-  G4TouchableHandle tHandle = track->GetTouchableHandle();
-  G4TouchableHandle tNextHandle = track->GetNextTouchableHandle();
-  G4VTouchable *touchableTrack = tHandle();
-  G4VTouchable *nextTouchableTrack = tNextHandle();
+                         << "PostPosition: x: " << newPosition.x() << " y: "
+                         << newPosition.y() << " z: " << newPosition.z());
   G4ThreeVector direction = track->GetMomentumDirection();
-  // navigator->LocateGlobalPointAndUpdateTouchable(newPosition, direction,
-  //                                                touchableTrack, false);
-  //  navigator->LocateGlobalPointAndUpdateTouchable(newPosition, direction,
-  //                                                 nextTouchableTrack, false);
-
-  G4VTouchable *touchableStepPoint = stepPoint->GetTouchableHandle()();
-  navigator->LocateGlobalPointAndUpdateTouchable(newPosition, direction,
-                                                 touchableStepPoint, false);
-  // stepPoint->SetTouchableHandle(tHandle);
+  UpdatePosition(step, newPosition);
 }

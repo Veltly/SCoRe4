@@ -3,6 +3,7 @@
 // File: VirtualPortal
 
 #include "../include/VPortal.hh"
+#include <G4EventManager.hh>
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
 #include <G4VPhysicalVolume.hh>
@@ -48,4 +49,27 @@ Surface::VPortal::TransformToGlobalCoordinate(const G4ThreeVector &vec) {
 
 void Surface::VPortal::SetTrigger(G4VPhysicalVolume *volume) {
   fTrigger = volume;
+}
+
+void Surface::VPortal::UpdatePosition(const G4Step *step,
+                                      G4ThreeVector &newPosition) {
+  G4ThreeVector direction = step->GetPostStepPoint()->GetMomentumDirection();
+  UpdatePositionMomentum(step, newPosition, direction);
+}
+void Surface::VPortal::UpdatePositionMomentum(const G4Step *step,
+                                              G4ThreeVector &newPosition,
+                                              G4ThreeVector &newDirection) {
+  G4EventManager *eventManager = G4EventManager::GetEventManager();
+  G4TrackingManager *trackingManager = eventManager->GetTrackingManager();
+  G4SteppingManager *steppingManager = trackingManager->GetSteppingManager();
+  G4Navigator *navigator = steppingManager->GetfNavigator();
+  G4StepPoint *stepPoint = step->GetPostStepPoint();
+  G4VTouchable *touchableStepPoint = stepPoint->GetTouchableHandle()();
+  navigator->LocateGlobalPointAndUpdateTouchable(newPosition, newDirection,
+                                                 touchableStepPoint, false);
+  G4Track *track = step->GetTrack();
+  track->SetPosition(newPosition);
+  track->SetMomentumDirection(newDirection);
+  stepPoint->SetPosition(newPosition);
+  stepPoint->SetMomentumDirection(newDirection);
 }
