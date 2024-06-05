@@ -89,7 +89,32 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   G4double subworld_sizeXY = 1 * cm;
   G4double subworld_sizeZ = 1 * cm;
-  G4ThreeVector subworldPlacement{5 * cm, 5 * cm, 20 * cm};
+
+  G4double subworldTrigger_sizeXY = subworld_sizeXY * 1.1;
+  G4double subworldTrigger_sizeZ = subworld_sizeZ * 1.1;
+  G4ThreeVector subworldTriggerPlacement{5 * cm, 5 * cm, 20 * cm};
+  G4Material *subworldTrigger_mat = nist->FindOrBuildMaterial("G4_AIR");
+  G4Box *solidSubworldTrigger =
+      new G4Box("SubworldTrigger", // its name
+                0.5 * subworldTrigger_sizeXY, 0.5 * subworldTrigger_sizeXY,
+                0.5 * subworldTrigger_sizeZ); // its size
+
+  G4LogicalVolume *logicSubworldTrigger =
+      new G4LogicalVolume(solidSubworldTrigger, // its solid
+                          subworldTrigger_mat,  // its material
+                          "SubworldTrigger");   // its name
+
+  G4VPhysicalVolume *physSubworldTrigger =
+      new G4PVPlacement(0,                        // no rotation
+                        subworldTriggerPlacement, //
+                        logicSubworldTrigger,     // its logical volume
+                        "SubworldTrigger",        // its name
+                        logicWorld,               // its mother  volume
+                        false,                    // no boolean operation
+                        0,                        // copy number
+                        checkOverlaps);           // overlaps checking
+
+  G4ThreeVector subworldPlacement{0, 0, 0};
   G4Material *subworld_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Box *solidSubworld = new G4Box("Subworld", // its name
                                    0.5 * subworld_sizeXY, 0.5 * subworld_sizeXY,
@@ -101,14 +126,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                           "Subworld");   // its name
 
   G4VPhysicalVolume *physSubworld =
-      new G4PVPlacement(0,                 // no rotation
-                        subworldPlacement, //
-                        logicSubworld,     // its logical volume
-                        "Subworld",        // its name
-                        logicWorld,        // its mother  volume
-                        false,             // no boolean operation
-                        0,                 // copy number
-                        checkOverlaps);    // overlaps checking
+      new G4PVPlacement(0,                    // no rotation
+                        subworldPlacement,    //
+                        logicSubworld,        // its logical volume
+                        "Subworld",           // its name
+                        logicSubworldTrigger, // its mother  volume
+                        false,                // no boolean operation
+                        0,                    // copy number
+                        checkOverlaps);       // overlaps checking
 
   G4double testobject_XY = subworld_sizeXY * 0.2;
   G4double testobject_Z = subworld_sizeZ * 0.2;
@@ -182,10 +207,15 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   Surface::PortalStore &portalStore = Surface::Locator::GetPortalStore();
   Surface::SimplePortal *portalEntrance =
       new Surface::SimplePortal("Entrance", physPortal, portalPlacement, 3);
-  Surface::SimplePortal *portalSubworld =
-      new Surface::SimplePortal("Subworld", physSubworld, subworldPlacement, 3);
+  Surface::SimplePortal *portalSubworld = new Surface::SimplePortal(
+      "Subworld", physSubworld, subworldTriggerPlacement, 3);
+  // set trigger for portals
+  portalEntrance->SetTrigger(physPortal);
+  portalSubworld->SetTrigger(physSubworldTrigger);
+  // link portals
   portalEntrance->SetOtherPortal(portalSubworld);
   portalSubworld->SetOtherPortal(portalEntrance);
+  // add them to the store
   portalStore.push_back(portalEntrance);
   portalStore.push_back(portalSubworld);
 

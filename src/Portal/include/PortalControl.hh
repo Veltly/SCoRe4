@@ -19,8 +19,9 @@ public:
   void EnterPortal(const G4Step *step);
   void LeavePortal(const G4Step *step);
   G4bool EnterPortalCheck(const G4Step *step);
-  G4bool LeavePortalCheck(const G4Step *step);
   void SetVerbose(G4int verbose);
+  G4bool IsVolumeInsidePortal(const G4VPhysicalVolume *volume) const;
+  void UsePortal(const G4Step *step);
 
 private:
   PortalStore &fPortalStore;
@@ -28,6 +29,7 @@ private:
   G4bool fJustPorted;
   G4bool fInSubworld;
   G4StepPoint fRecentStepPoint;
+  G4bool fInPortal;
 };
 } // namespace Surface
 #endif // PORTALCONTROL_HH

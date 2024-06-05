@@ -12,7 +12,7 @@
 #include <cstdlib>
 namespace Surface {
 
-enum class PortalType { SimplePortal };
+enum class PortalType { SimplePortal, PeriodicPortal };
 
 class VPortal {
 protected:
@@ -33,9 +33,11 @@ public:
   inline G4VPhysicalVolume *GetVolume() const { return fVolume; };
   inline G4String GetName() const { return fName; }
   inline PortalType GetPortalType() const { return fPortalType; };
+  inline G4VPhysicalVolume *GetTrigger() const { return fTrigger; };
   // Setter
   void SetGlobalCoord(G4ThreeVector vec);
   void SetVerbose(G4int verbose);
+  void SetTrigger(G4VPhysicalVolume *volume);
 
 private:
   G4String fName;
@@ -43,6 +45,7 @@ private:
   PortalType fPortalType;
   G4ThreeVector fGlobalCoord;
   G4bool fGlobalCoordSet;
+  G4VPhysicalVolume *fTrigger;
 };
 } // namespace Surface
 #endif // VPORTAL_HH

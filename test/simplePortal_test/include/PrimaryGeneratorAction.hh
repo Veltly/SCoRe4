@@ -33,6 +33,7 @@
 #include "../../../src/ParticleGenerator/include/SurfaceSource.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
+#include <G4GeneralParticleSource.hh>
 
 class G4Event;
 class G4Box;
@@ -51,7 +52,8 @@ public:
   virtual void GeneratePrimaries(G4Event *);
 
 private:
-  Surface::SurfaceSource *fSurfaceSource; // pointer a to G4 gun class
+  G4GeneralParticleSource *fGps;
+  //  Surface::SurfaceSource *fSurfaceSource; // pointer a to G4 gun class
 };
 
 #endif

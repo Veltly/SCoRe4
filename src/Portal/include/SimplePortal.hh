@@ -22,7 +22,7 @@ public:
                G4int verbose)
       : VPortal(name, volume, PortalType::SimplePortal, vec),
         fLogger({"SimplePortal" + name, verbose}){};
-  virtual void DoPortation(G4StepPoint *point) override;
+  //  virtual void DoPortation(G4StepPoint *point) override;
   void DoPortation(const G4Step *step);
   void SetOtherPortal(SimplePortal *otherPortal);
   void SetVerbose(G4int verbose);
