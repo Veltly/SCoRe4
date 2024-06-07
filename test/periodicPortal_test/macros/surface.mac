@@ -1,0 +1,10 @@
+#set surface options
+
+/geometry/surface/setSpikeWidth_X 1 mm
+/geometry/surface/setSpikeWidth_Y 1 mm
+/geometry/surface/setNrSpike_X 3
+/geometry/surface/setNrSpike_Y 2
+/geometry/surface/setMeanHeight 1 mm
+/geometry/surface/setHeightDeviation 0.2 mm
+/geometry/surface/setNLayer 1
+/geometry/surface/setSpikeform StandardPyramide

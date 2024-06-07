@@ -3,3 +3,5 @@
 add_subdirectory(surface_testsetup)
 
 add_subdirectory(simplePortal_test)
+
+add_subdirectory(periodicPortal_test)

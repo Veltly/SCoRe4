@@ -5,6 +5,7 @@
 #ifndef PERIODICPORTAL_HH
 #define PERIODICPORTAL_HH
 
+#include "../../Service/include/Logger.hh"
 #include "G4Step.hh"
 #include "G4VPhysicalVolume.hh"
 #include "VPortal.hh"
@@ -28,12 +29,13 @@ public:
   inline G4int GetCurrentNY() const { return fCurrentNY; }
   inline G4bool IsPortal() const { return fIsPortal; }
   void SetAsPortal() { fIsPortal = true; }
+  void SetOtherPortal(PeriodicPortal *otherPortal);
 
 private:
   void DoPeriodicPortation(const G4Step *step, SingleSurface);
   void EnterPortal(const G4Step *step, SingleSurface);
   void ExitPortal(const G4Step *step, SingleSurface);
-  SingleSurface GetNearestSurface(const G4Step *step) const;
+  SingleSurface GetNearestSurface(const G4Step *step);
   PortationType GetPortationType(SingleSurface) const;
   void DoPeriodicTransform(G4ThreeVector &vec, SingleSurface);
   void TransformSubworldToPortal(G4ThreeVector &vec);
@@ -41,6 +43,7 @@ private:
   G4double TransformZBetweenPortals(G4double val);
 
 private:
+  Logger fLogger;
   PeriodicPortal *fOtherPortal;
   G4VPhysicalVolume *fTrigger;
   G4bool fIsPortal; // True if it is the portal, false if it is the periodic

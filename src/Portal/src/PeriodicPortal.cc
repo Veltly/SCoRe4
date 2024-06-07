@@ -13,8 +13,8 @@
 Surface::PeriodicPortal::PeriodicPortal(G4String name,
                                         G4VPhysicalVolume *volume,
                                         G4ThreeVector &vec, G4int verbose)
-    : VPortal(name, volume, PortalType::PeriodicPortal) {
-  SetVerbose(verbose);
+    : VPortal(name, volume, PortalType::PeriodicPortal),
+      fLogger({"PeriodicPortal", verbose}), fIsPortal(false) {
   SetGlobalCoord(vec);
 };
 
@@ -24,14 +24,17 @@ void Surface::PeriodicPortal::DoPortation(const G4Step *step) {
   PortationType portationType = GetPortationType(surface);
   switch (portationType) {
   case PortationType::ENTER: {
+    fLogger.WriteDebugInfo("Doing portation of type: Enter");
     EnterPortal(step, surface);
     break;
   }
   case PortationType::EXIT: {
+    fLogger.WriteDebugInfo("Doing portation of type: Exit");
     ExitPortal(step, surface);
     break;
   }
   case PortationType::PERIODIC: {
+    fLogger.WriteDebugInfo("Doing portation of type: Periodic");
     DoPeriodicPortation(step, surface);
     break;
   }
@@ -66,31 +69,34 @@ void Surface::PeriodicPortal::DoPeriodicPortation(const G4Step *step,
 
 Surface::PeriodicPortal::PortationType
 Surface::PeriodicPortal::GetPortationType(SingleSurface surface) const {
-  if (fIsPortal) {
+  if (fIsPortal)
     return PortationType::ENTER;
-  }
-  switch (surface) {
-  case SingleSurface::X_UP:
-  case SingleSurface::X_DOWN:
-  case SingleSurface::Y_UP:
-  case SingleSurface::Y_DOWN:
+  if (surface == SingleSurface::X_UP and fCurrentNX < fMaxNX - 1)
     return PortationType::PERIODIC;
-    break;
-  case SingleSurface::Z_UP:
-  case SingleSurface::Z_DOWN:
-    return PortationType::EXIT;
-    break;
-  default:
-    exit(EXIT_FAILURE); // should never happen
-  }
+  if (surface == SingleSurface::X_DOWN and fCurrentNX > 0)
+    return PortationType::PERIODIC;
+  if (surface == SingleSurface::Y_UP and fCurrentNY < fMaxNY - 1)
+    return PortationType::PERIODIC;
+  if (surface == SingleSurface::Y_DOWN and fCurrentNY > 0)
+    return PortationType::PERIODIC;
+
+  return PortationType::EXIT;
 }
 
 // Function to decide in which direction the particle left the volume
 Surface::PeriodicPortal::SingleSurface
-Surface::PeriodicPortal::GetNearestSurface(const G4Step *step) const {
+Surface::PeriodicPortal::GetNearestSurface(const G4Step *step) {
   G4VSolid *portalSolid = GetVolume()->GetLogicalVolume()->GetSolid();
-  G4ThreeVector result =
-      portalSolid->SurfaceNormal(step->GetPostStepPoint()->GetPosition());
+  G4ThreeVector point = step->GetPostStepPoint()->GetPosition();
+  point = TransformToLocalCoordinate(point);
+  G4ThreeVector result = portalSolid->SurfaceNormal(point);
+
+  fLogger.WriteDebugInfo("Point: x: " + std::to_string(point.x()) +
+                         " y: " + std::to_string(point.y()) +
+                         " z: " + std::to_string(point.z()));
+  fLogger.WriteDebugInfo("SurfaceNormal: x: " + std::to_string(result.x()) +
+                         " y: " + std::to_string(result.y()) +
+                         " z: " + std::to_string(result.z()));
   if (result.x() > result.y() and result.x() > result.z()) {
     return SingleSurface::X_UP;
   } else if (result.x() < result.y() and result.x() < result.z()) {
@@ -104,7 +110,7 @@ Surface::PeriodicPortal::GetNearestSurface(const G4Step *step) const {
   } else if (result.z() < result.x() and result.z() < result.y()) {
     return SingleSurface::Z_DOWN;
   } else {
-    exit(EXIT_FAILURE); // is a last check, shoudl never happen
+    exit(EXIT_FAILURE); // is a last check, should never happen
   }
 }
 
@@ -135,10 +141,23 @@ void Surface::PeriodicPortal::DoPeriodicTransform(G4ThreeVector &vec,
   default:
     exit(EXIT_FAILURE); // should never happen
   }
+  fLogger.WriteDebugInfo(
+      "Periodic Transormation: NX: " + std::to_string(fCurrentNX) +
+      " NY: " + std::to_string(fCurrentNY));
 }
 
 void Surface::PeriodicPortal::TransformSubworldToPortal(G4ThreeVector &vec) {
-  // TO DO: Implementation
+  G4ThreeVector pMinVol, pMinOtherVol, pMax;
+  GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(pMinVol, pMax);
+  const G4ThreeVector volumeDistance = pMax - pMinVol;
+  fOtherPortal->GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(
+      pMinOtherVol, pMax);
+  const G4ThreeVector otherVolumeDistance = pMax - pMinOtherVol;
+  const G4ThreeVector shiftedVec = vec + volumeDistance / 2.;
+  vec.setX(shiftedVec.x() + fCurrentNX * volumeDistance.x() -
+           otherVolumeDistance.x() / 2.);
+  vec.setY(shiftedVec.y() + fCurrentNY * volumeDistance.y() -
+           otherVolumeDistance.y() / 2.);
 
   vec.setZ(TransformZBetweenPortals(vec.z()));
 }
@@ -146,16 +165,27 @@ void Surface::PeriodicPortal::TransformSubworldToPortal(G4ThreeVector &vec) {
 void Surface::PeriodicPortal::TransformPortalToSubworld(G4ThreeVector &vec) {
   G4ThreeVector pMinVol, pMinOtherVol, pMax;
   GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(pMinVol, pMax);
-  G4ThreeVector volumeDistance = pMax - pMinVol;
+  const G4ThreeVector volumeDistance = pMax - pMinVol;
   fOtherPortal->GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(
       pMinOtherVol, pMax);
-  G4ThreeVector otherVolumeDistance = pMax - pMinOtherVol;
-  fCurrentNX = fMaxNX / 2. + vec.x() / otherVolumeDistance.x();
-  fCurrentNY = fMaxNY / 2. + vec.y() / otherVolumeDistance.y();
-  // TO DO: Implementation
-  // fOtherPortal->fCurrentX and Y must be set
+  const G4ThreeVector otherVolumeDistance = pMax - pMinOtherVol;
+  const G4ThreeVector shiftedVec = vec + volumeDistance / 2.;
+  G4int NX = shiftedVec.x() / otherVolumeDistance.x();
+  G4int NY = shiftedVec.y() / otherVolumeDistance.y();
+  if (NX == fOtherPortal->fMaxNX)
+    --NX;
+  if (NY == fOtherPortal->fMaxNY)
+    --NY;
 
+  vec.setX(shiftedVec.x() - NX * otherVolumeDistance.x() -
+           otherVolumeDistance.x() / 2.);
+  vec.setY(shiftedVec.y() - NY * otherVolumeDistance.y() -
+           otherVolumeDistance.y() / 2.);
+  fOtherPortal->fCurrentNX = NX;
+  fOtherPortal->fCurrentNY = NY;
   vec.setZ(TransformZBetweenPortals(vec.z()));
+  fLogger.WriteDebugInfo("Subworld: X " + std::to_string(NX) + " Y " +
+                         std::to_string(NY));
 }
 
 G4double Surface::PeriodicPortal::TransformZBetweenPortals(G4double val) {
@@ -172,4 +202,9 @@ G4double Surface::PeriodicPortal::TransformZBetweenPortals(G4double val) {
 void Surface::PeriodicPortal::SetGrid(int nX, int nY) {
   fMaxNX = nX;
   fMaxNY = nY;
+}
+
+void Surface::PeriodicPortal::SetOtherPortal(
+    Surface::PeriodicPortal *otherPortal) {
+  fOtherPortal = otherPortal;
 }
