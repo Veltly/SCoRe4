@@ -21,22 +21,28 @@ class PeriodicPortal : public VPortal {
 public:
   PeriodicPortal(G4String name, G4VPhysicalVolume *volume, G4ThreeVector &vec,
                  G4int verbose);
+
   virtual void DoPortation(const G4Step *step);
+  // Setter
   void SetGrid(int nX, int nY);
+  void SetAsPortal() { fIsPortal = true; }
+  void SetOtherPortal(PeriodicPortal *otherPortal);
+  // Getter
   inline G4int GetMaxNX() const { return fMaxNX; }
   inline G4int GetMaxNY() const { return fMaxNY; }
   inline G4int GetCurrentNX() const { return fCurrentNX; }
   inline G4int GetCurrentNY() const { return fCurrentNY; }
+  // Check
   inline G4bool IsPortal() const { return fIsPortal; }
-  void SetAsPortal() { fIsPortal = true; }
-  void SetOtherPortal(PeriodicPortal *otherPortal);
 
 private:
   void DoPeriodicPortation(const G4Step *step, SingleSurface);
   void EnterPortal(const G4Step *step, SingleSurface);
   void ExitPortal(const G4Step *step, SingleSurface);
+
   SingleSurface GetNearestSurface(const G4Step *step);
   PortationType GetPortationType(SingleSurface) const;
+
   void DoPeriodicTransform(G4ThreeVector &vec, SingleSurface);
   void TransformSubworldToPortal(G4ThreeVector &vec);
   void TransformPortalToSubworld(G4ThreeVector &vec);

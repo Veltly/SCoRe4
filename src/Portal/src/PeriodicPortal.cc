@@ -9,6 +9,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4VSolid.hh"
 #include <cstdlib>
+#include <string>
 
 Surface::PeriodicPortal::PeriodicPortal(G4String name,
                                         G4VPhysicalVolume *volume,
@@ -65,6 +66,9 @@ void Surface::PeriodicPortal::DoPeriodicPortation(const G4Step *step,
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   DoPeriodicTransform(position, exitSurface);
   UpdatePosition(step, position);
+  fLogger.WriteDebugInfo(
+      "Entered Subwordl: X:" + std::to_string(GetCurrentNX()) +
+      " Y: " + std::to_string(GetCurrentNY()));
 }
 
 Surface::PeriodicPortal::PortationType
