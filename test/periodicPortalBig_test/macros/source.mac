@@ -4,7 +4,7 @@
 #
 #/run/beamOn 2
 
-/gps/position 2 -0.3 10
+/gps/position 2 -0.3 9.5
 /gps/particle gamma
 /gps/ene/mono 10 MeV
 /gps/direction -1 0.2 0.15

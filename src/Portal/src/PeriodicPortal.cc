@@ -66,15 +66,15 @@ void Surface::PeriodicPortal::DoPeriodicPortation(const G4Step *step,
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   DoPeriodicTransform(position, exitSurface);
   UpdatePosition(step, position);
-  fLogger.WriteDebugInfo(
-      "Entered Subwordl: X:" + std::to_string(GetCurrentNX()) +
-      " Y: " + std::to_string(GetCurrentNY()));
+  fLogger.WriteDebugInfo("Subworld: X:" + std::to_string(GetCurrentNX()) +
+                         " Y: " + std::to_string(GetCurrentNY()));
 }
 
 Surface::PeriodicPortal::PortationType
 Surface::PeriodicPortal::GetPortationType(SingleSurface surface) const {
   if (fIsPortal)
     return PortationType::ENTER;
+  // Periodic exit at a surface
   if (surface == SingleSurface::X_UP and fCurrentNX < fMaxNX - 1)
     return PortationType::PERIODIC;
   if (surface == SingleSurface::X_DOWN and fCurrentNX > 0)
@@ -84,6 +84,20 @@ Surface::PeriodicPortal::GetPortationType(SingleSurface surface) const {
   if (surface == SingleSurface::Y_DOWN and fCurrentNY > 0)
     return PortationType::PERIODIC;
 
+  // Periodic exit at an edge
+  if (surface == SingleSurface::X_UP_Y_UP and fCurrentNY < fMaxNX - 1 and
+      fCurrentNY < fMaxNY - 1)
+    return PortationType::PERIODIC;
+  if (surface == SingleSurface::X_UP_Y_DOWN and fCurrentNX < fMaxNX - 1 and
+      fCurrentNY > 0)
+    return PortationType::PERIODIC;
+  if (surface == SingleSurface::X_DOWN_Y_UP and fCurrentNX > 0 and
+      fCurrentNY < fMaxNY - 1)
+    return PortationType::PERIODIC;
+  if (surface == SingleSurface::X_DOWN_Y_DOWN and fCurrentNX > 0 and
+      fCurrentNY > 0)
+    return PortationType::PERIODIC;
+  // exit at a Z Surface, also including corners.
   return PortationType::EXIT;
 }
 
@@ -101,17 +115,39 @@ Surface::PeriodicPortal::GetNearestSurface(const G4Step *step) {
   fLogger.WriteDebugInfo("SurfaceNormal: x: " + std::to_string(result.x()) +
                          " y: " + std::to_string(result.y()) +
                          " z: " + std::to_string(result.z()));
-  if (result.x() > result.y() and result.x() > result.z()) {
+
+  auto IsZero = [](G4double a) {
+    const G4double numeric_limit =
+        std::numeric_limits<G4double>::epsilon() * 10;
+    return fabs(a) < numeric_limit;
+  };
+
+  const G4bool IsZero_X = IsZero(result.x());
+  const G4bool IsZero_Y = IsZero(result.y());
+  const G4bool IsZero_Z = IsZero(result.z());
+
+  // Case X or Y face
+  if (result.x() > 0. and IsZero_Y and IsZero_Z) {
     return SingleSurface::X_UP;
-  } else if (result.x() < result.y() and result.x() < result.z()) {
+  } else if (result.x() < 0. and IsZero_Y and IsZero_Z) {
     return SingleSurface::X_DOWN;
-  } else if (result.y() > result.x() and result.y() > result.z()) {
+  } else if (IsZero_X and result.y() > 0. and IsZero_Z) {
     return SingleSurface::Y_UP;
-  } else if (result.y() < result.x() and result.y() < result.z()) {
+  } else if (IsZero_X and result.y() < 0. and IsZero_Z) {
     return SingleSurface::Y_DOWN;
-  } else if (result.z() > result.x() and result.z() > result.y()) {
+    // Case XY edges
+  } else if (result.x() > 0. and result.y() > 0. and IsZero_Z) {
+    return SingleSurface::X_UP_Y_UP;
+  } else if (result.x() > 0. and result.y() < 0. and IsZero_Z) {
+    return SingleSurface::X_UP_Y_DOWN;
+  } else if (result.x() < 0. and result.y() > 0. and IsZero_Z) {
+    return SingleSurface::X_DOWN_Y_UP;
+  } else if (result.x() < 0. and result.y() < 0. and IsZero_Z) {
+    return SingleSurface::X_DOWN_Y_DOWN;
+    // Case including face Z after all other cases are excluded
+  } else if (result.z() > 0.) {
     return SingleSurface::Z_UP;
-  } else if (result.z() < result.x() and result.z() < result.y()) {
+  } else if (result.z() < 0.) {
     return SingleSurface::Z_DOWN;
   } else {
     exit(EXIT_FAILURE); // is a last check, should never happen
@@ -139,6 +175,30 @@ void Surface::PeriodicPortal::DoPeriodicTransform(G4ThreeVector &vec,
     ++fCurrentNY;
     break;
   case SingleSurface::Y_DOWN:
+    vec.setY(oldPosition.y() + volumeSize.y());
+    --fCurrentNY;
+    break;
+  case SingleSurface::X_UP_Y_UP:
+    vec.setX(oldPosition.x() - volumeSize.x());
+    ++fCurrentNX;
+    vec.setY(oldPosition.y() - volumeSize.y());
+    ++fCurrentNY;
+    break;
+  case SingleSurface::X_UP_Y_DOWN:
+    vec.setX(oldPosition.x() - volumeSize.x());
+    ++fCurrentNX;
+    vec.setY(oldPosition.y() + volumeSize.y());
+    --fCurrentNY;
+    break;
+  case SingleSurface::X_DOWN_Y_UP:
+    vec.setX(oldPosition.x() + volumeSize.x());
+    --fCurrentNX;
+    vec.setY(oldPosition.y() - volumeSize.y());
+    ++fCurrentNY;
+    break;
+  case SingleSurface::X_DOWN_Y_DOWN:
+    vec.setX(oldPosition.x() + volumeSize.x());
+    --fCurrentNX;
     vec.setY(oldPosition.y() + volumeSize.y());
     --fCurrentNY;
     break;

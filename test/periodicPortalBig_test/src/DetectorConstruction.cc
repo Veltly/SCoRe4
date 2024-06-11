@@ -231,7 +231,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   logicSubworld->SetUserLimits(limit_portal);
   logicPortal->SetUserLimits(limit);
   logicTestobject->SetUserLimits(limit_portal);
-  logicTestobjectB->SetUserLimits(limit_portal);
+  logicTestobjectB->SetUserLimits(limit);
   //
   // always return the physical World
   //
