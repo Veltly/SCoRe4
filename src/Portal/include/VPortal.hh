@@ -12,11 +12,7 @@
 #include <cstdlib>
 namespace Surface {
 
-enum class PortalType {
-  SimplePortal,
-  PeriodicPortal,
-  PeriodicMultipleSubworld
-};
+enum class PortalType { SimplePortal, PeriodicPortal, MultipleSubworld };
 
 class VPortal {
 protected:

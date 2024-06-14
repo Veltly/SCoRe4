@@ -1,8 +1,8 @@
 // Author: C.Gruener
 // Date: 24-06-11
-// File: PeriodicMultipleSubworlds
+// File: MultipleSubworlds
 
-#include "../include/PeriodicMultipleSubworld.hh"
+#include "../include/MultipleSubworld.hh"
 #include "../include/SubworldGrid.hh"
 #include "../include/VPortal.hh"
 
@@ -10,18 +10,21 @@
 #include "G4ThreeVector.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSolid.hh"
+#include <G4Types.hh>
 #include <cstdlib>
 #include <string>
 
-Surface::PeriodicMultipleSubworld::PeriodicMultipleSubworld(
-    const G4String name, G4VPhysicalVolume *volume, G4ThreeVector &vec,
-    const G4int verbose)
-    : VPortal(name, volume, PortalType::PeriodicMultipleSubworld),
-      fLogger({"PeriodicMultiplePortal", verbose}), fIsPortal(false) {
+Surface::MultipleSubworld::MultipleSubworld(const G4String name,
+                                            G4VPhysicalVolume *volume,
+                                            G4ThreeVector &vec,
+                                            const G4int verbose)
+    : VPortal(name, volume, PortalType::MultipleSubworld),
+      fLogger({"MultiplePortal", verbose}), fIsPortal(false),
+      fSubworldGrid(nullptr) {
   SetGlobalCoord(vec);
 };
 
-Surface::PeriodicMultipleSubworld::~PeriodicMultipleSubworld() {
+Surface::MultipleSubworld::~MultipleSubworld() {
   if (fSubworldGrid !=
       nullptr) // substitution for a shared pointer, be carefull, will be
                // deleted if any subworld is deleted.
@@ -29,7 +32,7 @@ Surface::PeriodicMultipleSubworld::~PeriodicMultipleSubworld() {
   fSubworldGrid = nullptr;
 };
 
-void Surface::PeriodicMultipleSubworld::DoPortation(const G4Step *step) {
+void Surface::MultipleSubworld::DoPortation(const G4Step *step) {
   // select portation method by checking Grid and side of exit portal
   SingleSurface surface = GetNearestSurface(step);
   PortationType portationType = GetPortationType(surface);
@@ -52,19 +55,21 @@ void Surface::PeriodicMultipleSubworld::DoPortation(const G4Step *step) {
   }
 };
 
-void Surface::PeriodicMultipleSubworld::EnterPortal(
-    const G4Step *step, const SingleSurface enterSurface) {
+void Surface::MultipleSubworld::EnterPortal(const G4Step *step,
+                                            const SingleSurface enterSurface) {
 
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   position = TransformToLocalCoordinate(position);
   TransformPortalToSubworld(position);
-  position =
-      fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(position);
+  fLogger.WriteDebugInfo("Test1" + fSubworldGrid->GetSubworld()->GetName());
+  fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(position);
+  fLogger.WriteDebugInfo("Test2");
   UpdatePosition(step, position);
+  fLogger.WriteDebugInfo("Test3");
 }
 
-void Surface::PeriodicMultipleSubworld::ExitPortal(
-    const G4Step *step, const SingleSurface exitSurface) {
+void Surface::MultipleSubworld::ExitPortal(const G4Step *step,
+                                           const SingleSurface exitSurface) {
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   position = TransformToLocalCoordinate(position);
   TransformSubworldToPortal(position);
@@ -72,7 +77,7 @@ void Surface::PeriodicMultipleSubworld::ExitPortal(
   UpdatePosition(step, position);
 }
 
-void Surface::PeriodicMultipleSubworld::DoPeriodicPortation(
+void Surface::MultipleSubworld::DoPeriodicPortation(
     const G4Step *step, const SingleSurface exitSurface) {
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   DoPeriodicTransform(position, exitSurface);
@@ -82,9 +87,8 @@ void Surface::PeriodicMultipleSubworld::DoPeriodicPortation(
       " Y: " + std::to_string(fSubworldGrid->CurrentPosY()));
 }
 
-Surface::PeriodicMultipleSubworld::PortationType
-Surface::PeriodicMultipleSubworld::GetPortationType(
-    const SingleSurface surface) const {
+Surface::MultipleSubworld::PortationType
+Surface::MultipleSubworld::GetPortationType(const SingleSurface surface) const {
   if (fIsPortal)
     return PortationType::ENTER;
   const G4int currentNX = fSubworldGrid->CurrentPosX();
@@ -119,8 +123,8 @@ Surface::PeriodicMultipleSubworld::GetPortationType(
 }
 
 // Function to decide in which direction the particle left the volume
-Surface::PeriodicMultipleSubworld::SingleSurface
-Surface::PeriodicMultipleSubworld::GetNearestSurface(const G4Step *step) {
+Surface::MultipleSubworld::SingleSurface
+Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
   G4VSolid *portalSolid = GetVolume()->GetLogicalVolume()->GetSolid();
   G4ThreeVector point = step->GetPostStepPoint()->GetPosition();
   point = TransformToLocalCoordinate(point);
@@ -171,7 +175,7 @@ Surface::PeriodicMultipleSubworld::GetNearestSurface(const G4Step *step) {
   }
 }
 
-void Surface::PeriodicMultipleSubworld::DoPeriodicTransform(
+void Surface::MultipleSubworld::DoPeriodicTransform(
     G4ThreeVector &vec, const SingleSurface surface) {
   G4VPhysicalVolume *volume = GetVolume();
   G4ThreeVector pMin, pMax;
@@ -232,8 +236,7 @@ void Surface::PeriodicMultipleSubworld::DoPeriodicTransform(
       " NY: " + std::to_string(fSubworldGrid->CurrentPosY()));
 }
 
-void Surface::PeriodicMultipleSubworld::TransformSubworldToPortal(
-    G4ThreeVector &vec) {
+void Surface::MultipleSubworld::TransformSubworldToPortal(G4ThreeVector &vec) {
   G4ThreeVector pMinVol, pMinOtherVol, pMax;
   GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(pMinVol, pMax);
   const G4ThreeVector volumeDistance = pMax - pMinVol;
@@ -249,8 +252,7 @@ void Surface::PeriodicMultipleSubworld::TransformSubworldToPortal(
   vec.setZ(TransformZBetweenPortals(vec.z()));
 }
 
-void Surface::PeriodicMultipleSubworld::TransformPortalToSubworld(
-    G4ThreeVector &vec) {
+void Surface::MultipleSubworld::TransformPortalToSubworld(G4ThreeVector &vec) {
   G4ThreeVector pMinVol, pMinOtherVol, pMax;
   GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(pMinVol, pMax);
   const G4ThreeVector volumeDistance = pMax - pMinVol;
@@ -264,7 +266,6 @@ void Surface::PeriodicMultipleSubworld::TransformPortalToSubworld(
     --NX;
   if (NY == fSubworldGrid->MaxY())
     --NY;
-
   vec.setX(shiftedVec.x() - NX * otherVolumeDistance.x() -
            otherVolumeDistance.x() / 2.);
   vec.setY(shiftedVec.y() - NY * otherVolumeDistance.y() -
@@ -276,8 +277,8 @@ void Surface::PeriodicMultipleSubworld::TransformPortalToSubworld(
                          std::to_string(NY));
 }
 
-G4double Surface::PeriodicMultipleSubworld::TransformZBetweenPortals(
-    const G4double val) {
+G4double
+Surface::MultipleSubworld::TransformZBetweenPortals(const G4double val) {
   G4ThreeVector pMin, pMax;
   GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(pMin, pMax);
   G4double volumeDistanceZ = pMax.z() - pMin.z();
@@ -287,25 +288,33 @@ G4double Surface::PeriodicMultipleSubworld::TransformZBetweenPortals(
   return val / volumeDistanceZ * otherVolumeDistanceZ;
 }
 
-void Surface::PeriodicMultipleSubworld::SetGrid(const int sizeX,
-                                                const int sizeY) {
+void Surface::MultipleSubworld::SetGrid(const G4int sizeX, const G4int sizeY,
+                                        const G4int verbose) {
   if (fSubworldGrid != nullptr) {
     fLogger.WriteError("Subworld Grid already set!");
     exit(EXIT_FAILURE);
   }
-  fSubworldGrid = new SubworldGrid<PeriodicMultipleSubworld>(sizeX, sizeY);
+  fSubworldGrid = new SubworldGrid<MultipleSubworld>(sizeX, sizeY, verbose);
 }
 
-void Surface::PeriodicMultipleSubworld::SetOtherPortal(
-    Surface::PeriodicMultipleSubworld *otherPortal) {
+void Surface::MultipleSubworld::SetOtherPortal(
+    Surface::MultipleSubworld *otherPortal) {
   fPortal = otherPortal;
 }
 
-void Surface::PeriodicMultipleSubworld::AddSubworldToGrid(
-    const G4int x, const G4int y, Surface::PeriodicMultipleSubworld *subworld) {
+void Surface::MultipleSubworld::AddSubworldToGrid(
+    const G4int x, const G4int y, Surface::MultipleSubworld *subworld) {
   if (fSubworldGrid == nullptr)
     exit(EXIT_FAILURE);
   if (subworld->GetSubworldGrid() != nullptr)
     exit(EXIT_FAILURE);
   fSubworldGrid->SetSubworld(x, y, subworld);
+}
+
+void Surface::MultipleSubworld::SetSubwordlEdge(const G4double edgeX,
+                                                const G4double edgeY,
+                                                const G4double edgeZ) {
+  fEdgeX = edgeX;
+  fEdgeY = edgeY;
+  fEdgeZ = edgeZ;
 }

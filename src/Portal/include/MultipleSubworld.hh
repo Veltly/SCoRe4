@@ -1,9 +1,9 @@
 // Author: C.Gruener
 // Date: 24-06-11
-// File: PeriodicMultipleSubworlds
+// File: MultipleSubworlds
 
-#ifndef PERIODICPORTAL_HH
-#define PERIODICPORTAL_HH
+#ifndef MULTIPLESUBWORLD_HH
+#define MULTIPLESUBWORLD_HH
 
 #include "../../Service/include/Logger.hh"
 #include "G4Step.hh"
@@ -14,7 +14,7 @@
 
 namespace Surface {
 
-class PeriodicMultipleSubworld : public VPortal {
+class MultipleSubworld : public VPortal {
 
   enum class SingleSurface {
     X_UP,
@@ -31,22 +31,24 @@ class PeriodicMultipleSubworld : public VPortal {
   enum class PortationType { ENTER, EXIT, PERIODIC };
 
 public:
-  PeriodicMultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
-                           G4ThreeVector &vec, const G4int verbose);
-  ~PeriodicMultipleSubworld();
+  MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
+                   G4ThreeVector &vec, const G4int verbose);
+  ~MultipleSubworld();
   virtual void DoPortation(const G4Step *step);
   // Setter
-  void SetGrid(const int nX, const int nY);
+  void SetGrid(const G4int nX, const G4int nY, const G4int verbose = 3);
   void AddSubworldToGrid(const G4int x, const G4int y,
-                         PeriodicMultipleSubworld *subworld);
+                         MultipleSubworld *subworld);
   void SetAsPortal() { fIsPortal = true; }
-  void SetOtherPortal(PeriodicMultipleSubworld *otherPortal);
+  void SetOtherPortal(MultipleSubworld *otherPortal);
   // Getter
-  SubworldGrid<PeriodicMultipleSubworld> *GetSubworldGrid() const {
+  SubworldGrid<MultipleSubworld> *GetSubworldGrid() const {
     return fSubworldGrid;
   }
   // Check
   inline G4bool IsPortal() const { return fIsPortal; }
+
+  void SetSubwordlEdge(G4double edgeX, G4double edgeY, G4double edgeZ);
 
 private:
   void DoPeriodicPortation(const G4Step *step, const SingleSurface);
@@ -63,14 +65,16 @@ private:
 
 private:
   Logger fLogger;
-  PeriodicMultipleSubworld *fPortal;
+  MultipleSubworld *fPortal; // TO DO: replace this or delete it!! In transform
+                             // function, example values must be set
+  G4double fEdgeX, fEdgeY, fEdgeZ;
   G4VPhysicalVolume *fTrigger;
   G4bool fIsPortal; // True if it is the portal, false if it is the periodic
                     // subworld
-  SubworldGrid<PeriodicMultipleSubworld> *fSubworldGrid;
+  SubworldGrid<MultipleSubworld> *fSubworldGrid;
   // order of Grid such that (fCurrentNX, fCurrentNy) = (0,0)
   // has the lowest local (x,y) coordinate in the portal
   // Grid will only be initialized if called
 };
 } // namespace Surface
-#endif // PERIODICPORTAL_HH
+#endif // MULTIPLESUBWORLD_HH

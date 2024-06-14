@@ -7,6 +7,7 @@
 #include "../../Service/include/Logger.hh"
 #include "../include/VPortal.hh"
 #include "G4Step.hh"
+#include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/PeriodicPortal.hh"
 #include "Portal/include/SimplePortal.hh"
 #include <G4LogicalVolume.hh>
@@ -82,6 +83,14 @@ void Surface::PortalControl::DoPortation(const G4Step *step,
     PeriodicPortal *periodicPortal = static_cast<PeriodicPortal *>(portal);
     fLogger.WriteDebugInfo("Using PeriodicPortal " + periodicPortal->GetName());
     periodicPortal->DoPortation(step);
+    break;
+  }
+  case PortalType::MultipleSubworld: {
+    MultipleSubworld *multipleSubworld =
+        static_cast<MultipleSubworld *>(portal);
+    fLogger.WriteDebugInfo("Using PeriodicPortal " +
+                           multipleSubworld->GetName());
+    multipleSubworld->DoPortation(step);
     break;
   }
   }
