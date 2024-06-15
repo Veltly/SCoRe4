@@ -161,6 +161,12 @@ public:
     fDensity.push_back(density);
   }
 
+  void SetGridInSubworlds(SubworldGrid<T> *grid) {
+    for (auto *subworld : fAvailableSubworlds) {
+      subworld->SetGrid(grid);
+    }
+  }
+
   void FillGrid(SubworldGrid<T> *grid) {
     G4double sumOfProb{0};
     std::vector<G4double> probability;
@@ -171,6 +177,7 @@ public:
     for (G4double &val : fDensity) {
       val = val / sumOfProb;
     }
+    SetGridInSubworlds(grid);
 
     const G4int gridMaxX = grid->MaxX();
     const G4int gridMaxY = grid->MaxY();

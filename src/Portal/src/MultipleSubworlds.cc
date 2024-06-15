@@ -35,7 +35,9 @@ Surface::MultipleSubworld::~MultipleSubworld() {
 void Surface::MultipleSubworld::DoPortation(const G4Step *step) {
   // select portation method by checking Grid and side of exit portal
   SingleSurface surface = GetNearestSurface(step);
+  fLogger.WriteDebugInfo("test1");
   PortationType portationType = GetPortationType(surface);
+  fLogger.WriteDebugInfo("test2");
   switch (portationType) {
   case PortationType::ENTER: {
     fLogger.WriteDebugInfo("Doing portation of type: Enter");
@@ -106,13 +108,19 @@ void Surface::MultipleSubworld::DoPeriodicPortation(
 }
 
 Surface::MultipleSubworld::PortationType
-Surface::MultipleSubworld::GetPortationType(const SingleSurface surface) const {
+Surface::MultipleSubworld::GetPortationType(const SingleSurface surface) {
+  fLogger.WriteDebugInfo("Started Portation type");
   if (fIsPortal)
     return PortationType::ENTER;
+  fLogger.WriteDebugInfo("Test");
   const G4int currentNX = fSubworldGrid->CurrentPosX();
   const G4int currentNY = fSubworldGrid->CurrentPosY();
+  fLogger.WriteDebugInfo("CurrentNX: " + std::to_string(currentNX));
+  fLogger.WriteDebugInfo("CurrentNY: " + std::to_string(currentNY));
   const G4int maxNX = fSubworldGrid->MaxX();
   const G4int maxNY = fSubworldGrid->MaxY();
+  fLogger.WriteDebugInfo("maxNX: " + std::to_string(maxNX));
+  fLogger.WriteDebugInfo("maxNY: " + std::to_string(maxNY));
   // Periodic exit at a surface
   if (surface == SingleSurface::X_UP and currentNX < maxNX - 1)
     return PortationType::PERIODIC;
@@ -313,6 +321,15 @@ void Surface::MultipleSubworld::SetGrid(const G4int sizeX, const G4int sizeY,
     exit(EXIT_FAILURE);
   }
   fSubworldGrid = new SubworldGrid<MultipleSubworld>(sizeX, sizeY, verbose);
+}
+
+void Surface::MultipleSubworld::SetGrid(
+    Surface::SubworldGrid<MultipleSubworld> *grid) {
+  if (fSubworldGrid != nullptr) {
+    fLogger.WriteError("Grid already set");
+    exit(EXIT_FAILURE);
+  }
+  fSubworldGrid = grid;
 }
 
 void Surface::MultipleSubworld::SetOtherPortal(

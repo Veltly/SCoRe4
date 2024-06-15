@@ -240,6 +240,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                                   subworld_sizeZ);
   portalEntrance->SetGrid(griddim, griddim, 0);
   portalEntrance->SetOtherPortal(portalSubworldA);
+  portalSubworldA->SetOtherPortal(portalEntrance);
+  portalSubworldB->SetOtherPortal(portalEntrance);
+  portalSubworldC->SetOtherPortal(portalEntrance);
   Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> subworldHelper(0);
   subworldHelper.AddAvailableSubworld(portalSubworldA, 0.3);
   subworldHelper.AddAvailableSubworld(portalSubworldB, 0.5);

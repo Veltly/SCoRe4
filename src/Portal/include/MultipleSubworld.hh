@@ -37,6 +37,7 @@ public:
   virtual void DoPortation(const G4Step *step);
   // Setter
   void SetGrid(const G4int nX, const G4int nY, const G4int verbose = 3);
+  void SetGrid(SubworldGrid<MultipleSubworld> *grid);
   void AddSubworldToGrid(const G4int x, const G4int y,
                          MultipleSubworld *subworld);
   void SetAsPortal() { fIsPortal = true; }
@@ -56,7 +57,7 @@ private:
   void ExitPortal(const G4Step *step, const SingleSurface);
 
   SingleSurface GetNearestSurface(const G4Step *step);
-  PortationType GetPortationType(const SingleSurface) const;
+  PortationType GetPortationType(const SingleSurface);
 
   void DoPeriodicTransform(G4ThreeVector &vec, SingleSurface);
   void TransformSubworldToPortal(G4ThreeVector &vec);
