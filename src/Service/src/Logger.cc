@@ -1,5 +1,6 @@
 
 #include "../include/Logger.hh"
+#include <G4ThreeVector.hh>
 #include <G4ios.hh>
 
 Surface::Logger::Logger(G4String aId, G4int aVerboseLvl)
@@ -29,6 +30,19 @@ void Surface::Logger::WriteDebugInfo(G4String &aMsg) {
 }
 
 void Surface::Logger::WriteDebugInfo(G4String &&aMsg) { WriteDebugInfo(aMsg); }
+
+void Surface::Logger::WriteDebugInfo(G4String &&aMsg,
+                                     const G4ThreeVector &aVec) {
+  WriteDebugInfo(aMsg, aVec);
+}
+void Surface::Logger::WriteDebugInfo(G4String &aMsg,
+                                     const G4ThreeVector &aVec) {
+  if (fVerboseLvl > fVerboseDebugInfo) {
+    G4cout << " ----DebugInfo----> " << fId << ": " << aMsg
+           << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
+           << G4endl;
+  }
+}
 
 void Surface::Logger::WriteDebugInfo(std::stringstream stream) {
   WriteDebugInfo(stream.str());

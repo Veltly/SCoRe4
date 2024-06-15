@@ -23,10 +23,10 @@ Surface::PortalControl::PortalControl(G4int verbose)
 }
 
 void Surface::PortalControl::DoStep(const G4Step *step) {
-  if (fJustPorted) {
-    fJustPorted = false;
-    return;
-  }
+  // if (fJustPorted) {
+  //  fJustPorted = false;
+  //  return;
+  // }
   G4StepPoint *postStepPoint = step->GetPostStepPoint();
   G4StepPoint *preStepPoint = step->GetPreStepPoint();
   G4VPhysicalVolume *prePhysVol = preStepPoint->GetPhysicalVolume();
@@ -46,22 +46,24 @@ void Surface::PortalControl::DoStep(const G4Step *step) {
     // postStep
     fLogger.WriteDebugInfo(
         "Volume of preStepPoint is: " +
-        step->GetPreStepPoint()->GetPhysicalVolume()->GetName());
+            step->GetPreStepPoint()->GetPhysicalVolume()->GetName() + " at ",
+        preStepPoint->GetPosition());
     fLogger.WriteDebugInfo("Volume of postStepPoint is: " +
-                           postStepPoint->GetPhysicalVolume()->GetName());
+                               postStepPoint->GetPhysicalVolume()->GetName() +
+                               " at ",
+                           postStepPoint->GetPosition());
+
     if (EnterPortalCheck(step)) {
       UsePortal(step);
     }
   }
   std::stringstream stream;
-  G4StepPoint *test = step->GetPostStepPoint();
-  G4ThreeVector post = test->GetPosition();
-  stream << "PostStepPoint: x: " << post.x() << " y: " << post.y()
-         << " z: " << post.z();
-  if (test->GetPhysicalVolume() != nullptr) {
-    stream << " Volume is: " << test->GetPhysicalVolume()->GetName();
+  G4StepPoint *postStep = step->GetPostStepPoint();
+  if (postStep->GetPhysicalVolume() != nullptr) {
+    stream << " Volume is: " << postStep->GetPhysicalVolume()->GetName()
+           << " at ";
   }
-  fLogger.WriteDebugInfo(stream.str());
+  fLogger.WriteDebugInfo(stream.str(), postStep->GetPosition());
 }
 
 void Surface::PortalControl::SetVerbose(G4int verbose) {
@@ -88,7 +90,7 @@ void Surface::PortalControl::DoPortation(const G4Step *step,
   case PortalType::MultipleSubworld: {
     MultipleSubworld *multipleSubworld =
         static_cast<MultipleSubworld *>(portal);
-    fLogger.WriteDebugInfo("Using PeriodicPortal " +
+    fLogger.WriteDebugInfo("Using MultipleSubworld " +
                            multipleSubworld->GetName());
     multipleSubworld->DoPortation(step);
     break;

@@ -87,10 +87,10 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   //
 
-  G4double subworld_sizeXY = 1 * cm;
+  G4double subworld_sizeXY = 1 * mm;
   G4double subworld_sizeZ = 1 * cm;
 
-  G4int griddim = 2;
+  G4int griddim = 200;
   G4double subworldTrigger_sizeXY = subworld_sizeXY * 1.1;
   G4double subworldTrigger_sizeZ = subworld_sizeZ * 1.1;
 
@@ -261,8 +261,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   // set StepLimit
 
-  G4double maxStepsize = 0.1 * mm;
-  G4double maxStepsize_subworld = 0.1 * um;
+  G4double maxStepsize = 11 * mm;
+  G4double maxStepsize_subworld = 100. * mm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   G4UserLimits *limit_subworld = new G4UserLimits(maxStepsize_subworld);
   logicWorld->SetUserLimits(limit);

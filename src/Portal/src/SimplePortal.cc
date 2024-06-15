@@ -47,15 +47,14 @@ void Surface::SimplePortal::DoPortation(const G4Step *step) {
   fLogger.WriteDebugInfo(std::stringstream()
                          << "PrePosition: x: " << prePosition.x() << " y: "
                          << prePosition.y() << " z: " << prePosition.z());
-  G4ThreeVector tmpPosition = TransformToLocalCoordinate(prePosition);
+  TransformToLocalCoordinate(prePosition);
   // Transformation of position
-  tmpPosition = TransformBetweenPortals(tmpPosition);
-  G4ThreeVector newPosition =
-      fOtherPortal->TransformToGlobalCoordinate(tmpPosition);
+  TransformBetweenPortals(prePosition);
+  fOtherPortal->TransformToGlobalCoordinate(prePosition);
 
   fLogger.WriteDebugInfo(std::stringstream()
-                         << "PostPosition: x: " << newPosition.x() << " y: "
-                         << newPosition.y() << " z: " << newPosition.z());
+                         << "PostPosition: x: " << prePosition.x() << " y: "
+                         << prePosition.y() << " z: " << prePosition.z());
   G4ThreeVector direction = track->GetMomentumDirection();
-  UpdatePosition(step, newPosition);
+  UpdatePosition(step, prePosition);
 }

@@ -51,26 +51,14 @@ void Surface::VPortal::SetGlobalCoord(G4ThreeVector vec) {
                         " z: " + std::to_string(fGlobalCoord.z()));
 }
 
-G4ThreeVector
-Surface::VPortal::TransformToLocalCoordinate(const G4ThreeVector &vec) {
+void Surface::VPortal::TransformToLocalCoordinate(G4ThreeVector &vec) {
   G4ThreeVector coordinateOfVolume = GetLocalCoordSystem();
-  return vec - coordinateOfVolume;
+  vec -= coordinateOfVolume;
 }
 
-G4ThreeVector
-Surface::VPortal::TransformToGlobalCoordinate(const G4ThreeVector &vec) {
-  Logger logger{"VPortal", 3};
-  logger.WriteDebugInfo("Transform to global initiated");
-  logger.WriteDebugInfo("Global coord of " + fName +
-                        " is set to x: " + std::to_string(fGlobalCoord.x()) +
-                        " y: " + std::to_string(fGlobalCoord.y()) +
-                        " z: " + std::to_string(fGlobalCoord.z()));
+void Surface::VPortal::TransformToGlobalCoordinate(G4ThreeVector &vec) {
   G4ThreeVector coordinateOfVolume = GetLocalCoordSystem();
-  logger.WriteDebugInfo("coord of volume " + fName + " is set to x: " +
-                        std::to_string(coordinateOfVolume.x()) +
-                        " y: " + std::to_string(coordinateOfVolume.y()) +
-                        " z: " + std::to_string(coordinateOfVolume.z()));
-  return vec + coordinateOfVolume;
+  vec += coordinateOfVolume;
 }
 
 void Surface::VPortal::SetTrigger(G4VPhysicalVolume *volume) {

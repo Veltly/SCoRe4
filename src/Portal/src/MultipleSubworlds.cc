@@ -35,9 +35,7 @@ Surface::MultipleSubworld::~MultipleSubworld() {
 void Surface::MultipleSubworld::DoPortation(const G4Step *step) {
   // select portation method by checking Grid and side of exit portal
   SingleSurface surface = GetNearestSurface(step);
-  fLogger.WriteDebugInfo("test1");
   PortationType portationType = GetPortationType(surface);
-  fLogger.WriteDebugInfo("test2");
   switch (portationType) {
   case PortationType::ENTER: {
     fLogger.WriteDebugInfo("Doing portation of type: Enter");
@@ -61,39 +59,32 @@ void Surface::MultipleSubworld::EnterPortal(const G4Step *step,
                                             const SingleSurface enterSurface) {
 
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
-  fLogger.WriteDebugInfo(
-      "Current position    x: " + std::to_string(position.x()) + " y: " +
-      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
-  position = TransformToLocalCoordinate(position);
-  fLogger.WriteDebugInfo(
-      "Local Coordinate    x: " + std::to_string(position.x()) + " y: " +
-      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
+  // fLogger.WriteDebugInfo(
+  //     "Current position    x: " + std::to_string(position.x()) + " y: " +
+  //     std::to_string(position.y()) + " z: " + std::to_string(position.z()));
+  TransformToLocalCoordinate(position);
+  // fLogger.WriteDebugInfo(
+  //     "Local Coordinate    x: " + std::to_string(position.x()) + " y: " +
+  //     std::to_string(position.y()) + " z: " + std::to_string(position.z()));
   TransformPortalToSubworld(position);
-  fLogger.WriteDebugInfo(
-      "Subworld Coordinate x: " + std::to_string(position.x()) + " y: " +
-      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
-  position =
-      fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(position);
-  MultipleSubworld *sub = fSubworldGrid->GetSubworld();
-  fLogger.WriteDebugInfo("Subworld name: " + sub->GetName());
-  G4ThreeVector testPos = {0, 0, 0};
-  sub->TransformToGlobalCoordinate(testPos);
-  fLogger.WriteDebugInfo(
-      "Testpos Coordinate   x: " + std::to_string(testPos.x()) + " y: " +
-      std::to_string(testPos.y()) + " z: " + std::to_string(testPos.z()));
-
-  fLogger.WriteDebugInfo(
-      "Global Coordinate   x: " + std::to_string(position.x()) + " y: " +
-      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
+  // fLogger.WriteDebugInfo(
+  //     "Subworld Coordinate x: " + std::to_string(position.x()) + " y: " +
+  //     std::to_string(position.y()) + " z: " + std::to_string(position.z()));
+  fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(position);
+  // MultipleSubworld *sub = fSubworldGrid->GetSubworld();
+  //  fLogger.WriteDebugInfo("Subworld name: " + sub->GetName());
+  //  fLogger.WriteDebugInfo(
+  //      "Global Coordinate   x: " + std::to_string(position.x()) + " y: " +
+  //      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
   UpdatePosition(step, position);
 }
 
 void Surface::MultipleSubworld::ExitPortal(const G4Step *step,
                                            const SingleSurface exitSurface) {
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
-  position = TransformToLocalCoordinate(position);
+  TransformToLocalCoordinate(position);
   TransformSubworldToPortal(position);
-  position = fPortal->TransformToGlobalCoordinate(position);
+  fPortal->TransformToGlobalCoordinate(position);
   UpdatePosition(step, position);
 }
 
@@ -102,25 +93,17 @@ void Surface::MultipleSubworld::DoPeriodicPortation(
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   DoPeriodicTransform(position, exitSurface);
   UpdatePosition(step, position);
-  fLogger.WriteDebugInfo(
-      "Subworld: X:" + std::to_string(fSubworldGrid->CurrentPosX()) +
-      " Y: " + std::to_string(fSubworldGrid->CurrentPosY()));
+  LoggCurrentStatus();
 }
 
 Surface::MultipleSubworld::PortationType
 Surface::MultipleSubworld::GetPortationType(const SingleSurface surface) {
-  fLogger.WriteDebugInfo("Started Portation type");
   if (fIsPortal)
     return PortationType::ENTER;
-  fLogger.WriteDebugInfo("Test");
   const G4int currentNX = fSubworldGrid->CurrentPosX();
   const G4int currentNY = fSubworldGrid->CurrentPosY();
-  fLogger.WriteDebugInfo("CurrentNX: " + std::to_string(currentNX));
-  fLogger.WriteDebugInfo("CurrentNY: " + std::to_string(currentNY));
   const G4int maxNX = fSubworldGrid->MaxX();
   const G4int maxNY = fSubworldGrid->MaxY();
-  fLogger.WriteDebugInfo("maxNX: " + std::to_string(maxNX));
-  fLogger.WriteDebugInfo("maxNY: " + std::to_string(maxNY));
   // Periodic exit at a surface
   if (surface == SingleSurface::X_UP and currentNX < maxNX - 1)
     return PortationType::PERIODIC;
@@ -153,15 +136,19 @@ Surface::MultipleSubworld::SingleSurface
 Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
   G4VSolid *portalSolid = GetVolume()->GetLogicalVolume()->GetSolid();
   G4ThreeVector point = step->GetPostStepPoint()->GetPosition();
-  point = TransformToLocalCoordinate(point);
+  TransformToLocalCoordinate(point);
   const G4ThreeVector result = portalSolid->SurfaceNormal(point);
 
-  fLogger.WriteDebugInfo("Point: x: " + std::to_string(point.x()) +
-                         " y: " + std::to_string(point.y()) +
-                         " z: " + std::to_string(point.z()));
-  fLogger.WriteDebugInfo("SurfaceNormal: x: " + std::to_string(result.x()) +
-                         " y: " + std::to_string(result.y()) +
-                         " z: " + std::to_string(result.z()));
+  fLogger.WriteDebugInfo("Point for finding surface normal", point);
+  fLogger.WriteDebugInfo("Surface normal                  ", result);
+  // fLogger.WriteDebugInfo(
+  //     "Point for finding surface normal: x: " + std::to_string(point.x()) +
+  //     " y: " + std::to_string(point.y()) + " z: " +
+  //     std::to_string(point.z()));
+  // fLogger.WriteDebugInfo(
+  //     "SurfaceNormal                   : x: " + std::to_string(result.x()) +
+  //     " y: " + std::to_string(result.y()) +
+  //     " z: " + std::to_string(result.z()));
 
   auto IsZero = [](const G4double a) {
     const G4double numeric_limit =
@@ -207,8 +194,8 @@ void Surface::MultipleSubworld::DoPeriodicTransform(
   G4ThreeVector pMin, pMax;
   volume->GetLogicalVolume()->GetSolid()->BoundingLimits(pMin, pMax);
   const G4ThreeVector volumeSize = pMax - pMin;
-  const G4ThreeVector oldPosition = vec;
   TransformToLocalCoordinate(vec); // transform to local coord
+  const G4ThreeVector oldPosition = vec;
   // I assume that all subworlds have the same dimension
   switch (surface) {
   case SingleSurface::X_UP:
@@ -256,10 +243,8 @@ void Surface::MultipleSubworld::DoPeriodicTransform(
   }
   fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(
       vec); // transform to coord of new subworld
-  fLogger.WriteDebugInfo(
-      "Periodic Transormation: NX: " +
-      std::to_string(fSubworldGrid->CurrentPosX()) +
-      " NY: " + std::to_string(fSubworldGrid->CurrentPosY()));
+  const std::string subworldName = fSubworldGrid->GetSubworld()->GetName();
+  LoggCurrentStatus();
 }
 
 void Surface::MultipleSubworld::TransformSubworldToPortal(G4ThreeVector &vec) {
@@ -299,8 +284,7 @@ void Surface::MultipleSubworld::TransformPortalToSubworld(G4ThreeVector &vec) {
   fSubworldGrid->SetCurrentX(NX);
   fSubworldGrid->SetCurrentY(NY);
   vec.setZ(TransformZBetweenPortals(vec.z()));
-  fLogger.WriteDebugInfo("Subworld: X " + std::to_string(NX) + " Y " +
-                         std::to_string(NY));
+  LoggCurrentStatus();
 }
 
 G4double
@@ -352,4 +336,12 @@ void Surface::MultipleSubworld::SetSubwordlEdge(const G4double edgeX,
   fEdgeX = edgeX;
   fEdgeY = edgeY;
   fEdgeZ = edgeZ;
+}
+
+void Surface::MultipleSubworld::LoggCurrentStatus() {
+  const std::string name = fSubworldGrid->GetSubworld()->GetName();
+  const std::string nX = std::to_string(fSubworldGrid->CurrentPosX());
+  const std::string nY = std::to_string(fSubworldGrid->CurrentPosY());
+  fLogger.WriteInfo("Current subworld is: " + name + " at X: " + nX +
+                    " Y: " + nY);
 }

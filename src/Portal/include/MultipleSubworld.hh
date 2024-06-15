@@ -64,6 +64,8 @@ private:
   void TransformPortalToSubworld(G4ThreeVector &vec);
   G4double TransformZBetweenPortals(const G4double val);
 
+  void LoggCurrentStatus();
+
 private:
   Logger fLogger;
   MultipleSubworld *fPortal; // TO DO: replace this or delete it!! In transform

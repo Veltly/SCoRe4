@@ -46,18 +46,18 @@ void Surface::PeriodicPortal::EnterPortal(const G4Step *step,
                                           SingleSurface enterSurface) {
 
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
-  position = TransformToLocalCoordinate(position);
+  TransformToLocalCoordinate(position);
   TransformPortalToSubworld(position);
-  position = fOtherPortal->TransformToGlobalCoordinate(position);
+  fOtherPortal->TransformToGlobalCoordinate(position);
   UpdatePosition(step, position);
 }
 
 void Surface::PeriodicPortal::ExitPortal(const G4Step *step,
                                          SingleSurface exitSurface) {
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
-  position = TransformToLocalCoordinate(position);
+  TransformToLocalCoordinate(position);
   TransformSubworldToPortal(position);
-  position = fOtherPortal->TransformToGlobalCoordinate(position);
+  fOtherPortal->TransformToGlobalCoordinate(position);
   UpdatePosition(step, position);
 }
 
@@ -106,7 +106,7 @@ Surface::PeriodicPortal::SingleSurface
 Surface::PeriodicPortal::GetNearestSurface(const G4Step *step) {
   G4VSolid *portalSolid = GetVolume()->GetLogicalVolume()->GetSolid();
   G4ThreeVector point = step->GetPostStepPoint()->GetPosition();
-  point = TransformToLocalCoordinate(point);
+  TransformToLocalCoordinate(point);
   G4ThreeVector result = portalSolid->SurfaceNormal(point);
 
   fLogger.WriteDebugInfo("Point: x: " + std::to_string(point.x()) +

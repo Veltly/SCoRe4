@@ -9,6 +9,7 @@
 #ifndef SURFACE_LOGGER
 #define SURFACE_LOGGER
 #include <G4String.hh>
+#include <G4ThreeVector.hh>
 namespace Surface {
 ///
 /// Logger Class to standardize logging
@@ -22,6 +23,8 @@ public:
   void WriteError(G4String &&);
   void WriteDebugInfo(G4String &);
   void WriteDebugInfo(G4String &&);
+  void WriteDebugInfo(G4String &, const G4ThreeVector &);
+  void WriteDebugInfo(G4String &&, const G4ThreeVector &);
   void WriteDebugInfo(std::stringstream);
   void SetVerboseLvl(G4int aVerboseLvl);
 

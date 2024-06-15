@@ -19,8 +19,8 @@ protected:
   G4ThreeVector GetLocalCoordSystem(G4VPhysicalVolume *volume);
   G4ThreeVector GetLocalCoordSystem();
 
-  G4ThreeVector TransformToLocalCoordinate(const G4ThreeVector &vec);
-  G4ThreeVector TransformToGlobalCoordinate(const G4ThreeVector &vec);
+  void TransformToLocalCoordinate(G4ThreeVector &vec);
+  void TransformToGlobalCoordinate(G4ThreeVector &vec);
   void UpdatePosition(const G4Step *step, G4ThreeVector &newPosition);
   void UpdatePositionMomentum(const G4Step *step, G4ThreeVector &newPosition,
                               G4ThreeVector &newDirection);
