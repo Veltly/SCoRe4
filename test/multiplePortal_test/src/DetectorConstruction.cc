@@ -87,9 +87,10 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   //
 
-  G4double subworld_sizeXY = 0.1 * mm;
-  G4double subworld_sizeZ = 1 * mm;
+  G4double subworld_sizeXY = 1 * cm;
+  G4double subworld_sizeZ = 1 * cm;
 
+  G4int griddim = 2;
   G4double subworldTrigger_sizeXY = subworld_sizeXY * 1.1;
   G4double subworldTrigger_sizeZ = subworld_sizeZ * 1.1;
 
@@ -197,7 +198,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   //
 
-  G4double portal_sizeXY = subworld_sizeXY * 1000;
+  G4double portal_sizeXY = subworld_sizeXY * griddim;
   G4double portal_sizeZ = subworld_sizeZ;
 
   G4ThreeVector portalPlacement{0 * cm, 0 * cm, 10 * cm};
@@ -237,7 +238,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   portalEntrance->SetAsPortal();
   portalEntrance->SetSubwordlEdge(subworld_sizeXY, subworld_sizeXY,
                                   subworld_sizeZ);
-  portalEntrance->SetGrid(1000, 2000, 0);
+  portalEntrance->SetGrid(griddim, griddim, 0);
   portalEntrance->SetOtherPortal(portalSubworldA);
   Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> subworldHelper(0);
   subworldHelper.AddAvailableSubworld(portalSubworldA, 0.3);

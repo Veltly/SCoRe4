@@ -59,13 +59,31 @@ void Surface::MultipleSubworld::EnterPortal(const G4Step *step,
                                             const SingleSurface enterSurface) {
 
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
+  fLogger.WriteDebugInfo(
+      "Current position    x: " + std::to_string(position.x()) + " y: " +
+      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
   position = TransformToLocalCoordinate(position);
+  fLogger.WriteDebugInfo(
+      "Local Coordinate    x: " + std::to_string(position.x()) + " y: " +
+      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
   TransformPortalToSubworld(position);
-  fLogger.WriteDebugInfo("Test1" + fSubworldGrid->GetSubworld()->GetName());
-  fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(position);
-  fLogger.WriteDebugInfo("Test2");
+  fLogger.WriteDebugInfo(
+      "Subworld Coordinate x: " + std::to_string(position.x()) + " y: " +
+      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
+  position =
+      fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(position);
+  MultipleSubworld *sub = fSubworldGrid->GetSubworld();
+  fLogger.WriteDebugInfo("Subworld name: " + sub->GetName());
+  G4ThreeVector testPos = {0, 0, 0};
+  sub->TransformToGlobalCoordinate(testPos);
+  fLogger.WriteDebugInfo(
+      "Testpos Coordinate   x: " + std::to_string(testPos.x()) + " y: " +
+      std::to_string(testPos.y()) + " z: " + std::to_string(testPos.z()));
+
+  fLogger.WriteDebugInfo(
+      "Global Coordinate   x: " + std::to_string(position.x()) + " y: " +
+      std::to_string(position.y()) + " z: " + std::to_string(position.z()));
   UpdatePosition(step, position);
-  fLogger.WriteDebugInfo("Test3");
 }
 
 void Surface::MultipleSubworld::ExitPortal(const G4Step *step,
