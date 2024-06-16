@@ -86,7 +86,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   G4double subworld_sizeXY = 1 * cm;
   G4double subworld_sizeZ = 1 * cm;
-  G4ThreeVector subworldPlacement{40 * cm, 40 * cm, 40 * cm};
+  // G4ThreeVector subworldPlacement{40 * cm, 40 * cm, 40 * cm};
+  G4ThreeVector subworldPlacement{0 * cm, 0 * cm, 0 * cm};
   G4Material *subworld_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Box *solidSubworld = new G4Box("Subworld", // its name
                                    0.5 * subworld_sizeXY, 0.5 * subworld_sizeXY,

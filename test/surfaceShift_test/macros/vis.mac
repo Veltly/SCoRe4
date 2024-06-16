@@ -105,8 +105,7 @@
 /vis/geometry/set/visibility World 0 true
 /vis/geometry/set/colour World 0 0 1 1 .2
 # "Envelope" is transparent blue to represent water
-/vis/geometry/set/colour Subworld 0 0 0 1 .05
-/vis/geometry/set/colour Roughness 0 0 0 1 .2
+/vis/geometry/set/colour TestBox 0 0 0 1 .2
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
 #/vis/viewer/set/viewpointThetaPhi 120 150
