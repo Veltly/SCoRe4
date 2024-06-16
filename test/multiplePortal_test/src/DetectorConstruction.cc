@@ -261,7 +261,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   // set StepLimit
 
-  G4double maxStepsize = 11 * mm;
+  G4double maxStepsize = 100 * mm;
   G4double maxStepsize_subworld = 100. * mm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   G4UserLimits *limit_subworld = new G4UserLimits(maxStepsize_subworld);

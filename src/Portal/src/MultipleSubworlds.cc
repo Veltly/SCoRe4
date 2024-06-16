@@ -138,17 +138,12 @@ Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
   G4ThreeVector point = step->GetPostStepPoint()->GetPosition();
   TransformToLocalCoordinate(point);
   const G4ThreeVector result = portalSolid->SurfaceNormal(point);
+  const G4ThreeVector direction =
+      step->GetPostStepPoint()->GetMomentumDirection();
 
   fLogger.WriteDebugInfo("Point for finding surface normal", point);
   fLogger.WriteDebugInfo("Surface normal                  ", result);
-  // fLogger.WriteDebugInfo(
-  //     "Point for finding surface normal: x: " + std::to_string(point.x()) +
-  //     " y: " + std::to_string(point.y()) + " z: " +
-  //     std::to_string(point.z()));
-  // fLogger.WriteDebugInfo(
-  //     "SurfaceNormal                   : x: " + std::to_string(result.x()) +
-  //     " y: " + std::to_string(result.y()) +
-  //     " z: " + std::to_string(result.z()));
+  fLogger.WriteDebugInfo("Momentum direction              ", direction);
 
   auto IsZero = [](const G4double a) {
     const G4double numeric_limit =
@@ -160,31 +155,63 @@ Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
   const G4bool IsZero_Y = IsZero(result.y());
   const G4bool IsZero_Z = IsZero(result.z());
 
-  // Case X or Y face
-  if (result.x() > 0. and IsZero_Y and IsZero_Z) {
-    return SingleSurface::X_UP;
-  } else if (result.x() < 0. and IsZero_Y and IsZero_Z) {
-    return SingleSurface::X_DOWN;
-  } else if (IsZero_X and result.y() > 0. and IsZero_Z) {
-    return SingleSurface::Y_UP;
-  } else if (IsZero_X and result.y() < 0. and IsZero_Z) {
-    return SingleSurface::Y_DOWN;
-    // Case XY edges
-  } else if (result.x() > 0. and result.y() > 0. and IsZero_Z) {
-    return SingleSurface::X_UP_Y_UP;
-  } else if (result.x() > 0. and result.y() < 0. and IsZero_Z) {
-    return SingleSurface::X_UP_Y_DOWN;
-  } else if (result.x() < 0. and result.y() > 0. and IsZero_Z) {
-    return SingleSurface::X_DOWN_Y_UP;
-  } else if (result.x() < 0. and result.y() < 0. and IsZero_Z) {
-    return SingleSurface::X_DOWN_Y_DOWN;
-    // Case including face Z after all other cases are excluded
-  } else if (result.z() > 0.) {
-    return SingleSurface::Z_UP;
-  } else if (result.z() < 0.) {
-    return SingleSurface::Z_DOWN;
+  SingleSurface X, Y, Z;
+
+  // X
+  if (IsZero_X) { // extra case because of comparison double with 0.
+    X = SingleSurface::X_SAME;
+  } else if (result.x() > 0. and direction.x() > 0.) {
+    X = SingleSurface::X_UP;
+  } else if (result.x() < 0. and direction.x() < 0.) {
+    X = SingleSurface::X_DOWN;
   } else {
-    exit(EXIT_FAILURE); // is a last check, should never happen
+    X = SingleSurface::X_SAME;
+  }
+
+  // Y
+  if (IsZero_Y) {
+    Y = SingleSurface::Y_SAME;
+  } else if (result.y() > 0. and direction.y() > 0.) {
+    Y = SingleSurface::Y_UP;
+  } else if (result.y() < 0. and direction.y() < 0.) {
+    Y = SingleSurface::Y_DOWN;
+  } else {
+    Y = SingleSurface::Y_SAME;
+  }
+
+  // Z
+  if (IsZero_Z) {
+    Z = SingleSurface::Z_SAME;
+  } else if (result.z() > 0. and direction.z() > 0.) {
+    Z = SingleSurface::Z_UP;
+  } else if (result.z() < 0. and direction.z() < 0.) {
+    Z = SingleSurface::Z_DOWN;
+  } else {
+    Z = SingleSurface::Z_SAME;
+  }
+
+  if (Z == SingleSurface::Z_UP) {
+    return SingleSurface::Z_UP;
+  } else if (Z == SingleSurface::Z_DOWN) {
+    return SingleSurface::Z_DOWN;
+  } else if (X == SingleSurface::X_UP and Y == SingleSurface::Y_UP) {
+    return SingleSurface::X_UP_Y_UP;
+  } else if (X == SingleSurface::X_UP and Y == SingleSurface::Y_DOWN) {
+    return SingleSurface::X_UP_Y_DOWN;
+  } else if (X == SingleSurface::X_DOWN and Y == SingleSurface::Y_UP) {
+    return SingleSurface::X_DOWN_Y_UP;
+  } else if (X == SingleSurface::X_DOWN and Y == SingleSurface::Y_DOWN) {
+    return SingleSurface::X_DOWN_Y_DOWN;
+  } else if (X == SingleSurface::X_UP) {
+    return SingleSurface::X_UP;
+  } else if (X == SingleSurface::X_DOWN) {
+    return SingleSurface::X_DOWN;
+  } else if (Y == SingleSurface::Y_UP) {
+    return SingleSurface::Y_UP;
+  } else if (Y == SingleSurface::Y_DOWN) {
+    return SingleSurface::Y_DOWN;
+  } else {
+    return SingleSurface::Z_SAME;
   }
 }
 
@@ -271,8 +298,13 @@ void Surface::MultipleSubworld::TransformPortalToSubworld(G4ThreeVector &vec) {
       pMinOtherVol, pMax);
   const G4ThreeVector otherVolumeDistance = pMax - pMinOtherVol;
   const G4ThreeVector shiftedVec = vec + volumeDistance / 2.;
+  G4double divNX = shiftedVec.x() / otherVolumeDistance.x();
+  G4double divNY = shiftedVec.y() / otherVolumeDistance.y();
   G4int NX = shiftedVec.x() / otherVolumeDistance.x();
   G4int NY = shiftedVec.y() / otherVolumeDistance.y();
+  fLogger.WriteDebugInfo("Calculate gridposition x: " + std::to_string(divNX) +
+                         " y: " + std::to_string(divNY) + " rounded x: " +
+                         std::to_string(NX) + " y: " + std::to_string(NY));
   if (NX == fSubworldGrid->MaxX())
     --NX;
   if (NY == fSubworldGrid->MaxY())

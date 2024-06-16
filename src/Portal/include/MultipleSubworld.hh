@@ -18,14 +18,17 @@ class MultipleSubworld : public VPortal {
 
   enum class SingleSurface {
     X_UP,
+    X_SAME,
     X_DOWN,
     Y_UP,
+    Y_SAME,
     Y_DOWN,
     X_UP_Y_UP,
     X_UP_Y_DOWN,
     X_DOWN_Y_UP,
     X_DOWN_Y_DOWN,
     Z_UP,
+    Z_SAME,
     Z_DOWN
   };
   enum class PortationType { ENTER, EXIT, PERIODIC };
