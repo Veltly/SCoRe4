@@ -8,6 +8,7 @@
 #include <G4Types.hh>
 #include <cstdlib>
 #include <fstream>
+#include <string>
 
 Surface::Shift::Shift(const std::string &filename, const G4int verbose)
     : fLogger({"Shift", verbose}) {
@@ -69,10 +70,28 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
 };
 
 G4double Surface::Shift::Interpolate(const G4double random, const G4int idx) {
-  const G4double prob = fProbability[idx - 1];
-  const G4double diffProb = fProbability[idx] - prob;
-  const G4double randomNormalized = (random - prob) / diffProb;
-  const G4double shift = fShift[idx - 1];
-  const G4double diffShift = fShift[idx] - shift;
-  return shift + randomNormalized * diffShift;
+  G4double val{0};
+  if (idx - 2 >= 0) {
+    val = fProbability[idx - 2];
+  }
+  G4double lowProb{0};
+  if (idx - 1 >= 0) {
+    lowProb = fProbability[idx - 1];
+  }
+  //  fLogger.WriteDebugInfo("IDX: " + std::to_string(idx));
+  const G4double randNorm = (random - lowProb) / (fProbability[idx] - lowProb);
+  const G4double a = fProbability[idx] - lowProb;
+  const G4double b = fProbability[idx + 1] - fProbability[idx];
+  const G4double v = fShift[idx];
+  const G4double w = fShift[idx + 1];
+  G4double tmp = sqrt(a * a * (1 - randNorm) + b * b * randNorm);
+  tmp -= a;
+  tmp /= (b - a);
+  const G4double shift = v + tmp * (w - v);
+  //  fLogger.WriteDebugInfo(
+  //      "prob[idx - 1]: " + std::to_string(lowProb) + " prob[idx]: " +
+  //      std::to_string(fProbability[idx]) + "a: " + std::to_string(a) +
+  //      " b: " + std::to_string(b) + " v: " + std::to_string(v) +
+  //      " w: " + std::to_string(w) + " result: " + std::to_string(shift));
+  return shift;
 };
