@@ -48,7 +48,23 @@ G4ThreeVector Surface::FacetStore::GetRandomPoint() const {
       return point;
     }
   }
-  EXIT_FAILURE;
+  exit(EXIT_FAILURE);
+  return G4ThreeVector{0, 0, 0};
+}
+
+G4ThreeVector
+Surface::FacetStore::GetRandomPoint(G4ThreeVector &surfaceNormal) {
+  G4double random = G4UniformRand();
+  for (size_t i = 0; i < fFacetProbability.size(); ++i) {
+    if (random <= fFacetProbability[i]) {
+      auto point = fFacetVector[i]->GetPointOnFace();
+      surfaceNormal = fFacetVector[i]->GetSurfaceNormal();
+      surfaceNormal /= surfaceNormal.r();
+      point = fTransform + point;
+      return point;
+    }
+  }
+  exit(EXIT_FAILURE);
   return G4ThreeVector{0, 0, 0};
 }
 

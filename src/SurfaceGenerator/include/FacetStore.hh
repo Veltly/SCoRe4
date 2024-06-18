@@ -38,6 +38,10 @@ public:
   ///
   G4ThreeVector GetRandomPoint() const;
   ///
+  /// Returns random point of facet and stores facet normal vector in argument.
+  ///
+  G4ThreeVector GetRandomPoint(G4ThreeVector &surfaceNormal);
+  ///
   /// Appends Triangular Facet to Fact Store.
   /// \param facet Pointer to facet which will be added to store
   ///

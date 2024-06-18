@@ -37,7 +37,7 @@ private:
   Surface::SurfaceSourceMessenger *fMessenger;
   G4GeneralParticleSource *fParticleGenerator;
   Surface::FacetStore fFacetStore;
-  G4bool shift;
+  G4bool fWithShift;
 };
 } // namespace Surface
 #endif // SURFACE_SURFACESOURCE
