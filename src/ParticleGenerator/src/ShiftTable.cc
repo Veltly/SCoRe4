@@ -20,9 +20,9 @@ Surface::Shift::~Shift(){};
 void Surface::Shift::DoShift(G4ThreeVector &position,
                              const G4ThreeVector &direction) {
   G4double random = G4UniformRand();
-  for (size_t i = 0; i < fProbability.size(); ++i) {
-    if (random <= fProbability[i]) {
-      const G4double shift = Interpolate(random, i);
+  for (size_t i = 0; i < fBarProbability.size(); ++i) {
+    if (random <= fBarProbability[i]) {
+      const G4double shift = Interpolate(i);
       const G4ThreeVector normedDirection = direction / direction.r();
       position += normedDirection * shift;
       return;
@@ -35,7 +35,9 @@ void Surface::Shift::PrintShiftTable() {
   ss << "Shift table:\n";
   for (size_t i = 0; i < fProbability.size(); ++i) {
     ss << "Shift: " << std::setw(10) << fShift[i]
-       << " summed probability: " << std::setw(10) << fProbability[i] << "\n";
+       << " Counts: " << std::setw(10) << fProbability[i]
+       << " Summed probability: " << std::setw(10) << fBarProbability[i]
+       << "\n";
   }
   fLogger.WriteInfo(ss.str());
 };
@@ -48,35 +50,46 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
     return exit(EXIT_FAILURE);
   }
   std::string line;
-  std::map<G4double, G4double> fileData;
   const std::string delimiter = ",";
   while (getline(file, line)) {
     const G4int pos = line.find(delimiter);
     const G4double depth = std::stod(line.substr(0, pos));
     const G4double counts = std::stod(line.substr(pos + 1, pos + line.size()));
-    fileData[depth] = counts;
+    fShift.push_back(depth);
+    fProbability.push_back(counts);
   }
   file.close();
   G4double counts{0};
-  for (auto &ele : fileData) {
-    counts += ele.second;
+  for (size_t i = 0; i < fProbability.size() - 1; ++i) {
+    counts += Interpolate(0.5, fProbability.at(i), fProbability.at(i + 1));
   }
+
   G4double probability{0};
-  for (auto &ele : fileData) {
-    probability += ele.second / counts;
-    fProbability.push_back(probability);
-    fShift.push_back(ele.first);
+  for (size_t i = 0; i < fProbability.size() - 1; ++i) {
+    probability +=
+        Interpolate(0.5, fProbability.at(i), fProbability.at(i + 1)) / counts;
+    fBarProbability.push_back(probability);
   }
 };
 
-G4double Surface::Shift::Interpolate(const G4double random, const G4int idx) {
-  const G4double lowProb = fProbability[idx];
-  const G4double highProb = fProbability[idx + 1];
+G4double Surface::Shift::Interpolate(const G4double xNormed,
+                                     const G4double lowerY,
+                                     const G4double upperY) {
+  const G4double k = (upperY - lowerY);
+  const G4double result = lowerY + xNormed * k;
+  return result;
+};
+
+G4double Surface::Shift::Interpolate(const G4int idx) {
+  const G4double a = fProbability[idx];
+  const G4double b = fProbability[idx + 1];
   const G4double rand = G4UniformRand();
-  // const G4double randNorm = (random - lowProb) / (highProb - lowProb);
   const G4double minShift = fShift[idx];
   const G4double maxShift = fShift[idx + 1];
-  const G4double shift = minShift + rand * (maxShift - minShift);
+  G4double tmp = sqrt(a * a * (1 - rand) + b * b * rand);
+  tmp -= a;
+  tmp /= (b - a);
+  const G4double shift = minShift + tmp * (maxShift - minShift);
   // fLogger.WriteDebugInfo("prob[idx]: " + std::to_string(lowProb) +
   //                        " prob[idx + 1]: " + std::to_string(highProb) +
   //                        " minShift: " + std::to_string(minShift) +
@@ -85,28 +98,3 @@ G4double Surface::Shift::Interpolate(const G4double random, const G4int idx) {
   //                        " result: " + std::to_string(shift));
   return shift;
 }
-
-// G4double Surface::Shift::InterpolateA(const G4double random, const G4int idx)
-// {
-//   G4double val{0};
-//   if (idx - 2 >= 0) {
-//     val = fProbability[idx - 2];
-//   }
-//   G4double lowProb{0};
-//   if (idx - 1 >= 0) {
-//     lowProb = fProbability[idx - 1];
-//   }
-//   //  fLogger.WriteDebugInfo("IDX: " + std::to_string(idx));
-//   const G4double randNorm = (random - lowProb) / (fProbability[idx] -
-//   lowProb); const G4double a = fProbability[idx] - lowProb; const G4double b
-//   = fProbability[idx + 1] - fProbability[idx]; const G4double v =
-//   fShift[idx]; const G4double w = fShift[idx + 1]; G4double tmp = sqrt(a * a
-//   * (1 - randNorm) + b * b * randNorm); tmp -= a; tmp /= (b - a); const
-//   G4double shift = v + tmp * (w - v);
-//   //  fLogger.WriteDebugInfo(
-//   //      "prob[idx - 1]: " + std::to_string(lowProb) + " prob[idx]: " +
-//   //      std::to_string(fProbability[idx]) + "a: " + std::to_string(a) +
-//   //      " b: " + std::to_string(b) + " v: " + std::to_string(v) +
-//   //      " w: " + std::to_string(w) + " result: " + std::to_string(shift));
-//   return shift;
-// };

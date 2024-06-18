@@ -47,7 +47,7 @@ RunAction::RunAction() : G4UserRunAction() {
   G4CsvAnalysisManager *analysis = G4CsvAnalysisManager::Instance();
   analysis->SetVerboseLevel(1);
   analysis->SetFirstHistoId(1);
-  analysis->CreateH1("depth", "Postition", 1000, 0, 1);
+  analysis->CreateH1("depth", "Postition", 1000, 0, 2.5);
   analysis->OpenFile("depth");
   G4cout << "test analysis" << G4endl;
 }

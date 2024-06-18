@@ -19,11 +19,13 @@ public:
 
 private:
   void LoadShiftTable(const std::string &filename);
-  G4double Interpolate(const G4double, const G4int);
+  G4double Interpolate(const G4int);
+  G4double Interpolate(const G4double, const G4double, const G4double);
 
 private:
   std::vector<G4double> fProbability;
   std::vector<G4double> fShift;
+  std::vector<G4double> fBarProbability;
   Logger fLogger;
 };
 } // namespace Surface
