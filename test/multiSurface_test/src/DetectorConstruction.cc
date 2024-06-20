@@ -66,10 +66,10 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   //
 
-  G4double subworld_sizeXY = 10 * mm;
-  G4double subworld_sizeZ = 1 * cm;
+  G4double subworld_sizeXY = 0.1 * mm;
+  G4double subworld_sizeZ = 0.1 * mm;
 
-  G4int griddim = 10;
+  G4int griddim = 200;
   G4double subworldTrigger_sizeXY = subworld_sizeXY * 1.1;
   G4double subworldTrigger_sizeZ = subworld_sizeZ * 1.1;
 
@@ -203,8 +203,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   Surface::Describer &describerB = fGeneratorB.GetDescriber();
   Surface::Describer &describerC = fGeneratorC.GetDescriber();
 
-  describerA.SetNrSpike_X(2);
-  describerA.SetNrSpike_Y(2);
+  describerA.SetNrSpike_X(50);
+  describerA.SetNrSpike_Y(50);
   describerA.SetSpikeWidth_X(basis_sizeXY * 0.5 / 2.);
   describerA.SetSpikeWidth_Y(basis_sizeXY * 0.5 / 2.);
   describerA.SetMeanHeight((subworld_sizeZ - basis_sizeZ) * 0.5);
@@ -212,8 +212,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   describerA.SetHeightDeviation(0.0 * mm);
   describerA.SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
 
-  describerB.SetNrSpike_X(2);
-  describerB.SetNrSpike_Y(2);
+  describerB.SetNrSpike_X(50);
+  describerB.SetNrSpike_Y(50);
   describerB.SetSpikeWidth_X(basis_sizeXY * 0.5 / 2.);
   describerB.SetSpikeWidth_Y(basis_sizeXY * 0.5 / 2.);
   describerB.SetMeanHeight((subworld_sizeZ - basis_sizeZ) * 0.3);
@@ -221,8 +221,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   describerB.SetHeightDeviation(0.0 * mm);
   describerB.SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
 
-  describerC.SetNrSpike_X(2);
-  describerC.SetNrSpike_Y(2);
+  describerC.SetNrSpike_X(50);
+  describerC.SetNrSpike_Y(50);
   describerC.SetSpikeWidth_X(basis_sizeXY * 0.5 / 2.);
   describerC.SetSpikeWidth_Y(basis_sizeXY * 0.5 / 2.);
   describerC.SetMeanHeight((subworld_sizeZ - basis_sizeZ) * 0.1);
@@ -243,9 +243,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4MultiUnion *solidSurfaceC =
       static_cast<G4MultiUnion *>(fGeneratorC.GetSolid());
 
-  solidSurfaceA->AddNode(solidBasis, basisTransform);
-  solidSurfaceB->AddNode(solidBasis, basisTransform);
-  solidSurfaceC->AddNode(solidBasis, basisTransform);
+  solidSurfaceA->AddNode(*solidBasis, basisTransform);
+  solidSurfaceB->AddNode(*solidBasis, basisTransform);
+  solidSurfaceC->AddNode(*solidBasis, basisTransform);
 
   // Voxelize all surfaces
   //
@@ -315,18 +315,19 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   //
 
+  G4int verboseLvL{0};
   Surface::PortalStore &portalStore = Surface::Locator::GetPortalStore();
-  Surface::MultipleSubworld *portalEntrance =
-      new Surface::MultipleSubworld("Entrance", physPortal, portalPlacement, 3);
+  Surface::MultipleSubworld *portalEntrance = new Surface::MultipleSubworld(
+      "Entrance", physPortal, portalPlacement, verboseLvL);
 
   Surface::MultipleSubworld *portalSubworldA = new Surface::MultipleSubworld(
-      "Subworld-A", physSubworldA, subworldTriggerPlacementA, 3,
+      "Subworld-A", physSubworldA, subworldTriggerPlacementA, verboseLvL,
       fGeneratorA.GetFacetStore());
   Surface::MultipleSubworld *portalSubworldB = new Surface::MultipleSubworld(
-      "Subworld-B", physSubworldB, subworldTriggerPlacementB, 3,
+      "Subworld-B", physSubworldB, subworldTriggerPlacementB, verboseLvL,
       fGeneratorB.GetFacetStore());
   Surface::MultipleSubworld *portalSubworldC = new Surface::MultipleSubworld(
-      "Subworld-C", physSubworldC, subworldTriggerPlacementC, 3,
+      "Subworld-C", physSubworldC, subworldTriggerPlacementC, verboseLvL,
       fGeneratorC.GetFacetStore());
 
   // set trigger for portals
