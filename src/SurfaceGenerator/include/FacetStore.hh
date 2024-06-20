@@ -8,6 +8,7 @@
 #ifndef SURFACE_FACETSTORE
 #define SURFACE_FACETSTORE
 
+#include <G4String.hh>
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
 #include <G4TriangularFacet.hh>
@@ -29,6 +30,7 @@ private:
   };
 
 public:
+  FacetStore(G4String name = "") : fStoreName(name){};
   ///
   /// Closes Facet Store and prepares it for usage in simulation.
   ///
@@ -65,6 +67,7 @@ public:
   void SetTransformation(const G4ThreeVector &transformation) {
     fTransform = transformation;
   };
+  inline G4String GetStoreName() const { return fStoreName; };
 
 private:
   ///
@@ -87,6 +90,7 @@ private:
   G4bool fClosed{false}; ///< Indicates if Facet Store is closed and facets can
                          ///< not be added anymore.
   G4ThreeVector fTransform;
+  G4String fStoreName;
 };
 } // namespace Surface
 #endif // SURFACE_FACETSTORE

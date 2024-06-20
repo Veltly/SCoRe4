@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <numeric>
 
-Surface::Calculator::Calculator(Surface::FacetStore &aFacetStore) {
-  fFacetStore = aFacetStore;
+Surface::Calculator::Calculator(Surface::FacetStore *aFacetStore)
+    : fFacetStore(aFacetStore) {
   Recalculate();
 };
 
@@ -27,6 +27,7 @@ void Surface::Calculator::Recalculate() {
   Sa = CalcSa();
   Sku = CalcSku();
   Ssk = CalcSsk();
+  area = CalcArea();
 }
 
 G4double Surface::Calculator::Integrate_f_0() { return 0.5; }
@@ -164,8 +165,8 @@ G4double Surface::Calculator::GetTrafoDeterminant(const Vertices &aVertices) {
 }
 
 G4double Surface::Calculator::CalcProjectedSurface() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double Surface{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
@@ -181,8 +182,8 @@ G4double Surface::Calculator::CalcProjectedSurface() {
 }
 
 G4double Surface::Calculator::CalcMeanHeight() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double Volume{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet = *(*FacetIter);
@@ -194,8 +195,8 @@ G4double Surface::Calculator::CalcMeanHeight() {
 }
 
 G4double Surface::Calculator::CalcSa() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
@@ -218,8 +219,8 @@ G4double Surface::Calculator::CalcSa() {
 G4double Surface::Calculator::CalcSz() { return CalcSp() + CalcSv(); }
 
 G4double Surface::Calculator::CalcSv() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double min{MeanHeight};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
@@ -236,8 +237,8 @@ G4double Surface::Calculator::CalcSv() {
 }
 
 G4double Surface::Calculator::CalcSp() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double max{MeanHeight};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
@@ -254,8 +255,8 @@ G4double Surface::Calculator::CalcSp() {
 }
 
 G4double Surface::Calculator::CalcSq() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
@@ -269,8 +270,8 @@ G4double Surface::Calculator::CalcSq() {
 }
 
 G4double Surface::Calculator::CalcSsk() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
@@ -286,8 +287,8 @@ G4double Surface::Calculator::CalcSsk() {
 }
 
 G4double Surface::Calculator::CalcSku() {
-  auto FacetIter = fFacetStore.GetIterBegin();
-  auto FacetIterEnd = fFacetStore.GetIterEnd();
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
@@ -300,6 +301,20 @@ G4double Surface::Calculator::CalcSku() {
   Value /= ProjectedSurface;
   Value /= std::pow(Sq, 4);
   return Value;
+}
+
+G4double Surface::Calculator::CalcArea() {
+  auto FacetIter = fFacetStore->GetIterBegin();
+  auto FacetIterEnd = fFacetStore->GetIterEnd();
+  G4double surface{0};
+  while (FacetIter != FacetIterEnd) {
+    const G4TriangularFacet &facet =
+        *(*FacetIter); // Double dereferenceing because ITER to FACETPOINTER
+                       // to FACET;
+    surface += facet.GetArea();
+    ++FacetIter;
+  }
+  return surface;
 }
 
 G4double Surface::Calculator::IntegrationRoutine(
@@ -396,6 +411,7 @@ void Surface::Calculator::PrintSurfaceInformation() const {
   G4cout << "Sa             : " << GetSa() << G4endl;
   G4cout << "Ssk            : " << GetSsk() << G4endl;
   G4cout << "Sku            : " << GetSku() << G4endl;
+  G4cout << "Area           : " << GetArea() << G4endl;
   G4cout << "\n\n" << G4endl;
 }
 

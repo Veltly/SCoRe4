@@ -6,6 +6,7 @@
 #define MULTIPLESUBWORLD_HH
 
 #include "../../Service/include/Logger.hh"
+#include "../../SurfaceGenerator/include/FacetStore.hh"
 #include "G4Step.hh"
 #include "G4VPhysicalVolume.hh"
 #include "SubworldGrid.hh"
@@ -35,7 +36,8 @@ class MultipleSubworld : public VPortal {
 
 public:
   MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
-                   G4ThreeVector &vec, const G4int verbose);
+                   G4ThreeVector &vec, const G4int verbose,
+                   FacetStore *facetStore = nullptr);
   ~MultipleSubworld();
   virtual void DoPortation(const G4Step *step);
   // Setter
@@ -53,6 +55,8 @@ public:
   inline G4bool IsPortal() const { return fIsPortal; }
 
   void SetSubwordlEdge(G4double edgeX, G4double edgeY, G4double edgeZ);
+
+  FacetStore *GetFacetStore() { return fFacetStore; };
 
 private:
   void DoPeriodicPortation(const G4Step *step, const SingleSurface);
@@ -81,6 +85,7 @@ private:
   // order of Grid such that (fCurrentNX, fCurrentNy) = (0,0)
   // has the lowest local (x,y) coordinate in the portal
   // Grid will only be initialized if called
+  FacetStore *fFacetStore;
 };
 } // namespace Surface
 #endif // MULTIPLESUBWORLD_HH

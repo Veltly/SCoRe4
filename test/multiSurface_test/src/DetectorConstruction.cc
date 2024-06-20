@@ -265,6 +265,16 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   voxelB.Voxelize(solidSurfaceB);
   voxelC.Voxelize(solidSurfaceC);
 
+  G4ThreeVector facetStorePlacementA =
+      subworldTriggerPlacementA + surfaceInSubworld;
+  G4ThreeVector facetStorePlacementB =
+      subworldTriggerPlacementB + surfaceInSubworld;
+  G4ThreeVector facetStorePlacementC =
+      subworldTriggerPlacementC + surfaceInSubworld;
+
+  fGeneratorA.SetSurfaceTransformation(facetStorePlacementA);
+  fGeneratorB.SetSurfaceTransformation(facetStorePlacementB);
+  fGeneratorC.SetSurfaceTransformation(facetStorePlacementC);
   // generate logical volumes of roughness
   //
   G4LogicalVolume *logicSurfaceA =
@@ -310,11 +320,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
       new Surface::MultipleSubworld("Entrance", physPortal, portalPlacement, 3);
 
   Surface::MultipleSubworld *portalSubworldA = new Surface::MultipleSubworld(
-      "Subworld-A", physSubworldA, subworldTriggerPlacementA, 3);
+      "Subworld-A", physSubworldA, subworldTriggerPlacementA, 3,
+      fGeneratorA.GetFacetStore());
   Surface::MultipleSubworld *portalSubworldB = new Surface::MultipleSubworld(
-      "Subworld-B", physSubworldB, subworldTriggerPlacementB, 3);
+      "Subworld-B", physSubworldB, subworldTriggerPlacementB, 3,
+      fGeneratorB.GetFacetStore());
   Surface::MultipleSubworld *portalSubworldC = new Surface::MultipleSubworld(
-      "Subworld-C", physSubworldC, subworldTriggerPlacementC, 3);
+      "Subworld-C", physSubworldC, subworldTriggerPlacementC, 3,
+      fGeneratorC.GetFacetStore());
 
   // set trigger for portals
   portalEntrance->SetTrigger(physPortal);
@@ -349,7 +362,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // set StepLimit
 
   G4double maxStepsize = 100 * mm;
-  G4double maxStepsize_subworld = 100. * mm;
+  G4double maxStepsize_subworld = 0.1 * mm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   G4UserLimits *limit_subworld = new G4UserLimits(maxStepsize_subworld);
   logicWorld->SetUserLimits(limit);

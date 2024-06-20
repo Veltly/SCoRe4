@@ -48,9 +48,9 @@ public:
   G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
 
 protected:
-  Surface::SurfaceGenerator fGeneratorA;
-  Surface::SurfaceGenerator fGeneratorB;
-  Surface::SurfaceGenerator fGeneratorC;
+  Surface::SurfaceGenerator fGeneratorA{"GenA"};
+  Surface::SurfaceGenerator fGeneratorB{"GenB"};
+  Surface::SurfaceGenerator fGeneratorC{"GenC"};
   G4LogicalVolume *fScoringVolume;
 };
 

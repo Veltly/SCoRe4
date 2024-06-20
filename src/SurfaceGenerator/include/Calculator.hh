@@ -36,7 +36,7 @@ public:
   ///
   /// Instantiates calculator.
   ///\param FacetStore has to be passed
-  Calculator(Surface::FacetStore &);
+  Calculator(Surface::FacetStore *);
   ///
   /// Recalculates all values.
   void Recalculate();
@@ -49,6 +49,7 @@ public:
   inline G4double GetSku() const { return Sku; }
   inline G4double GetSsk() const { return Ssk; }
   inline G4double GetSq() const { return Sq; }
+  inline G4double GetArea() const { return area; }
   ///
   /// Print Surface Information to console.
   void PrintSurfaceInformation() const;
@@ -90,6 +91,9 @@ private:
   /// Calculate root mean square height.
   /// \f$ Sq = \sqrt{\frac{1}{A} \int \int_A Z^2(x,y)dxdy} \f$
   G4double CalcSq();
+  ///
+  /// Calculate area of surface
+  G4double CalcArea();
   ///
   /// Returns vertices from passed Facet.
   static Vertices GetVertices(const G4TriangularFacet &aFacet);
@@ -134,7 +138,7 @@ private:
   static G4ThreeVector GetLowestVertex(const Vertices &);
   static G4ThreeVector GetHighestVertex(const Vertices &);
   static void TransformFunctionparameter(FunctionParameter &, const Vertices &);
-  Surface::FacetStore fFacetStore;
+  Surface::FacetStore *fFacetStore;
   G4double MeanHeight;       ///< Mean height
   G4double ProjectedSurface; ///< Area of projected surface
   G4double Sz;               ///< Maximum Height
@@ -144,6 +148,7 @@ private:
   G4double Sku;              ///< Kurtosis
   G4double Ssk;              ///< Skewness
   G4double Sq;               ///< Root mean square height
+  G4double area;             ///< Area of surface
 };
 } // namespace Surface
 #endif

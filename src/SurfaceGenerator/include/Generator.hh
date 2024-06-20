@@ -12,6 +12,7 @@
 #include "../../Service/include/Logger.hh"
 #include "Assembler.hh"
 #include "Describer.hh"
+#include "FacetStore.hh"
 #include "Storage.hh"
 #include <G4Transform3D.hh>
 #include <G4VSolid.hh>
@@ -24,7 +25,7 @@ namespace Surface {
 /// surface of the volume will be generated.
 class SurfaceGenerator {
 public:
-  SurfaceGenerator() noexcept;
+  SurfaceGenerator(G4String name = "") noexcept;
   ///
   /// Returns handle to solid
   inline G4VSolid *GetSolid() const { return fSolidhandle; };
@@ -34,6 +35,7 @@ public:
   void GenerateSurface();
 
   inline Describer &GetDescriber() { return fDescriber; };
+  inline FacetStore *GetFacetStore() { return fFacetStore; };
   void SetSurfaceTransformation(G4ThreeVector &transform);
 
 private:
@@ -53,7 +55,9 @@ private:
   G4VSolid *fSolidhandle;                   ///< Pointer to final solid
   std::vector<SurfaceDescription> fSurface; ///< stores description of surface
   Describer fDescriber;                     ///< describes surface
-  Surface::Logger fLogger;
+  Logger fLogger;
+  FacetStore *fFacetStore;
+  G4String fName;
 };
 
 } // namespace Surface

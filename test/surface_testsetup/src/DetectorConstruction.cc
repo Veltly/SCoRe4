@@ -5,6 +5,7 @@
 #include "DetectorConstruction.hh"
 
 #include "../../../src/Service/include/G4Voxelizer_Green.hh"
+#include "../../../src/Service/include/Locator.hh"
 #include "../../../src/SurfaceGenerator/include/Generator.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
@@ -166,6 +167,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                     logicSubworld, 0, 0, checkOverlaps);
 
   fSurfaceGenerator.SetSurfaceTransformation(subworldPlacement);
+  Surface::FacetStore &store = Surface::Locator::GetFacetStore();
+  store = *fSurfaceGenerator.GetFacetStore();
   //
   // always return the physical World
   //

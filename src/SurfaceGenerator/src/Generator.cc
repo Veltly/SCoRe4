@@ -6,15 +6,16 @@
 //
 //
 #include "../include/Generator.hh"
-#include "../../Service/include/Locator.hh"
 #include "../include/Assembler.hh"
 #include "../include/Calculator.hh"
 #include "../include/Describer.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
 #include <G4MultiUnion.hh>
 #include <G4Transform3D.hh>
-Surface::SurfaceGenerator::SurfaceGenerator() noexcept
+Surface::SurfaceGenerator::SurfaceGenerator(G4String name) noexcept
     : fSolidhandle(nullptr), fDescriber(Surface::Describer()),
-      fLogger({"SurfaceGenerator", 3}) {
+      fLogger({"SurfaceGenerator", 3}), fFacetStore(new FacetStore{name}),
+      fName(name) {
   fLogger.WriteInfo("initialized");
 }
 
@@ -27,7 +28,7 @@ void Surface::SurfaceGenerator::GenerateSurface() {
 void Surface::SurfaceGenerator::Assemble() {
   fLogger.WriteDebugInfo("calling assemble");
   auto description = fDescriber.GetSolidDescription();
-  Surface::Assembler Assembler;
+  Surface::Assembler Assembler(fFacetStore);
   Assembler.SetDescription(description);
   Assembler.Assemble();
   fSolidhandle = Assembler.GetSolid();
@@ -37,7 +38,7 @@ void Surface::SurfaceGenerator::Assemble() {
 
 void Surface::SurfaceGenerator::Calculate() {
   fLogger.WriteDebugInfo("calling calculate");
-  Calculator calculator{Locator::GetFacetStore()};
+  Calculator calculator{fFacetStore};
   calculator.PrintSurfaceInformation();
 }
 
@@ -49,5 +50,5 @@ void Surface::SurfaceGenerator::GenerateDescription() {
 
 void Surface::SurfaceGenerator::SetSurfaceTransformation(
     G4ThreeVector &transform) {
-  Surface::Locator::GetFacetStore().SetTransformation(transform);
+  fFacetStore->SetTransformation(transform);
 }

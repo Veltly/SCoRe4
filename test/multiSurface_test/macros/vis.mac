@@ -108,6 +108,9 @@
 /vis/geometry/set/colour SubworldA 0 0 0 1 .2
 /vis/geometry/set/colour SubworldB 0 0 0 1 .2
 /vis/geometry/set/colour SubworldC 0 0 0 1 .2
+/vis/geometry/set/colour SurfaceA 1 0 0 0 .2
+/vis/geometry/set/colour SurfaceB 1 0 0 0 .2
+/vis/geometry/set/colour SurfaceC 1 0 0 0 .2
 /vis/geometry/set/colour SubworldTriggerA 0 0 1 1 .1
 /vis/geometry/set/colour SubworldTriggerB 0 0 1 1 .1
 /vis/geometry/set/colour SubworldTriggerC 0 0 1 1 .1

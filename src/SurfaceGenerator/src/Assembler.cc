@@ -20,7 +20,8 @@
 
 using Volumetype = Surface::SolidDescription::Solid;
 
-Surface::Assembler::Assembler() : fLogger({"Assembler", 3}){};
+Surface::Assembler::Assembler(FacetStore *store)
+    : fLogger({"Assembler", 3}), fFacetStore(store){};
 
 void Surface::Assembler::Assemble() {
   G4MultiUnion *AssembledSolid = new G4MultiUnion;
@@ -35,7 +36,6 @@ void Surface::Assembler::Assemble() {
 }
 
 void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
-  auto &FacetStore = Surface::Locator::GetFacetStore();
   G4VSolid *newSolid = GetSingleSolid(aDescription);
   G4Polyhedron polyhedron{*newSolid->CreatePolyhedron()};
   polyhedron.Transform(aDescription.Transform);
@@ -48,10 +48,10 @@ void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
       Tmp_Vertices.emplace_back(
           G4ThreeVector{Vertices[i].x(), Vertices[i].y(), Vertices[i].z()});
     }
-    FacetStore.AppendToFacetVector(new G4TriangularFacet{
+    fFacetStore->AppendToFacetVector(new G4TriangularFacet{
         Tmp_Vertices[0], Tmp_Vertices[1], Tmp_Vertices[2], ABSOLUTE});
     if (NVertices == 4) {
-      FacetStore.AppendToFacetVector(new G4TriangularFacet{
+      fFacetStore->AppendToFacetVector(new G4TriangularFacet{
           Tmp_Vertices[0], Tmp_Vertices[2], Tmp_Vertices[3], ABSOLUTE});
     }
   }

@@ -4,6 +4,7 @@
 
 #include "../include/ShiftTable.hh"
 #include "Randomize.hh"
+#include <G4SystemOfUnits.hh>
 #include <G4ThreeVector.hh>
 #include <G4Types.hh>
 #include <cstdlib>
@@ -22,12 +23,19 @@ void Surface::Shift::DoShift(G4ThreeVector &position,
   G4double random = G4UniformRand();
   for (size_t i = 0; i < fBarProbability.size(); ++i) {
     if (random <= fBarProbability[i]) {
-      const G4double shift = Interpolate(i);
+      const G4double shift = Interpolate(i) * CLHEP::nm;
       const G4ThreeVector normedDirection = direction / direction.r();
-      position += normedDirection * shift;
+      position -= normedDirection * shift;
       return;
     };
   }
+}
+
+void Surface::Shift::DoShiftByValue(const G4double shift,
+                                    G4ThreeVector &position,
+                                    const G4ThreeVector &direction) {
+  const G4ThreeVector normedDirection = direction.unit();
+  position -= normedDirection * shift;
 }
 
 void Surface::Shift::PrintShiftTable() {

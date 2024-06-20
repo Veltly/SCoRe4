@@ -17,10 +17,11 @@
 Surface::MultipleSubworld::MultipleSubworld(const G4String name,
                                             G4VPhysicalVolume *volume,
                                             G4ThreeVector &vec,
-                                            const G4int verbose)
+                                            const G4int verbose,
+                                            FacetStore *facetStore)
     : VPortal(name, volume, PortalType::MultipleSubworld),
       fLogger({"MultiplePortal", verbose}), fIsPortal(false),
-      fSubworldGrid(nullptr) {
+      fSubworldGrid(nullptr), fFacetStore(facetStore) {
   SetGlobalCoord(vec);
 };
 

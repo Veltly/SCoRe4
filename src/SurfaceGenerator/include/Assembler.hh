@@ -10,6 +10,7 @@
 #define SURFACE_ASSEMBLER
 
 #include "../../Service/include/Logger.hh"
+#include "FacetStore.hh"
 #include "Storage.hh"
 #include <G4Box.hh>
 #include <G4Transform3D.hh>
@@ -26,7 +27,7 @@ namespace Surface {
 ///
 class Assembler {
 public:
-  Assembler();
+  Assembler(FacetStore *store);
   ///
   /// calls the assembler to assemble and add all selected facets to the
   /// FacetStore.
@@ -58,6 +59,7 @@ private:
   G4VSolid *fSolid;         ///< Solid handle;
   Description fDescription; ///< handle of Description
   Surface::Logger fLogger;
+  FacetStore *fFacetStore;
 };
 
 } // namespace Surface
