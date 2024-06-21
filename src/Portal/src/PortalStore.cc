@@ -2,8 +2,8 @@
 // Date: 24-05-24
 // File: PortalStore
 
-#include "Portal/include/PortalStore.hh"
-#include "Portal/include/VPortal.hh"
+#include "../include/PortalStore.hh"
+#include "../include/VPortal.hh"
 #include <G4LogicalVolume.hh>
 #include <G4VPhysicalVolume.hh>
 #include <algorithm>

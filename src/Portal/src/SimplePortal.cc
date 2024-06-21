@@ -3,8 +3,8 @@
 // File: SimplePortal
 
 #include "../include/SimplePortal.hh"
-#include "ParticleGenerator/include/SurfaceSource.hh"
-#include "Portal/include/VPortal.hh"
+#include "../../ParticleGenerator/include/SurfaceSource.hh"
+#include "../include/VPortal.hh"
 #include <G4EventManager.hh>
 #include <G4Navigator.hh>
 #include <G4PhysicalVolumeStore.hh>

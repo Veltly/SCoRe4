@@ -4,11 +4,11 @@
 
 #include "../../Portal/include/MultipleSubworld.hh"
 #include "../../Portal/include/PortalStore.hh"
+#include "../../Portal/include/SubworldGrid.hh"
 #include "../../Service/include/Locator.hh"
+#include "../../SurfaceGenerator/include/Calculator.hh"
+#include "../../SurfaceGenerator/include/FacetStore.hh"
 #include "../include/MultiSubworldSampler.hh"
-#include "Portal/include/SubworldGrid.hh"
-#include "SurfaceGenerator/include/Calculator.hh"
-#include "SurfaceGenerator/include/FacetStore.hh"
 #include <G4GeneralParticleSource.hh>
 #include <G4ThreeVector.hh>
 

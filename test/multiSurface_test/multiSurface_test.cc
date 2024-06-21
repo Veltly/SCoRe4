@@ -4,9 +4,9 @@
 // Testsetup is based on example
 
 #include "ActionInitialization.hh"
-#include "DetectorConstruction.hh"
 #include "G4RunManager.hh"
-#include "PhysicsList.hh"
+#include "include/DetectorConstruction.hh"
+#include "include/PhysicsList.hh"
 
 #include "G4UImanager.hh"
 

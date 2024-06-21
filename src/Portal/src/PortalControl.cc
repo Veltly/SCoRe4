@@ -5,11 +5,11 @@
 #include "../include/PortalControl.hh"
 #include "../../Service/include/Locator.hh"
 #include "../../Service/include/Logger.hh"
+#include "../include/MultipleSubworld.hh"
+#include "../include/PeriodicPortal.hh"
+#include "../include/SimplePortal.hh"
 #include "../include/VPortal.hh"
 #include "G4Step.hh"
-#include "Portal/include/MultipleSubworld.hh"
-#include "Portal/include/PeriodicPortal.hh"
-#include "Portal/include/SimplePortal.hh"
 #include <G4LogicalVolume.hh>
 #include <G4StepPoint.hh>
 #include <G4ThreeVector.hh>

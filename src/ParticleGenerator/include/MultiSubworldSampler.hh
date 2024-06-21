@@ -5,11 +5,11 @@
 #ifndef MULTISUBWORLDSAMPLER_HH
 #define MULTISUBWORLDSAMPLER_HH
 
+#include "../../Portal/include/MultipleSubworld.hh"
+#include "../../Portal/include/SubworldGrid.hh"
 #include "../../Service/include/VSampler.hh"
 #include "G4GeneralParticleSource.hh"
 #include "G4VPrimaryGenerator.hh"
-#include "Portal/include/MultipleSubworld.hh"
-#include "Portal/include/SubworldGrid.hh"
 #include "ShiftTable.hh"
 namespace Surface {
 

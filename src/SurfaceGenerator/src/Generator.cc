@@ -9,7 +9,7 @@
 #include "../include/Assembler.hh"
 #include "../include/Calculator.hh"
 #include "../include/Describer.hh"
-#include "SurfaceGenerator/include/FacetStore.hh"
+#include "../include/FacetStore.hh"
 #include <G4MultiUnion.hh>
 #include <G4Transform3D.hh>
 Surface::SurfaceGenerator::SurfaceGenerator(G4String name) noexcept
