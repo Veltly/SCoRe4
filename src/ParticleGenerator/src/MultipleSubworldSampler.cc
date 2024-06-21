@@ -3,15 +3,33 @@
 // File MultiSubworldSampler
 
 #include "../../Portal/include/MultipleSubworld.hh"
+#include "../../Portal/include/PortalStore.hh"
+#include "../../Service/include/Locator.hh"
 #include "../include/MultiSubworldSampler.hh"
+#include "Portal/include/SubworldGrid.hh"
 #include "SurfaceGenerator/include/Calculator.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
+#include <G4GeneralParticleSource.hh>
 #include <G4ThreeVector.hh>
+
+void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
+  if (!GetSamplerStatus()) {
+    Surface::PortalStore pStore = Surface::Locator::GetPortalStore();
+    Surface::MultipleSubworld *subworld =
+        static_cast<Surface::MultipleSubworld *>(pStore[0]);
+    SetSubworld(subworld->GetSubworldGrid());
+  }
+  fParticleGenerator->GeneratePrimaryVertex(event);
+  G4ThreeVector position = GetRandom();
+  event->GetPrimaryVertex()->SetPosition(position.x(), position.y(),
+                                         position.z());
+}
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(G4String shiftFilename)
     : fShift({shiftFilename}),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler"}),
-      fSamplerReady(false), fLogger({"MultiSubworldSampler", 3}){};
+      fSamplerReady(false), fLogger({"MultiSubworldSampler", 3}),
+      fParticleGenerator(new G4GeneralParticleSource){};
 
 G4ThreeVector Surface::MultiSubworldSampler::GetRandom() {
   if (!fSamplerReady) {
