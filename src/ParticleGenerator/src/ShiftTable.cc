@@ -9,6 +9,7 @@
 #include <G4Types.hh>
 #include <cstdlib>
 #include <fstream>
+#include <limits>
 #include <string>
 
 Surface::Shift::Shift(const std::string &filename, const G4int verbose)
@@ -18,17 +19,35 @@ Surface::Shift::Shift(const std::string &filename, const G4int verbose)
 
 Surface::Shift::~Shift(){};
 
-void Surface::Shift::DoShift(G4ThreeVector &position,
-                             const G4ThreeVector &direction) {
+G4double Surface::Shift::CalcShift() {
   G4double random = G4UniformRand();
   for (size_t i = 0; i < fBarProbability.size(); ++i) {
     if (random <= fBarProbability[i]) {
-      const G4double shift = Interpolate(i) * CLHEP::nm;
-      const G4ThreeVector normedDirection = direction / direction.r();
-      position -= normedDirection * shift;
-      return;
+      return Interpolate(i) * CLHEP::nm;
     };
   }
+}
+
+void Surface::Shift::DoShift(G4ThreeVector &position,
+                             const G4ThreeVector &direction) {
+  G4double shift;
+  G4int counter{0};
+  while (true) {
+    shift = CalcShift();
+    if (shift < fMaxShift and shift > fMinShift) {
+      break;
+    }
+    ++counter;
+    if (counter > 10000) {
+      fLogger.WriteError("Counter of ShiftTable > 10,000! Now performing shift "
+                         "with value outside marked area");
+      break;
+    }
+  }
+
+  fLogger.WriteDebugInfo("Shift done: " + std::to_string(shift));
+  const G4ThreeVector normedDirection = direction / direction.r();
+  position -= normedDirection * shift;
 }
 
 void Surface::Shift::DoShiftByValue(const G4double shift,
@@ -94,9 +113,19 @@ G4double Surface::Shift::Interpolate(const G4int idx) {
   const G4double rand = G4UniformRand();
   const G4double minShift = fShift[idx];
   const G4double maxShift = fShift[idx + 1];
-  G4double tmp = sqrt(a * a * (1 - rand) + b * b * rand);
-  tmp -= a;
-  tmp /= (b - a);
+  auto IsZero = [](const G4double a) {
+    const G4double numeric_limit =
+        std::numeric_limits<G4double>::epsilon() * 10;
+    return fabs(a) < numeric_limit;
+  };
+  G4double tmp = 0;
+  if (IsZero(b - a)) {
+    tmp = rand;
+  } else {
+    tmp = sqrt(a * a * (1 - rand) + b * b * rand);
+    tmp -= a;
+    tmp /= (b - a);
+  }
   const G4double shift = minShift + tmp * (maxShift - minShift);
   // fLogger.WriteDebugInfo("prob[idx]: " + std::to_string(lowProb) +
   //                        " prob[idx + 1]: " + std::to_string(highProb) +
@@ -105,4 +134,13 @@ G4double Surface::Shift::Interpolate(const G4int idx) {
   //                        " rand: " + std::to_string(rand) +
   //                        " result: " + std::to_string(shift));
   return shift;
+}
+
+void Surface::Shift::SetMinShift(G4double min) {
+  fMinShift = min;
+  fLogger.WriteInfo("Min shift set to " + std::to_string(min));
+}
+void Surface::Shift::SetMaxShift(G4double max) {
+  fMaxShift = max;
+  fLogger.WriteInfo("Max shift set to " + std::to_string(max));
 }

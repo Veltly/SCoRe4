@@ -2,12 +2,15 @@
 #include "G4GeneralParticleSource.hh"
 #include "G4RunManager.hh"
 #include "ParticleGenerator/include/ShiftTable.hh"
+#include <CLHEP/Units/SystemOfUnits.h>
 #include <G4ThreeVector.hh>
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(), fGps(new G4GeneralParticleSource()),
-      fShiftTable(new Surface::Shift{"macros/shiftData", 3}) {
+      fShiftTable(new Surface::Shift{"macros/shiftData", 1}) {
   fShiftTable->PrintShiftTable();
+  fShiftTable->SetMinShift(20. * CLHEP::nm);
+  fShiftTable->SetMaxShift(40. * CLHEP::nm);
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {
