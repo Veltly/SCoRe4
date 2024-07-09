@@ -3,6 +3,7 @@
 // File: ShiftTable
 
 #include "../include/ShiftTable.hh"
+#include "../include/ShiftTableMessenger.hh"
 #include "Randomize.hh"
 #include <G4Material.hh>
 #include <G4SystemOfUnits.hh>
@@ -15,10 +16,10 @@
 #include <limits>
 #include <string>
 
-Surface::Shift::Shift(const std::string &filename, const G4int verbose)
-    : fLogger({"Shift", verbose}) {
-  LoadShiftTable(filename);
-};
+Surface::Shift::Shift(const G4int verbose)
+    : fMinShift(0.), fMaxShift(DBL_MAX), fConfineMaterialName(""),
+      fLogger({"Shift", verbose}),
+      fMessenger(new Surface::ShiftMessenger(this)){};
 
 Surface::Shift::~Shift(){};
 
@@ -181,3 +182,7 @@ G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
 void Surface::Shift::ConfineToMaterial(const G4String &materialName) {
   fConfineMaterialName = materialName;
 };
+
+void Surface::Shift::SetVerboseLvl(const G4int verboseLvl) {
+  fLogger.SetVerboseLvl(verboseLvl);
+}
