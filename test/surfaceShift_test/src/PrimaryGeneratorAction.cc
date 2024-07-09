@@ -9,8 +9,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(), fGps(new G4GeneralParticleSource()),
       fShiftTable(new Surface::Shift{"macros/shiftData", 1}) {
   fShiftTable->PrintShiftTable();
-  fShiftTable->SetMinShift(20. * CLHEP::nm);
-  fShiftTable->SetMaxShift(40. * CLHEP::nm);
+  fShiftTable->SetMinShift(10 * CLHEP::nm);
+  fShiftTable->SetMaxShift(110. * CLHEP::nm);
+  fShiftTable->ConfineToMaterial("G4_Si");
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {

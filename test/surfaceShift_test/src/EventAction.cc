@@ -44,5 +44,5 @@ void EventAction::BeginOfEventAction(const G4Event *) {}
 void EventAction::EndOfEventAction(const G4Event *event) {
   G4CsvAnalysisManager *analysis = G4CsvAnalysisManager::Instance();
   G4ThreeVector primaryPosition = event->GetPrimaryVertex()->GetPosition();
-  analysis->FillH1(1, abs(5. - primaryPosition.z()));
+  analysis->FillH1(1, abs(primaryPosition.z()));
 }

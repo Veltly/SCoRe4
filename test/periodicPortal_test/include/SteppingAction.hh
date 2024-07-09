@@ -50,7 +50,7 @@ public:
 
 private:
   EventAction *fEventAction;
-  Surface::PortalControl fPortalControl;
+  Surface::PortalControl fPortalControl{-1};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

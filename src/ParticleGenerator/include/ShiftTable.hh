@@ -20,12 +20,14 @@ public:
   void PrintShiftTable();
   void SetMinShift(G4double min);
   void SetMaxShift(G4double max);
+  void ConfineToMaterial(const G4String &materialName);
 
 private:
   void LoadShiftTable(const std::string &filename);
   G4double Interpolate(const G4int);
   G4double Interpolate(const G4double, const G4double, const G4double);
   G4double CalcShift();
+  G4bool IsConfinedToMaterial(const G4ThreeVector &point);
 
 private:
   std::vector<G4double> fProbability;
@@ -34,6 +36,7 @@ private:
   G4double fMinShift{0.};
   G4double fMaxShift{std::numeric_limits<G4double>::max()};
   Logger fLogger;
+  G4String fConfineMaterialName = "";
 };
 } // namespace Surface
 #endif // SHIFTTABLE_HH

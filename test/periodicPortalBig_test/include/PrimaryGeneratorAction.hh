@@ -30,9 +30,8 @@
 #ifndef PrimaryGeneratorAction_h
 #define PrimaryGeneratorAction_h 1
 
-#include "../../../src/ParticleGenerator/include/SurfaceSource.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "globals.hh"
+#include "ParticleGenerator/include/MultiSubworldSampler.hh"
 #include <G4GeneralParticleSource.hh>
 
 class G4Event;
@@ -52,7 +51,8 @@ public:
   virtual void GeneratePrimaries(G4Event *);
 
 private:
-  G4GeneralParticleSource *fGps;
+  // G4GeneralParticleSource *fGps;
+  Surface::MultiSubworldSampler fSampler;
   //  Surface::SurfaceSource *fSurfaceSource; // pointer a to G4 gun class
 };
 

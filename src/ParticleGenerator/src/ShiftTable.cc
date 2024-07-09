@@ -4,9 +4,12 @@
 
 #include "../include/ShiftTable.hh"
 #include "Randomize.hh"
+#include <G4Material.hh>
 #include <G4SystemOfUnits.hh>
 #include <G4ThreeVector.hh>
+#include <G4TransportationManager.hh>
 #include <G4Types.hh>
+#include <G4VPhysicalVolume.hh>
 #include <cstdlib>
 #include <fstream>
 #include <limits>
@@ -30,24 +33,33 @@ G4double Surface::Shift::CalcShift() {
 
 void Surface::Shift::DoShift(G4ThreeVector &position,
                              const G4ThreeVector &direction) {
-  G4double shift;
   G4int counter{0};
   while (true) {
-    shift = CalcShift();
-    if (shift < fMaxShift and shift > fMinShift) {
-      break;
-    }
+
+    const G4double shift = CalcShift();
+
+    const G4ThreeVector normedDirection = direction / direction.r();
+    const G4ThreeVector newPosition = position - normedDirection * shift;
+
     ++counter;
     if (counter > 10000) {
       fLogger.WriteError("Counter of ShiftTable > 10,000! Now performing shift "
                          "with value outside marked area");
-      break;
+      position = newPosition;
+      return;
     }
-  }
 
-  fLogger.WriteDebugInfo("Shift done: " + std::to_string(shift));
-  const G4ThreeVector normedDirection = direction / direction.r();
-  position -= normedDirection * shift;
+    if (fMinShift > shift or shift > fMaxShift) {
+      continue;
+    }
+
+    if (not IsConfinedToMaterial(newPosition)) {
+      continue;
+    }
+    fLogger.WriteDebugInfo("Shift done: " + std::to_string(shift));
+    position = newPosition;
+    return;
+  }
 }
 
 void Surface::Shift::DoShiftByValue(const G4double shift,
@@ -144,3 +156,28 @@ void Surface::Shift::SetMaxShift(G4double max) {
   fMaxShift = max;
   fLogger.WriteInfo("Max shift set to " + std::to_string(max));
 }
+
+G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
+  if (fConfineMaterialName == "") {
+    return true;
+  }
+  G4ThreeVector null(0., 0., 0.);
+
+  G4VPhysicalVolume *physVol =
+      G4TransportationManager::GetTransportationManager()
+          ->GetNavigatorForTracking()
+          ->LocateGlobalPointAndSetup(point, &null, true);
+
+  const G4String matName =
+      physVol->GetLogicalVolume()->GetMaterial()->GetName();
+
+  fLogger.WriteDebugInfo("Material Name of physical Volume is: " + matName);
+  if (matName == fConfineMaterialName) {
+    return true;
+  }
+  return false;
+}
+
+void Surface::Shift::ConfineToMaterial(const G4String &materialName) {
+  fConfineMaterialName = materialName;
+};

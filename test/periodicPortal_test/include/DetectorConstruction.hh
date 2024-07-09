@@ -30,6 +30,7 @@
 #ifndef DetectorConstruction_h
 #define DetectorConstruction_h 1
 
+#include "../../../src/SurfaceGenerator/include/Generator.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 class G4VPhysicalVolume;
@@ -47,6 +48,9 @@ public:
   G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
 
 protected:
+  Surface::SurfaceGenerator fGeneratorA{"GenA"};
+  Surface::SurfaceGenerator fGeneratorB{"GenB"};
+  Surface::SurfaceGenerator fGeneratorC{"GenC"};
   G4LogicalVolume *fScoringVolume;
 };
 

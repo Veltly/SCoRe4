@@ -54,8 +54,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // Box
   //
   //
-  G4double box_sizeXY = 2 * cm;
-  G4double box_sizeZ = 1 * cm;
+  G4double box_sizeXY = 1 * cm;
+  G4double box_sizeZ = 50 * nm;
   G4Material *box_mat = nist->FindOrBuildMaterial("G4_Si");
   G4Box *solidBox = new G4Box("TestBox", // its name
                               0.5 * box_sizeXY, 0.5 * box_sizeXY,
@@ -65,14 +65,23 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                                                   box_mat,    // its material
                                                   "TestBox"); // its name
 
-  new G4PVPlacement(0,               // no rotation
-                    G4ThreeVector(), // at (0,0,0)
-                    logicBox,        // its logical volume
-                    "TestBox",       // its name
-                    logicWorld,      // its mother  volume
-                    false,           // no boolean operation
-                    0,               // copy number
-                    checkOverlaps);  // overlaps checking
+  new G4PVPlacement(0,                            // no rotation
+                    G4ThreeVector(0, 0, 25 * nm), // at (0,0,0)
+                    logicBox,                     // its logical volume
+                    "TestBox1",                   // its name
+                    logicWorld,                   // its mother  volume
+                    false,                        // no boolean operation
+                    0,                            // copy number
+                    checkOverlaps);               // overlaps checking
+
+  new G4PVPlacement(0,                             // no rotation
+                    G4ThreeVector(0, 0, 100 * nm), // at (0,0,0)
+                    logicBox,                      // its logical volume
+                    "TestBox2",                    // its name
+                    logicWorld,                    // its mother  volume
+                    false,                         // no boolean operation
+                    0,                             // copy number
+                    checkOverlaps);                // overlaps checking
 
   // always return the physical World
   //
