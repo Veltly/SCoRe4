@@ -51,9 +51,7 @@ public:
   virtual void GeneratePrimaries(G4Event *);
 
 private:
-  // G4GeneralParticleSource *fGps;
-  Surface::MultiSubworldSampler fSampler;
-  //  Surface::SurfaceSource *fSurfaceSource; // pointer a to G4 gun class
+  G4GeneralParticleSource *fGps;
 };
 
 #endif
