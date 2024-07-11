@@ -116,7 +116,7 @@ Surface::PeriodicPortal::GetNearestSurface(const G4Step *step) {
                          " y: " + std::to_string(result.y()) +
                          " z: " + std::to_string(result.z()));
 
-  auto IsZero = [](G4double a) {
+  auto IsZero = [](const G4double a) {
     const G4double numeric_limit =
         std::numeric_limits<G4double>::epsilon() * 10;
     return fabs(a) < numeric_limit;

@@ -26,8 +26,7 @@ void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
 }
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(G4String shiftFilename)
-    : fShift({shiftFilename}),
-      fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler"}),
+    : fShift(), fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler"}),
       fSamplerReady(false), fLogger({"MultiSubworldSampler", 3}),
       fParticleGenerator(new G4GeneralParticleSource){};
 

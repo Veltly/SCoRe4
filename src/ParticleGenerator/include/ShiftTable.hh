@@ -35,6 +35,7 @@ private:
   std::vector<G4double> fProbability;
   std::vector<G4double> fShift;
   std::vector<G4double> fBarProbability;
+  G4bool fShiftTableReady;
   G4double fMinShift;
   G4double fMaxShift;
   G4String fConfineMaterialName;

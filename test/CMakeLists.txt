@@ -8,7 +8,9 @@ add_subdirectory(periodicPortal_test)
 
 add_subdirectory(periodicPortalBig_test)
 
-add_subdirectory(multiplePortal_test)
+add_subdirectory(multiPortal_test)
+
+add_subdirectory(multiPortalHelper_test)
 
 add_subdirectory(surfaceShift_test)
 

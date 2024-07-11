@@ -224,7 +224,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // set StepLimit
 
   G4double maxStepsize = 0.1 * mm;
-  G4double maxStepsize_portal = 0.1 * um;
+  G4double maxStepsize_portal = 0.1 * mm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   G4UserLimits *limit_portal = new G4UserLimits(maxStepsize_portal);
   logicWorld->SetUserLimits(limit);

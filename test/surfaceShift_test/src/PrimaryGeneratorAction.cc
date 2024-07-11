@@ -7,12 +7,7 @@
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(), fGps(new G4GeneralParticleSource()),
-      fShiftTable(new Surface::Shift{"macros/shiftData", 1}) {
-  fShiftTable->PrintShiftTable();
-  fShiftTable->SetMinShift(10 * CLHEP::nm);
-  fShiftTable->SetMaxShift(110. * CLHEP::nm);
-  fShiftTable->ConfineToMaterial("G4_Si");
-}
+      fShiftTable(new Surface::Shift{3}) {}
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {
   delete fGps;

@@ -18,7 +18,7 @@ namespace Surface {
 
 template <class T> class SubworldGrid {
 public:
-  SubworldGrid(const G4int sizeX, const G4int sizeY, G4int verbose = 3)
+  SubworldGrid(const G4int sizeX, const G4int sizeY, G4int verbose = 5)
       : fColumnSize(sizeY), fMaxX(sizeX), fMaxY(sizeY), fCurrentX(-1),
         fCurrentY(-1), fLogger(Logger{"SubworldGrid", verbose}) {
     // col major order
@@ -149,14 +149,16 @@ private:
 
 template <class T> class HelperFillSubworldGrid {
 public:
-  HelperFillSubworldGrid(G4int verbose = 3)
+  HelperFillSubworldGrid(G4int verbose = 5)
       : fLogger(Logger{"HelperFillSubworldGrid", verbose}){};
 
   void AddAvailableSubworld(T *subworld, const G4double density) {
-    std::stringstream ss;
-    ss << "Added " << subworld->GetName() << " with density " << density
-       << " to helper class";
-    fLogger.WriteDebugInfo(ss.str());
+    //   std::stringstream ss;
+    fLogger.WriteDetailInfo(std::stringstream()
+                            << "Added " << subworld->GetName()
+                            << " with density " << density
+                            << " to helper class");
+    //    fLogger.WriteDetailInfo(ss.str());
     fAvailableSubworlds.push_back(subworld);
     fDensity.push_back(density);
   }
@@ -165,6 +167,7 @@ public:
     for (auto *subworld : fAvailableSubworlds) {
       subworld->SetGrid(grid);
     }
+    fLogger.WriteDetailInfo("Link Grid to Subworlds");
   }
 
   void FillGrid(SubworldGrid<T> *grid) {
@@ -178,9 +181,12 @@ public:
       val = val / sumOfProb;
     }
     SetGridInSubworlds(grid);
-
     const G4int gridMaxX = grid->MaxX();
     const G4int gridMaxY = grid->MaxY();
+    fLogger.WriteDetailInfo(std::stringstream()
+                            << "Start filling Grid of size:\n"
+                            << "Nx : " << gridMaxX << "\n"
+                            << "Ny : " << gridMaxY << "\n");
     for (size_t x = 0; x < gridMaxX; ++x) {
       for (size_t y = 0; y < gridMaxY; ++y) {
         G4double random = G4UniformRand();

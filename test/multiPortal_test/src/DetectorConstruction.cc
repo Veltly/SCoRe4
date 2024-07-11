@@ -236,7 +236,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   portalSubworldC->SetTrigger(physSubworldTriggerC);
   // link portals
   portalEntrance->SetAsPortal();
-  portalEntrance->SetSubwordlEdge(subworld_sizeXY, subworld_sizeXY,
+  portalEntrance->SetSubworldEdge(subworld_sizeXY, subworld_sizeXY,
                                   subworld_sizeZ);
   portalEntrance->SetGrid(griddim, griddim, 0);
   portalEntrance->SetOtherPortal(portalSubworldA);

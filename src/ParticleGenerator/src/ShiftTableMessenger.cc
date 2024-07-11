@@ -22,33 +22,33 @@ Surface::ShiftMessenger::ShiftMessenger(Surface::Shift *shift)
   // As the messenger class is instantiated by the PrimaryGeneratorSource, the
   // pointer Source can not be NULL, hence no test needed.
 
-  fDirectory = new G4UIdirectory("/Shift/");
+  fDirectory = new G4UIdirectory("/shift/");
   fDirectory->SetGuidance("Controls the shift of the particle source");
   /** @todo Specify the state for which the commands are available. **/
 
-  fCmdVerbose = new G4UIcmdWithAnInteger("/Shift/Verbose", this);
+  fCmdVerbose = new G4UIcmdWithAnInteger("/shift/verbose", this);
   fCmdVerbose->AvailableForStates(G4State_PreInit, G4State_Init, G4State_Idle);
   fCmdVerbose->SetGuidance("Set verbose level of shift");
 
   fCmdPrintShiftTable =
-      new G4UIcmdWithoutParameter("/Shift/PrintShiftTable", this);
+      new G4UIcmdWithoutParameter("/shift/printShiftTable", this);
   fCmdPrintShiftTable->AvailableForStates(G4State_PreInit, G4State_Init,
                                           G4State_Idle);
   fCmdPrintShiftTable->SetGuidance("Print ShiftTable to output");
 
-  fCmdLoadShiftTable = new G4UIcmdWithAString("/Shift/LoadShiftTable", this);
+  fCmdLoadShiftTable = new G4UIcmdWithAString("/shift/loadShiftTable", this);
   fCmdLoadShiftTable->AvailableForStates(G4State_PreInit, G4State_Init,
                                          G4State_Idle);
   fCmdLoadShiftTable->SetGuidance("Load a ShiftTable from filepath");
 
-  fCmdSetMinShift = new G4UIcmdWithADoubleAndUnit("/Shift/SetMinShift", this);
+  fCmdSetMinShift = new G4UIcmdWithADoubleAndUnit("/shift/setMinShift", this);
   fCmdSetMinShift->AvailableForStates(G4State_PreInit, G4State_Init,
                                       G4State_Idle);
   fCmdSetMinShift->SetGuidance("Set the minimal shift to do");
   fCmdSetMinShift->SetDefaultUnit("mm");
   fCmdSetMinShift->SetDefaultValue(0.);
 
-  fCmdSetMaxShift = new G4UIcmdWithADoubleAndUnit("/Shift/SetMaxShift", this);
+  fCmdSetMaxShift = new G4UIcmdWithADoubleAndUnit("/shift/setMaxShift", this);
   fCmdSetMaxShift->AvailableForStates(G4State_PreInit, G4State_Init,
                                       G4State_Idle);
   fCmdSetMaxShift->SetGuidance("Set the maximal shift to do");
@@ -56,7 +56,7 @@ Surface::ShiftMessenger::ShiftMessenger(Surface::Shift *shift)
   fCmdSetMaxShift->SetDefaultValue(DBL_MAX);
 
   fCmdConfineToMaterial =
-      new G4UIcmdWithAString("/Shift/ConfineToMaterial", this);
+      new G4UIcmdWithAString("/shift/confineToMaterial", this);
   fCmdConfineToMaterial->AvailableForStates(G4State_PreInit, G4State_Init,
                                             G4State_Idle);
   fCmdConfineToMaterial->SetGuidance("Confine shift point to material");

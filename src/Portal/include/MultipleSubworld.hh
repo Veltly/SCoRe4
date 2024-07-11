@@ -12,6 +12,7 @@
 #include "SubworldGrid.hh"
 #include "VPortal.hh"
 #include <G4ThreeVector.hh>
+#include <G4Transform3D.hh>
 
 namespace Surface {
 
@@ -38,37 +39,56 @@ public:
   MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
                    G4ThreeVector &vec, const G4int verbose,
                    FacetStore *facetStore = nullptr);
+
+  MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
+                   G4Transform3D transform, const G4int verbose,
+                   FacetStore *facetStore = nullptr);
+
   ~MultipleSubworld();
+
   virtual void DoPortation(const G4Step *step);
+
   // Setter
   void SetGrid(const G4int nX, const G4int nY, const G4int verbose = 3);
+
   void SetGrid(SubworldGrid<MultipleSubworld> *grid);
+
   void AddSubworldToGrid(const G4int x, const G4int y,
                          MultipleSubworld *subworld);
+
   void SetAsPortal() { fIsPortal = true; }
+
   void SetOtherPortal(MultipleSubworld *otherPortal);
+
   // Getter
   SubworldGrid<MultipleSubworld> *GetSubworldGrid() const {
     return fSubworldGrid;
   }
+
   // Check
   inline G4bool IsPortal() const { return fIsPortal; }
 
-  void SetSubwordlEdge(G4double edgeX, G4double edgeY, G4double edgeZ);
+  void SetSubworldEdge(G4double edgeX, G4double edgeY, G4double edgeZ);
 
   FacetStore *GetFacetStore() { return fFacetStore; };
 
 private:
   void DoPeriodicPortation(const G4Step *step, const SingleSurface);
+
   void EnterPortal(const G4Step *step, const SingleSurface);
+
   void ExitPortal(const G4Step *step, const SingleSurface);
 
   SingleSurface GetNearestSurface(const G4Step *step);
+
   PortationType GetPortationType(const SingleSurface);
 
   void DoPeriodicTransform(G4ThreeVector &vec, SingleSurface);
+
   void TransformSubworldToPortal(G4ThreeVector &vec);
+
   void TransformPortalToSubworld(G4ThreeVector &vec);
+
   G4double TransformZBetweenPortals(const G4double val);
 
   void LoggCurrentStatus();

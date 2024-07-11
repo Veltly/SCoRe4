@@ -3,6 +3,13 @@
 /gps/direction 0 0 1
 /gps/position 0 0 0
 
+/shift/verbose 0
+/shift/loadShiftTable macros/shiftData
+/shift/printShiftTable
+/shift/setMinShift 10 nm
+/shift/setMaxShift 110 nm
+/shift/confineToMaterial G4_Si
+
 /run/printProgress 100000
 /run/beamOn 1000000
 #/run/beamOn 100

@@ -17,8 +17,8 @@
 #include <string>
 
 Surface::Shift::Shift(const G4int verbose)
-    : fMinShift(0.), fMaxShift(DBL_MAX), fConfineMaterialName(""),
-      fLogger({"Shift", verbose}),
+    : fShiftTableReady(false), fMinShift(0.), fMaxShift(DBL_MAX),
+      fConfineMaterialName(""), fLogger({"Shift", verbose}),
       fMessenger(new Surface::ShiftMessenger(this)){};
 
 Surface::Shift::~Shift(){};
@@ -34,6 +34,12 @@ G4double Surface::Shift::CalcShift() {
 
 void Surface::Shift::DoShift(G4ThreeVector &position,
                              const G4ThreeVector &direction) {
+  if (not fShiftTableReady) {
+    fLogger.WriteInfo("Shift called, but ShiftTable not ready\n"
+                      "No shift done!");
+    return;
+  }
+
   G4int counter{0};
   while (true) {
 
@@ -86,8 +92,8 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
   std::ifstream file;
   file.open(filename);
   if (!file.is_open()) {
-    fLogger.WriteError("File for shifttable not found!");
-    return exit(EXIT_FAILURE);
+    fLogger.WriteError("File for shifttable not found at: " + filename);
+    return;
   }
   std::string line;
   const std::string delimiter = ",";
@@ -110,6 +116,7 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
         Interpolate(0.5, fProbability.at(i), fProbability.at(i + 1)) / counts;
     fBarProbability.push_back(probability);
   }
+  fShiftTableReady = true;
 };
 
 G4double Surface::Shift::Interpolate(const G4double xNormed,

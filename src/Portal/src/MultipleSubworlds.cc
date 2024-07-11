@@ -10,6 +10,7 @@
 #include "G4ThreeVector.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VSolid.hh"
+#include <G4Transform3D.hh>
 #include <G4Types.hh>
 #include <cstdlib>
 #include <string>
@@ -22,6 +23,18 @@ Surface::MultipleSubworld::MultipleSubworld(const G4String name,
     : VPortal(name, volume, PortalType::MultipleSubworld),
       fLogger({"MultiplePortal", verbose}), fIsPortal(false),
       fSubworldGrid(nullptr), fFacetStore(facetStore) {
+  SetGlobalCoord(vec);
+};
+
+Surface::MultipleSubworld::MultipleSubworld(const G4String name,
+                                            G4VPhysicalVolume *volume,
+                                            G4Transform3D transform,
+                                            const G4int verbose,
+                                            FacetStore *facetStore)
+    : VPortal(name, volume, PortalType::MultipleSubworld),
+      fLogger({"MultiplePortal", verbose}), fIsPortal(false),
+      fSubworldGrid(nullptr), fFacetStore(facetStore) {
+  const G4ThreeVector vec = transform.getTranslation();
   SetGlobalCoord(vec);
 };
 
@@ -363,7 +376,7 @@ void Surface::MultipleSubworld::AddSubworldToGrid(
   fSubworldGrid->SetSubworld(x, y, subworld);
 }
 
-void Surface::MultipleSubworld::SetSubwordlEdge(const G4double edgeX,
+void Surface::MultipleSubworld::SetSubworldEdge(const G4double edgeX,
                                                 const G4double edgeY,
                                                 const G4double edgeZ) {
   fEdgeX = edgeX;
