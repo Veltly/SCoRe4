@@ -2,8 +2,8 @@
 // Date: 24-06-18
 // File: VSampler
 
-#ifndef MULTIPLESUBWORLDSAMPLER_HH
-#define MULTIPLESUBWORLDSAMPLER_HH
+#ifndef VSAMPLER_HH
+#define VSAMPLER_HH
 #include "../../Service/include/Logger.hh"
 #include "Randomize.hh"
 #include <cstdlib>
@@ -31,7 +31,7 @@ private:
   }
 
 public:
-  VSampler(const G4String name = "VSampler", const G4int verbose = 3)
+  VSampler(const G4String name = "VSampler", const G4int verbose = 6)
       : fIsClosed(false), fLogger({name, verbose}), fName(name){};
 
   void AppendValue(const T value) {
@@ -89,4 +89,4 @@ private:
   const G4String fName;
 };
 } // namespace Surface
-#endif // MULTIPLESUBWORLDSAMPLER_HH
+#endif // VSAMPLER_HH

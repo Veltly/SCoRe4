@@ -21,6 +21,13 @@ Surface::Shift::Shift(const G4int verbose)
       fConfineMaterialName(""), fLogger({"Shift", verbose}),
       fMessenger(new Surface::ShiftMessenger(this)){};
 
+Surface::Shift::Shift(const G4String &filename, const G4int verbose)
+    : fShiftTableReady(false), fMinShift(0.), fMaxShift(DBL_MAX),
+      fConfineMaterialName(""), fLogger({"Shift", verbose}),
+      fMessenger(new Surface::ShiftMessenger(this)) {
+  LoadShiftTable(filename);
+};
+
 Surface::Shift::~Shift(){};
 
 G4double Surface::Shift::CalcShift() {

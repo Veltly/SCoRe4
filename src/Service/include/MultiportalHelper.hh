@@ -42,12 +42,25 @@ public:
 
   void SetNDifferentSubworlds(const G4int val);
 
-  // Getter
-  Surface::MultipleSubworld *GetSubworld(const G4int nr);
+  void SetPortalName(const G4String name);
+  void SetSubworldName(const G4String name);
 
+  // Getter
+  Surface::MultipleSubworld *GetSubworld(const G4int id);
+
+  G4double GetPortalDx() const;
+  G4double GetPortalDy() const;
+  G4double GetPortalDz() const;
+
+  G4double GetSubworldDx() const;
+  G4double GetSubworldDy() const;
+  G4double GetSubworldDz() const;
+
+  G4Material *GetSubworldMaterial() const;
+  G4Transform3D GetSubworldPlacement(const G4int id);
   // Verbose
-  // TODO: add verbose functions
-  void PrintInfo();
+  void PrintInfo() const;
+  std::stringstream StreamInfo() const;
 
 private:
   void CheckValues();
@@ -88,6 +101,9 @@ private:
   Surface::MultipleSubworld *fPortal;
 
   Surface::Logger fLogger;
+
+  G4String fPortalName;
+  G4String fSubName;
 };
 } // namespace Surface
 #endif // SURFACE_MULTIPORTALHELPER

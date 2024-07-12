@@ -27,6 +27,15 @@ G4int Surface::PortalStore::FindPortal(const G4VPhysicalVolume *volume) const {
   return -1;
 }
 
+G4int Surface::PortalStore::FindPortalId(const G4String &name) const {
+  for (size_t i = 0; i < this->size(); ++i) {
+    if (this->at(i)->GetName() == name) {
+      return static_cast<G4int>(i);
+    }
+  }
+  return -1;
+}
+
 Surface::VPortal *
 Surface::PortalStore::GetPortal(const G4VPhysicalVolume *volume) const {
   G4int portalIdx = FindPortal(volume);

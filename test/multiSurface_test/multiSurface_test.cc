@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 
   G4UIExecutive *ui = 0;
   if (argc == 1) {
-    ui = new G4UIExecutive(argc, argv);
+    ui = new G4UIExecutive(argc, argv, "tcsh");
   }
 
   // Construct the default run manager

@@ -15,6 +15,7 @@ class PortalStore : public std::vector<VPortal *> {
 private:
 public:
   G4int FindPortal(const G4VPhysicalVolume *volume) const;
+  G4int FindPortalId(const G4String &name) const;
   G4int FindLogPortal(const G4LogicalVolume *volume) const;
   G4int FindTrigger(const G4VPhysicalVolume *volume) const;
   G4bool IsPortal(const G4VPhysicalVolume *volume) const;

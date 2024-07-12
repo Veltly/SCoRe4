@@ -14,6 +14,7 @@ namespace Surface {
 class Shift {
 public:
   Shift(const G4int verbose = 3);
+  Shift(const G4String &filename, const G4int verbose = 3);
   ~Shift();
   void DoShift(G4ThreeVector &position, const G4ThreeVector &direction);
   void DoShiftByValue(const G4double shift, G4ThreeVector &position,

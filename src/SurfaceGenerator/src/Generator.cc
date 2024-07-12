@@ -49,6 +49,6 @@ void Surface::SurfaceGenerator::GenerateDescription() {
 }
 
 void Surface::SurfaceGenerator::SetSurfaceTransformation(
-    G4ThreeVector &transform) {
+    const G4ThreeVector &transform) {
   fFacetStore->SetTransformation(transform);
 }

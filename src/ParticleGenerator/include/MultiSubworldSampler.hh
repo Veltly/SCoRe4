@@ -11,6 +11,7 @@
 #include "G4GeneralParticleSource.hh"
 #include "G4VPrimaryGenerator.hh"
 #include "ShiftTable.hh"
+
 namespace Surface {
 
 struct Coord {
@@ -21,17 +22,25 @@ struct Coord {
 class MultiSubworldSampler : public G4VPrimaryGenerator {
 private:
   void PrepareSampler();
+  G4ThreeVector GetRandom();
 
 public:
-  MultiSubworldSampler(G4String);
+  MultiSubworldSampler(const G4String &name, const G4String &portalName,
+                       const G4String &shiftFilename,
+                       const G4int verboseLvl = 6);
+  MultiSubworldSampler(const G4String &name, const G4String &portalName,
+                       const G4int verboseLvl = 6);
+
   void GeneratePrimaryVertex(G4Event *argEvent);
-  G4ThreeVector GetRandom();
-  inline G4bool GetSamplerStatus() const { return fSamplerReady; };
+  inline G4bool IsSamplerReady() const { return fSamplerReady; };
   void SetSubworld(SubworldGrid<MultipleSubworld> *);
 
 private:
+  G4String fName;
+  G4String fPortalName;
   SubworldGrid<MultipleSubworld> *fSubworld;
   Surface::Shift fShift;
+  G4bool fShiftActive;
   VSampler<Coord> fSubworldSampler;
   G4bool fSamplerReady;
   Logger fLogger;

@@ -57,8 +57,8 @@ public:
   inline void IncrY() { ++fCurrentY; }
   inline void DecrY() { --fCurrentY; }
 
-  void PrintGrid(const G4int minX, const G4int maxX, const G4int minY,
-                 const G4int maxY) {
+  std::stringstream StreamGrid(const G4int minX, const G4int maxX,
+                               const G4int minY, const G4int maxY) {
     std::stringstream ss;
     auto symbols = GetLegend();
     for (size_t x = minX; x < maxX; ++x) {
@@ -68,8 +68,13 @@ public:
       }
       ss << "\n";
     }
-    G4cout << ss.str() << G4endl;
+    return ss;
   };
+
+  void PrintGrid(const G4int minX, const G4int maxX, const G4int minY,
+                 const G4int maxY) {
+    G4cout << StreamGrid(minX, maxX, minY, maxY).str() << G4endl;
+  }
 
   const std::set<T *> GetUniqueSubworlds() {
     std::set<T *> uniqueSubworlds;
@@ -82,15 +87,21 @@ public:
     return uniqueSubworlds;
   }
 
-  void PrintUniqueSubworlds() {
-    fLogger.WriteDebugInfo("Unique subworlds in grid");
+  std::stringstream StreamUniqueSubworlds() {
+    std::stringstream ss;
+    ss << "Unique subworlds in grid\n";
     std::set<T *> unique = GetUniqueSubworlds();
     for (T *ele : unique) {
-      fLogger.WriteDebugInfo(ele->GetName());
+      ss << ele->GetName() << "\n";
     }
+    return ss;
   }
 
-  void PrintStatistic() {
+  void PrintUniqueSubworlds() {
+    G4cout << StreamUniqueSubworlds().str() << G4endl;
+  }
+
+  std::stringstream StreamStatistic() {
     std::map<T *, G4int> counter;
     const size_t N = fMaxX * fMaxY;
     for (size_t i = 0; i < N; ++i) {
@@ -110,17 +121,21 @@ public:
       ss << "---> " << ele.first->GetName() << " : " << ele.second * invertedSum
          << "% \n";
     }
-    fLogger.WriteInfo(ss.str());
+    return ss;
   };
 
-  void PrintLegend() {
+  void PrintStatistic() { G4cout << StreamStatistic().str() << G4endl; }
+
+  std::stringstream StreamLegend() {
     std::stringstream ss;
     ss << "Legend: \n";
     for (auto &ele : GetLegend()) {
       ss << "    " << ele.second << " : " << ele.first->GetName() << "\n";
     }
-    fLogger.WriteInfo(ss.str());
+    return ss;
   }
+
+  void PrintLegend() { G4cout << StreamLegend().str() << G4endl; }
 
 private:
   std::map<T *, char> GetLegend() {
@@ -153,12 +168,10 @@ public:
       : fLogger(Logger{"HelperFillSubworldGrid", verbose}){};
 
   void AddAvailableSubworld(T *subworld, const G4double density) {
-    //   std::stringstream ss;
     fLogger.WriteDetailInfo(std::stringstream()
                             << "Added " << subworld->GetName()
                             << " with density " << density
                             << " to helper class");
-    //    fLogger.WriteDetailInfo(ss.str());
     fAvailableSubworlds.push_back(subworld);
     fDensity.push_back(density);
   }
@@ -207,4 +220,4 @@ private:
   Logger fLogger;
 };
 } // namespace Surface
-#endif // VPORTAL_HH
+#endif // SUBWORLDGRID_HH

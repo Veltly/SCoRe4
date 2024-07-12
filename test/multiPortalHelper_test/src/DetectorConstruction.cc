@@ -103,6 +103,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   helper.SetNDifferentSubworlds(3);
 
+  helper.SetPortalName("Portal");
   helper.Generate();
 
   Surface::MultipleSubworld *subA = helper.GetSubworld(0);

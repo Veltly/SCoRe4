@@ -24,11 +24,7 @@ void Surface::Logger::WriteDetailInfo(G4String &aMsg) {
   }
 }
 
-void Surface::Logger::WriteInfo(void (*print)()) {
-  if (fVerboseLvl > fVerboseDetailInfo) {
-    print();
-  }
-}
+G4bool Surface::Logger::WriteInfo() { return fVerboseLvl > fVerboseInfo; }
 
 void Surface::Logger::WriteDetailInfo(G4String &&aMsg) {
   WriteDetailInfo(aMsg);
@@ -37,10 +33,8 @@ void Surface::Logger::WriteDetailInfo(std::stringstream &&aMsg) {
   WriteDetailInfo(aMsg.str());
 }
 
-void Surface::Logger::WriteDetailInfo(void (*print)()) {
-  if (fVerboseLvl > fVerboseDetailInfo) {
-    print();
-  }
+G4bool Surface::Logger::WriteDetailInfo() {
+  return fVerboseLvl > fVerboseDetailInfo;
 }
 
 void Surface::Logger::WriteWarning(G4String &aMsg) {
@@ -54,10 +48,8 @@ void Surface::Logger::WriteWarning(std::stringstream &&aMsg) {
   WriteWarning(aMsg.str());
 }
 
-void Surface::Logger::WriteWarning(void (*print)()) {
-  if (fVerboseLvl > fVerboseDetailInfo) {
-    print();
-  }
+G4bool Surface::Logger::WriteWarning() {
+  return fVerboseLvl > fVerboseDetailInfo;
 }
 
 void Surface::Logger::WriteError(G4String &aMsg) {
@@ -72,10 +64,8 @@ void Surface::Logger::WriteError(std::stringstream &&aMsg) {
   WriteError(aMsg.str());
 }
 
-void Surface::Logger::WriteError(void (*print)()) {
-  if (fVerboseLvl > fVerboseDetailInfo) {
-    print();
-  }
+G4bool Surface::Logger::WriteError() {
+  return fVerboseLvl > fVerboseDetailInfo;
 }
 
 void Surface::Logger::WriteDebugInfo(G4String &aMsg) {
@@ -103,10 +93,8 @@ void Surface::Logger::WriteDebugInfo(std::stringstream &&stream) {
   WriteDebugInfo(stream.str());
 }
 
-void Surface::Logger::WriteDebugInfo(void (*print)()) {
-  if (fVerboseLvl > fVerboseDetailInfo) {
-    print();
-  }
+G4bool Surface::Logger::WriteDebugInfo() {
+  return fVerboseLvl > fVerboseDetailInfo;
 }
 
 void Surface::Logger::SetVerboseLvl(G4int aVerboseLvl) {

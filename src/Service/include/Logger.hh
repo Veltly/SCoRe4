@@ -21,29 +21,29 @@ public:
   void WriteInfo(G4String &);
   void WriteInfo(G4String &&);
   void WriteInfo(std::stringstream &&);
-  void WriteInfo(void (*print)());
+  G4bool WriteInfo();
 
   void WriteDetailInfo(G4String &);
   void WriteDetailInfo(G4String &&);
   void WriteDetailInfo(std::stringstream &&);
-  void WriteDetailInfo(void (*print)());
+  G4bool WriteDetailInfo();
 
   void WriteWarning(G4String &);
   void WriteWarning(G4String &&);
   void WriteWarning(std::stringstream &&);
-  void WriteWarning(void (*print)());
+  G4bool WriteWarning();
 
   void WriteError(G4String &);
   void WriteError(G4String &&);
   void WriteError(std::stringstream &&);
-  void WriteError(void (*print)());
+  G4bool WriteError();
 
   void WriteDebugInfo(G4String &);
   void WriteDebugInfo(G4String &&);
   void WriteDebugInfo(G4String &, const G4ThreeVector &);
   void WriteDebugInfo(G4String &&, const G4ThreeVector &);
   void WriteDebugInfo(std::stringstream &&);
-  void WriteDebugInfo(void (*print)());
+  G4bool WriteDebugInfo();
 
   void SetVerboseLvl(G4int aVerboseLvl);
 

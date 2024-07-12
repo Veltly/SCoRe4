@@ -36,7 +36,7 @@ public:
 
   inline Describer &GetDescriber() { return fDescriber; };
   inline FacetStore *GetFacetStore() { return fFacetStore; };
-  void SetSurfaceTransformation(G4ThreeVector &transform);
+  void SetSurfaceTransformation(const G4ThreeVector &transform);
 
 private:
   inline std::vector<SurfaceDescription> GetSurface() const {

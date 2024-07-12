@@ -8,7 +8,8 @@
 #include <G4GeneralParticleSource.hh>
 PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(),
-      fSampler(Surface::MultiSubworldSampler{"macros/shiftTable"}) {}
+      fSampler(Surface::MultiSubworldSampler{"Testsampler", "Test",
+                                             "macros/shiftTable"}) {}
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {}
 

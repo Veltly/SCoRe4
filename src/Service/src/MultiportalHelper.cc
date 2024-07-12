@@ -30,7 +30,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
     const G4Transform3D transformation = fPlacementSub.at(i);
 
     // Create Trigger
-    const G4String nameTrig = "Trigger_" + std::to_string(i);
+    const G4String nameTrig = fSubName + "_Trigger_" + std::to_string(i);
     G4Box *solidTrig =
         new G4Box(nameTrig, 1.1 * fDxSub, 1.1 * fDySub, 1.1 * fDzSub);
     G4LogicalVolume *logicTrig =
@@ -40,7 +40,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
                           false, 0, fCheckOverlaps);
 
     // Create Subworld
-    const G4String nameSub = "Subworld_" + std::to_string(i);
+    const G4String nameSub = fSubName + "Subworld_" + std::to_string(i);
     G4Box *solidSub = new G4Box(nameSub, fDxSub, fDySub, fDzSub);
     G4LogicalVolume *logicSub =
         new G4LogicalVolume(solidSub, fSubworldMaterial, nameSub);
@@ -67,7 +67,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 };
 
 void Surface::MultiportalHelper::GeneratePortal() {
-  const G4String namePortal = "Portal";
+  const G4String namePortal = fPortalName;
 
   G4Box *solidPortal = new G4Box(namePortal, fDxSub, fDySub, fDzSub);
   G4LogicalVolume *logicPortal =
@@ -108,7 +108,6 @@ void Surface::MultiportalHelper::FillSubworldmap() {
     mapHelper.AddAvailableSubworld(subworld, density);
   }
 
-  G4cout << "Test" << G4endl;
   mapHelper.FillGrid(fPortal->GetSubworldGrid());
   fLogger.WriteInfo("Filled map Portal<->Subworlds");
 }
@@ -128,7 +127,9 @@ void Surface::MultiportalHelper::Generate() {
 
   fLogger.WriteInfo("Generated Portal with Subworlds");
 
-  fLogger.WriteDetailInfo(&Surface::MultiportalHelper::PrintInfo);
+  if (fLogger.WriteDetailInfo()) {
+    PrintInfo();
+  };
 }
 
 // Setter
@@ -175,39 +176,80 @@ void Surface::MultiportalHelper::SetNDifferentSubworlds(const G4int val) {
 }
 
 Surface::MultipleSubworld *
-Surface::MultiportalHelper::GetSubworld(const G4int nr) {
-  return fMultipleSubworld.at(nr);
+Surface::MultiportalHelper::GetSubworld(const G4int id) {
+  return fMultipleSubworld.at(id);
 }
 
-void Surface::MultiportalHelper::PrintInfo() {
+void Surface::MultiportalHelper::SetPortalName(const G4String name) {
+  fPortalName = name;
+}
+
+void Surface::MultiportalHelper::SetSubworldName(const G4String name) {
+  fSubName = name;
+}
+
+std::stringstream Surface::MultiportalHelper::StreamInfo() const {
   auto trafoString = [](const G4Transform3D &trafo) {
     const G4ThreeVector vec = trafo.getTranslation();
     std::stringstream ss;
-    ss << "x: " << vec.x() << "y: " << vec.y() << "z: " << vec.z();
+    ss << "x: " << vec.x() << " y: " << vec.y() << " z: " << vec.z();
     return ss.str();
   };
 
   std::stringstream ss;
-  ss << "************************************\n"
+  ss << "\n"
+     << "************************************\n"
      << "**** State of MultiportalHelper ****\n"
      << "************************************\n"
-     << "Info Portal:\n"
+     << "\n"
+     << "Info Portal: " << fPortalName << "\n"
      << "Dx: " << fDx << "\n"
      << "Dy: " << fDy << "\n"
      << "Dz: " << fDz << "\n"
-     << "Placement Portal: " << trafoString(fPlacementPortal) << "\n\n";
+     << "Placement Portal: " << trafoString(fPlacementPortal) << "\n"
+     << "\n\n";
 
   ss << "Info Subworlds:\n"
      << "Dx: " << fDxSub << "\n"
      << "Dy: " << fDySub << "\n"
-     << "Dz: " << fDzSub << "\n";
-
+     << "Dz: " << fDzSub << "\n"
+     << "\n"
+     << "Name          Placement          Density\n";
   for (G4int i = 0; i < fNOfDifferentSubworlds; ++i) {
-    ss << "Placement Subworld_" << i << ": " << trafoString(fPlacementSub.at(i))
-       << "\n";
+    ss << "Subworld_" << i << ": " << trafoString(fPlacementSub.at(i)) << " , "
+       << fSubworldProb.at(i) << "\n";
   }
-  ss << "Material: " << fSubworldMaterial << "\n";
+  ss << "\n"
+     << fPortal->GetSubworldGrid()->StreamStatistic().str() << "\n"
+     << "Material: " << fSubworldMaterial->GetName() << "\n"
+     << "\n\n";
+
+  ss << "Grid:\n"
+     << "Nx: " << fNx << "\n"
+     << "Ny: " << fNy << "\n"
+     << "Sum: " << fNx * fNy << "\n"
+     << "\n";
   ss << "************************************\n"
      << "************************************\n";
-  G4cout << ss.str() << G4endl;
+  return ss;
+}
+
+void Surface::MultiportalHelper::PrintInfo() const {
+  G4cout << StreamInfo().str() << G4endl;
+}
+
+// Getter
+
+G4double Surface::MultiportalHelper::GetPortalDx() const { return fDx; }
+G4double Surface::MultiportalHelper::GetPortalDy() const { return fDy; }
+G4double Surface::MultiportalHelper::GetPortalDz() const { return fDz; }
+G4double Surface::MultiportalHelper::GetSubworldDx() const { return fDxSub; }
+G4double Surface::MultiportalHelper::GetSubworldDy() const { return fDySub; }
+G4double Surface::MultiportalHelper::GetSubworldDz() const { return fDzSub; }
+G4Material *Surface::MultiportalHelper::GetSubworldMaterial() const {
+  return fSubworldMaterial;
+}
+
+G4Transform3D Surface::MultiportalHelper::GetSubworldPlacement(const G4int id) {
+  return fPlacementSub.at(id);
 }

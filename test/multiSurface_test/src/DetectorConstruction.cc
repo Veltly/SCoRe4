@@ -5,8 +5,8 @@
 #include "DetectorConstruction.hh"
 
 #include "../../../src/Portal/include/MultipleSubworld.hh"
-#include "../../../src/Portal/include/PortalStore.hh"
-#include "../../../src/Service/include/Locator.hh"
+#include "../../../src/Service/include/G4Voxelizer_Green.hh"
+#include "../../../src/Service/include/MultiportalHelper.hh"
 #include "../../../src/SurfaceGenerator/include/Describer.hh"
 #include "../../../src/SurfaceGenerator/include/Generator.hh"
 #include "G4Box.hh"
@@ -15,16 +15,13 @@
 #include "G4PVPlacement.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
-#include "Portal/include/SubworldGrid.hh"
-#include "Portal/include/VPortal.hh"
-#include "Service/include/G4Voxelizer_Green.hh"
+#include <CLHEP/Geometry/Transform3D.h>
 #include <G4MultiUnion.hh>
 #include <G4Region.hh>
 #include <G4RotationMatrix.hh>
 #include <G4ThreeVector.hh>
 #include <G4Transform3D.hh>
 #include <G4UserLimits.hh>
-#include <cfloat>
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fScoringVolume(0) {}
@@ -40,8 +37,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   // World
   //
-  G4double world_sizeXY = 1 * m;
-  G4double world_sizeZ = 1 * m;
+  const G4double world_sizeXY = 1 * m;
+  const G4double world_sizeZ = 1 * m;
   G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
   G4Box *solidWorld = new G4Box("World", // its name
@@ -62,132 +59,56 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                         0,               // copy number
                         checkOverlaps);  // overlaps checking
 
-  // Creating three Subworlds A, B ,C to port into
-  //
-  //
+  const G4ThreeVector placementA{5 * cm, 5 * cm, 22 * cm};
+  const G4ThreeVector placementB{5 * cm, 5 * cm, 20 * cm};
+  const G4ThreeVector placementC{5 * cm, 5 * cm, 18 * cm};
 
-  G4double subworld_sizeXY = 0.1 * mm;
-  G4double subworld_sizeZ = 0.1 * mm;
+  const G4Transform3D trafoA{G4RotationMatrix(), placementA};
+  const G4Transform3D trafoB{G4RotationMatrix(), placementB};
+  const G4Transform3D trafoC{G4RotationMatrix(), placementC};
 
-  G4int griddim = 200;
-  G4double subworldTrigger_sizeXY = subworld_sizeXY * 1.1;
-  G4double subworldTrigger_sizeZ = subworld_sizeZ * 1.1;
+  const G4ThreeVector placementPortal{0 * cm, 0 * cm, 10 * cm};
+  const G4Transform3D trafoPortal{G4RotationMatrix(), placementPortal};
 
-  // Subworld Trigger
+  G4Material *subworldMaterial = nist->FindOrBuildMaterial("G4_AIR");
 
-  G4Material *subworldTrigger_mat = nist->FindOrBuildMaterial("G4_AIR");
+  Surface::MultiportalHelper helper(6);
 
-  G4Box *solidSubworldTrigger =
-      new G4Box("SubworldTrigger", // its name
-                0.5 * subworldTrigger_sizeXY, 0.5 * subworldTrigger_sizeXY,
-                0.5 * subworldTrigger_sizeZ); // its size
+  helper.SetDxPortal(10 * cm);
+  helper.SetDyPortal(10 * cm);
+  helper.SetDzPortal(0.5 * cm);
 
-  G4LogicalVolume *logicSubworldTriggerA =
-      new G4LogicalVolume(solidSubworldTrigger, // its solid
-                          subworldTrigger_mat,  // its material
-                          "SubworldTriggerA");  // its name
+  helper.SetDxSub(0.5 * mm);
+  helper.SetDySub(0.5 * mm);
+  helper.SetDzSub(0.5 * cm);
 
-  G4LogicalVolume *logicSubworldTriggerB =
-      new G4LogicalVolume(solidSubworldTrigger, // its solid
-                          subworldTrigger_mat,  // its material
-                          "SubworldTriggerB");  // its name
+  helper.SetNxSub(200);
+  helper.SetNySub(200);
 
-  G4LogicalVolume *logicSubworldTriggerC =
-      new G4LogicalVolume(solidSubworldTrigger, // its solid
-                          subworldTrigger_mat,  // its material
-                          "SubworldTriggerC");  // its name
-  // Subworld
+  helper.AddSubworldPlacement(trafoA);
+  helper.AddSubworldPlacement(trafoB);
+  helper.AddSubworldPlacement(trafoC);
 
-  G4Material *subworld_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Box *solidSubworld = new G4Box("Subworld", // its name
-                                   0.5 * subworld_sizeXY, 0.5 * subworld_sizeXY,
-                                   0.5 * subworld_sizeZ); // its size
+  helper.AddSubworldDensity(0.3);
+  helper.AddSubworldDensity(0.5);
+  helper.AddSubworldDensity(0.2);
 
-  G4LogicalVolume *logicSubworldA =
-      new G4LogicalVolume(solidSubworld, // its solid
-                          subworld_mat,  // its material
-                          "SubworldA");  // its name
+  helper.SetMotherVolume(logicWorld);
 
-  G4LogicalVolume *logicSubworldB =
-      new G4LogicalVolume(solidSubworld, // its solid
-                          subworld_mat,  // its material
-                          "SubworldB");  // its name
+  helper.SetPortalPlacement(trafoPortal);
 
-  G4LogicalVolume *logicSubworldC =
-      new G4LogicalVolume(solidSubworld, // its solid
-                          subworld_mat,  // its material
-                          "SubworldC");  // its name
-  //
-  G4ThreeVector subworldTriggerPlacementA{5 * cm, 5 * cm, 22 * cm};
-  G4ThreeVector subworldTriggerPlacementB{5 * cm, 5 * cm, 20 * cm};
-  G4ThreeVector subworldTriggerPlacementC{5 * cm, 5 * cm, 18 * cm};
+  helper.SetSubworldMaterial(subworldMaterial);
 
-  G4VPhysicalVolume *physSubworldTriggerA =
-      new G4PVPlacement(0,                         // no rotation
-                        subworldTriggerPlacementA, //
-                        logicSubworldTriggerA,     // its logical volume
-                        "SubworldTriggerA",        // its name
-                        logicWorld,                // its mother  volume
-                        false,                     // no boolean operation
-                        0,                         // copy number
-                        checkOverlaps);            // overlaps checking
+  helper.SetNDifferentSubworlds(3);
 
-  G4VPhysicalVolume *physSubworldTriggerB =
-      new G4PVPlacement(0,                         // no rotation
-                        subworldTriggerPlacementB, //
-                        logicSubworldTriggerB,     // its logical volume
-                        "SubworldTriggerB",        // its name
-                        logicWorld,                // its mother  volume
-                        false,                     // no boolean operation
-                        0,                         // copy number
-                        checkOverlaps);            // overlaps checking
+  helper.SetPortalName("Test");
+  helper.Generate();
 
-  G4VPhysicalVolume *physSubworldTriggerC =
-      new G4PVPlacement(0,                         // no rotation
-                        subworldTriggerPlacementC, //
-                        logicSubworldTriggerC,     // its logical volume
-                        "SubworldTriggerC",        // its name
-                        logicWorld,                // its mother  volume
-                        false,                     // no boolean operation
-                        0,                         // copy number
-                        checkOverlaps);            // overlaps checking
-
-  G4ThreeVector subworldPlacement{0, 0, 0};
-
-  G4VPhysicalVolume *physSubworldA =
-      new G4PVPlacement(0,                     // no rotation
-                        subworldPlacement,     //
-                        logicSubworldA,        // its logical volume
-                        "SubworldA",           // its name
-                        logicSubworldTriggerA, // its mother  volume
-                        false,                 // no boolean operation
-                        0,                     // copy number
-                        checkOverlaps);        // overlaps checking
-  G4VPhysicalVolume *physSubworldB =
-      new G4PVPlacement(0,                     // no rotation
-                        subworldPlacement,     //
-                        logicSubworldB,        // its logical volume
-                        "SubworldB",           // its name
-                        logicSubworldTriggerB, // its mother  volume
-                        false,                 // no boolean operation
-                        0,                     // copy number
-                        checkOverlaps);        // overlaps checking
-  G4VPhysicalVolume *physSubworldC =
-      new G4PVPlacement(0,                     // no rotation
-                        subworldPlacement,     //
-                        logicSubworldC,        // its logical volume
-                        "SubworldC",           // its name
-                        logicSubworldTriggerC, // its mother  volume
-                        false,                 // no boolean operation
-                        0,                     // copy number
-                        checkOverlaps);        // overlaps checking
-
-  // build rough surface for all subworlds
-  //
-  //
-
-  G4double basis_sizeXY = subworld_sizeXY;
-  G4double basis_sizeZ = subworld_sizeZ * 0.3;
+  G4cout << "TestC" << G4endl;
+  // build roughness for subworlds
+  const G4double basis_sizeXY = helper.GetSubworldDx();
+  const G4double basis_sizeZ = helper.GetSubworldDz() * 0.3;
+  const G4double subworld_sizeZ = helper.GetSubworldDz();
 
   G4Material *surface_mat = nist->FindOrBuildMaterial("G4_Si");
 
@@ -265,12 +186,16 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   voxelB.Voxelize(solidSurfaceB);
   voxelC.Voxelize(solidSurfaceC);
 
-  G4ThreeVector facetStorePlacementA =
-      subworldTriggerPlacementA + surfaceInSubworld;
-  G4ThreeVector facetStorePlacementB =
-      subworldTriggerPlacementB + surfaceInSubworld;
-  G4ThreeVector facetStorePlacementC =
-      subworldTriggerPlacementC + surfaceInSubworld;
+  const G4ThreeVector placementSubA =
+      helper.GetSubworldPlacement(0).getTranslation();
+  const G4ThreeVector placementSubB =
+      helper.GetSubworldPlacement(1).getTranslation();
+  const G4ThreeVector placementSubC =
+      helper.GetSubworldPlacement(2).getTranslation();
+
+  const G4ThreeVector facetStorePlacementA = placementSubA + surfaceInSubworld;
+  const G4ThreeVector facetStorePlacementB = placementSubB + surfaceInSubworld;
+  const G4ThreeVector facetStorePlacementC = placementSubC + surfaceInSubworld;
 
   fGeneratorA.SetSurfaceTransformation(facetStorePlacementA);
   fGeneratorB.SetSurfaceTransformation(facetStorePlacementB);
@@ -284,95 +209,28 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4LogicalVolume *logicSurfaceC =
       new G4LogicalVolume(solidSurfaceC, surface_mat, "SurfaceC");
 
+  Surface::MultipleSubworld *subA = helper.GetSubworld(0);
+  Surface::MultipleSubworld *subB = helper.GetSubworld(1);
+  Surface::MultipleSubworld *subC = helper.GetSubworld(2);
+
   new G4PVPlacement(NULL, surfaceInSubworld, logicSurfaceA, "SurfaceA",
-                    logicSubworldA, 0, 0, checkOverlaps);
+                    subA->GetVolume()->GetLogicalVolume(), 0, 0, checkOverlaps);
   new G4PVPlacement(NULL, surfaceInSubworld, logicSurfaceB, "SurfaceB",
-                    logicSubworldB, 0, 0, checkOverlaps);
+                    subB->GetVolume()->GetLogicalVolume(), 0, 0, checkOverlaps);
   new G4PVPlacement(NULL, surfaceInSubworld, logicSurfaceC, "SurfaceC",
-                    logicSubworldC, 0, 0, checkOverlaps);
-
-  // Portal entrance
-  //
-  //
-
-  G4double portal_sizeXY = subworld_sizeXY * griddim;
-  G4double portal_sizeZ = subworld_sizeZ;
-
-  G4ThreeVector portalPlacement{0 * cm, 0 * cm, 10 * cm};
-  G4Material *portal_mat = nist->FindOrBuildMaterial("G4_AIR");
-
-  G4Box *solidPortal = new G4Box("Portal", 0.5 * portal_sizeXY,
-                                 0.5 * portal_sizeXY, 0.5 * portal_sizeZ);
-
-  G4LogicalVolume *logicPortal =
-      new G4LogicalVolume(solidPortal, portal_mat, "Portal");
-
-  G4VPhysicalVolume *physPortal =
-      new G4PVPlacement(0, portalPlacement, logicPortal, "Portal", logicWorld,
-                        false, 0, checkOverlaps);
-  //
-  // Add Portal and Subworlds to portal Store
-  //
-  //
-
-  G4int verboseLvL{0};
-  Surface::PortalStore &portalStore = Surface::Locator::GetPortalStore();
-  Surface::MultipleSubworld *portalEntrance = new Surface::MultipleSubworld(
-      "Entrance", physPortal, portalPlacement, verboseLvL);
-
-  Surface::MultipleSubworld *portalSubworldA = new Surface::MultipleSubworld(
-      "Subworld-A", physSubworldA, subworldTriggerPlacementA, verboseLvL,
-      fGeneratorA.GetFacetStore());
-  Surface::MultipleSubworld *portalSubworldB = new Surface::MultipleSubworld(
-      "Subworld-B", physSubworldB, subworldTriggerPlacementB, verboseLvL,
-      fGeneratorB.GetFacetStore());
-  Surface::MultipleSubworld *portalSubworldC = new Surface::MultipleSubworld(
-      "Subworld-C", physSubworldC, subworldTriggerPlacementC, verboseLvL,
-      fGeneratorC.GetFacetStore());
-
-  // set trigger for portals
-  portalEntrance->SetTrigger(physPortal);
-  portalSubworldA->SetTrigger(physSubworldTriggerA);
-  portalSubworldB->SetTrigger(physSubworldTriggerB);
-  portalSubworldC->SetTrigger(physSubworldTriggerC);
-  // link portals
-  portalEntrance->SetAsPortal();
-  portalEntrance->SetSubworldEdge(subworld_sizeXY, subworld_sizeXY,
-                                  subworld_sizeZ);
-  portalEntrance->SetGrid(griddim, griddim, 0);
-  portalEntrance->SetOtherPortal(portalSubworldA);
-  portalSubworldA->SetOtherPortal(portalEntrance);
-  portalSubworldB->SetOtherPortal(portalEntrance);
-  portalSubworldC->SetOtherPortal(portalEntrance);
-  Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> subworldHelper(0);
-  subworldHelper.AddAvailableSubworld(portalSubworldA, 0.3);
-  subworldHelper.AddAvailableSubworld(portalSubworldB, 0.5);
-  subworldHelper.AddAvailableSubworld(portalSubworldC, 0.2);
-  subworldHelper.FillGrid(portalEntrance->GetSubworldGrid());
-  portalEntrance->GetSubworldGrid()->PrintUniqueSubworlds();
-  portalEntrance->GetSubworldGrid()->PrintStatistic();
-  portalEntrance->GetSubworldGrid()->PrintLegend();
-  portalEntrance->GetSubworldGrid()->PrintGrid(0, 10, 0, 10);
-
-  // add them to the store
-  portalStore.push_back(portalEntrance);
-  portalStore.push_back(portalSubworldA);
-  portalStore.push_back(portalSubworldB);
-  portalStore.push_back(portalSubworldC);
-
-  // set StepLimit
+                    subC->GetVolume()->GetLogicalVolume(), 0, 0, checkOverlaps);
+  //   set StepLimit
 
   G4double maxStepsize = 100 * mm;
-  G4double maxStepsize_subworld = 0.1 * mm;
+  G4double maxStepsize_subworld = 100. * mm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   G4UserLimits *limit_subworld = new G4UserLimits(maxStepsize_subworld);
   logicWorld->SetUserLimits(limit);
-  logicSubworldA->SetUserLimits(limit_subworld);
-  logicSubworldB->SetUserLimits(limit_subworld);
-  logicSubworldC->SetUserLimits(limit_subworld);
-  logicPortal->SetUserLimits(limit);
+  // subA->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
+  // subB->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
+  // subC->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
   //
-  // always return the physical World
+  //    always return the physical World
   //
   return physWorld;
 }
