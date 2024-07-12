@@ -105,10 +105,12 @@
 /vis/geometry/set/visibility World 0 true
 /vis/geometry/set/colour World 0 0 1 1 .2
 # "Envelope" is transparent blue to represent water
-/vis/geometry/set/colour Subworld 0 0 0 1 .2
-/vis/geometry/set/colour SubworldTriggerA 0 0 1 1 .1
-/vis/geometry/set/colour SubworldTriggerB 0 0 1 1 .1
-/vis/geometry/set/colour SubworldTriggerC 0 0 1 1 .1
+/vis/geometry/set/colour Subworld_0 0 0 0 1 .2
+/vis/geometry/set/colour Subworld_1 0 0 0 1 .2
+/vis/geometry/set/colour Subworld_2 0 0 0 1 .2
+/vis/geometry/set/colour Trigger_0 0 0 1 1 .1
+/vis/geometry/set/colour Trigger_1 0 0 1 1 .1
+/vis/geometry/set/colour Trigger_2 0 0 1 1 .1
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
 /vis/geometry/set/colour Portal 0 0 0 1 .2

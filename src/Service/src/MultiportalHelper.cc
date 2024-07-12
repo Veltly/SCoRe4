@@ -127,6 +127,8 @@ void Surface::MultiportalHelper::Generate() {
   FillSubworldmap();
 
   fLogger.WriteInfo("Generated Portal with Subworlds");
+
+  fLogger.WriteDetailInfo(&Surface::MultiportalHelper::PrintInfo);
 }
 
 // Setter
@@ -186,11 +188,26 @@ void Surface::MultiportalHelper::PrintInfo() {
   };
 
   std::stringstream ss;
-  ss << "State of MultiportalHelper\n"
+  ss << "************************************\n"
+     << "**** State of MultiportalHelper ****\n"
+     << "************************************\n"
      << "Info Portal:\n"
      << "Dx: " << fDx << "\n"
      << "Dy: " << fDy << "\n"
      << "Dz: " << fDz << "\n"
-     << "Placement:\n"
-     << trafoString(fPlacementPortal);
+     << "Placement Portal: " << trafoString(fPlacementPortal) << "\n\n";
+
+  ss << "Info Subworlds:\n"
+     << "Dx: " << fDxSub << "\n"
+     << "Dy: " << fDySub << "\n"
+     << "Dz: " << fDzSub << "\n";
+
+  for (G4int i = 0; i < fNOfDifferentSubworlds; ++i) {
+    ss << "Placement Subworld_" << i << ": " << trafoString(fPlacementSub.at(i))
+       << "\n";
+  }
+  ss << "Material: " << fSubworldMaterial << "\n";
+  ss << "************************************\n"
+     << "************************************\n";
+  G4cout << ss.str() << G4endl;
 }

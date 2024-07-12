@@ -8,7 +8,6 @@ Surface::Logger::Logger(G4String aId, G4int aVerboseLvl)
 
 void Surface::Logger::WriteInfo(G4String &aMsg) {
   if (fVerboseLvl > fVerboseInfo) {
-    ;
     G4cout << " ----Info----> " << fId << ": " << aMsg << G4endl;
   }
 }
@@ -21,8 +20,13 @@ void Surface::Logger::WriteInfo(std::stringstream &&aMsg) {
 
 void Surface::Logger::WriteDetailInfo(G4String &aMsg) {
   if (fVerboseLvl > fVerboseDetailInfo) {
-    ;
     G4cout << " ----Info----> " << fId << ": " << aMsg << G4endl;
+  }
+}
+
+void Surface::Logger::WriteInfo(void (*print)()) {
+  if (fVerboseLvl > fVerboseDetailInfo) {
+    print();
   }
 }
 
@@ -31,6 +35,12 @@ void Surface::Logger::WriteDetailInfo(G4String &&aMsg) {
 }
 void Surface::Logger::WriteDetailInfo(std::stringstream &&aMsg) {
   WriteDetailInfo(aMsg.str());
+}
+
+void Surface::Logger::WriteDetailInfo(void (*print)()) {
+  if (fVerboseLvl > fVerboseDetailInfo) {
+    print();
+  }
 }
 
 void Surface::Logger::WriteWarning(G4String &aMsg) {
@@ -44,6 +54,12 @@ void Surface::Logger::WriteWarning(std::stringstream &&aMsg) {
   WriteWarning(aMsg.str());
 }
 
+void Surface::Logger::WriteWarning(void (*print)()) {
+  if (fVerboseLvl > fVerboseDetailInfo) {
+    print();
+  }
+}
+
 void Surface::Logger::WriteError(G4String &aMsg) {
   if (fVerboseLvl > fVerboseError) {
     G4cout << " ----Error----> " << fId << ": " << aMsg << G4endl;
@@ -54,6 +70,12 @@ void Surface::Logger::WriteError(G4String &&aMsg) { WriteError(aMsg); }
 
 void Surface::Logger::WriteError(std::stringstream &&aMsg) {
   WriteError(aMsg.str());
+}
+
+void Surface::Logger::WriteError(void (*print)()) {
+  if (fVerboseLvl > fVerboseDetailInfo) {
+    print();
+  }
 }
 
 void Surface::Logger::WriteDebugInfo(G4String &aMsg) {
@@ -79,6 +101,12 @@ void Surface::Logger::WriteDebugInfo(G4String &aMsg,
 
 void Surface::Logger::WriteDebugInfo(std::stringstream &&stream) {
   WriteDebugInfo(stream.str());
+}
+
+void Surface::Logger::WriteDebugInfo(void (*print)()) {
+  if (fVerboseLvl > fVerboseDetailInfo) {
+    print();
+  }
 }
 
 void Surface::Logger::SetVerboseLvl(G4int aVerboseLvl) {
