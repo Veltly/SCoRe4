@@ -52,8 +52,8 @@
 namespace Surface {
 
 struct G4VoxelBox {
-  G4ThreeVector hlen; // half length of the box
-  G4ThreeVector pos;  // position of the box
+  G4ThreeVector hlen;  // half length of the box
+  G4ThreeVector pos;   // position of the box
 };
 
 struct G4VoxelInfo {
@@ -63,7 +63,7 @@ struct G4VoxelInfo {
 };
 
 class G4Voxelizer_Green {
-public:
+ public:
   template <typename T>
   static inline G4int BinarySearch(const std::vector<T> &vec, T value);
 
@@ -141,8 +141,8 @@ public:
 
   inline long long CountVoxels(std::vector<G4double> boundaries[]) const;
 
-  inline const std::vector<G4int> &
-  GetCandidates(std::vector<G4int> &curVoxel) const;
+  inline const std::vector<G4int> &GetCandidates(
+      std::vector<G4int> &curVoxel) const;
 
   inline G4int GetVoxelBoxesSize() const;
 
@@ -159,13 +159,11 @@ public:
 
   static G4int GetDefaultVoxelsCount();
 
-  void SetMaxBoundary(G4ThreeVector aBoundary);
+  void SetMaxBoundary(const G4int maxX, const G4int maxY, const G4int maxZ);
 
-  inline G4ThreeVector GetMaxBoundary() const { return fMaxBoundary; };
-
-private:
+ private:
   class G4VoxelComparator {
-  public:
+   public:
     std::vector<G4VoxelInfo> &fVoxels;
 
     G4VoxelComparator(std::vector<G4VoxelInfo> &voxels) : fVoxels(voxels) {}
@@ -178,7 +176,7 @@ private:
     }
   };
 
-private:
+ private:
   void BuildEmpty();
 
   G4String GetCandidatesAsString(const G4SurfBits &bits) const;
@@ -217,7 +215,7 @@ private:
   void TransformLimits(G4ThreeVector &min, G4ThreeVector &max,
                        const G4Transform3D &transformation) const;
 
-private:
+ private:
   static G4ThreadLocal G4int fDefaultVoxelsCount;
 
   std::vector<G4VoxelBox> fVoxelBoxes;
@@ -256,9 +254,9 @@ private:
 
   G4SurfBits fEmpty;
 
-  G4ThreeVector fMaxBoundary;
+  G4int fMaxBoundary[3];
 };
 
 #include "G4Voxelizer_Green.icc"
-} // namespace Surface
+}  // namespace Surface
 #endif

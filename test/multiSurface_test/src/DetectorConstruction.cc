@@ -4,6 +4,15 @@
 
 #include "DetectorConstruction.hh"
 
+#include <CLHEP/Geometry/Transform3D.h>
+
+#include <G4MultiUnion.hh>
+#include <G4Region.hh>
+#include <G4RotationMatrix.hh>
+#include <G4ThreeVector.hh>
+#include <G4Transform3D.hh>
+#include <G4UserLimits.hh>
+
 #include "../../../src/Portal/include/MultipleSubworld.hh"
 #include "../../../src/Service/include/G4Voxelizer_Green.hh"
 #include "../../../src/Service/include/MultiportalHelper.hh"
@@ -15,13 +24,6 @@
 #include "G4PVPlacement.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
-#include <CLHEP/Geometry/Transform3D.h>
-#include <G4MultiUnion.hh>
-#include <G4Region.hh>
-#include <G4RotationMatrix.hh>
-#include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
-#include <G4UserLimits.hh>
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fScoringVolume(0) {}
@@ -41,23 +43,23 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   const G4double world_sizeZ = 1 * m;
   G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
-  G4Box *solidWorld = new G4Box("World", // its name
+  G4Box *solidWorld = new G4Box("World",  // its name
                                 0.5 * world_sizeXY, 0.5 * world_sizeXY,
-                                0.5 * world_sizeZ); // its size
+                                0.5 * world_sizeZ);  // its size
 
-  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, // its solid
-                                                    world_mat,  // its material
-                                                    "World");   // its name
+  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld,  // its solid
+                                                    world_mat,   // its material
+                                                    "World");    // its name
 
   G4VPhysicalVolume *physWorld =
-      new G4PVPlacement(0,               // no rotation
-                        G4ThreeVector(), // at (0,0,0)
-                        logicWorld,      // its logical volume
-                        "World",         // its name
-                        0,               // its mother  volume
-                        false,           // no boolean operation
-                        0,               // copy number
-                        checkOverlaps);  // overlaps checking
+      new G4PVPlacement(0,                // no rotation
+                        G4ThreeVector(),  // at (0,0,0)
+                        logicWorld,       // its logical volume
+                        "World",          // its name
+                        0,                // its mother  volume
+                        false,            // no boolean operation
+                        0,                // copy number
+                        checkOverlaps);   // overlaps checking
 
   const G4ThreeVector placementA{5 * cm, 5 * cm, 22 * cm};
   const G4ThreeVector placementB{5 * cm, 5 * cm, 20 * cm};
@@ -178,9 +180,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   Surface::G4Voxelizer_Green &voxelC =
       (Surface::G4Voxelizer_Green &)solidSurfaceC->GetVoxels();
 
-  voxelA.SetMaxBoundary({10, 10, 2});
-  voxelB.SetMaxBoundary({10, 10, 2});
-  voxelC.SetMaxBoundary({10, 10, 2});
+  voxelA.SetMaxBoundary(10, 10, 2);
+  voxelB.SetMaxBoundary(10, 10, 2);
+  voxelC.SetMaxBoundary(10, 10, 2);
 
   voxelA.Voxelize(solidSurfaceA);
   voxelB.Voxelize(solidSurfaceB);

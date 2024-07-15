@@ -28,6 +28,8 @@
 // 19.10.12 Marek Gayer, created
 // --------------------------------------------------------------------
 
+#include "../include/G4Voxelizer_Green.hh"
+
 #include <G4ThreeVector.hh>
 #include <algorithm>
 #include <iomanip>
@@ -35,9 +37,6 @@
 #include <set>
 #include <sstream>
 
-#include "G4VSolid.hh"
-
-#include "../include/G4Voxelizer_Green.hh"
 #include "G4CSGSolid.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4MultiUnion.hh"
@@ -45,6 +44,7 @@
 #include "G4PhysicalConstants.hh"
 #include "G4SolidStore.hh"
 #include "G4Types.hh"
+#include "G4VSolid.hh"
 #include "Randomize.hh"
 #include "geomdefs.hh"
 
@@ -75,8 +75,7 @@ void Surface::G4Voxelizer_Green::BuildEmpty() {
   std::vector<G4int> xyz(3), max(3), candidates(fTotalCandidates);
   const std::vector<G4int> empty(0);
 
-  for (auto i = 0; i <= 2; ++i)
-    max[i] = fBoundaries[i].size();
+  for (auto i = 0; i <= 2; ++i) max[i] = fBoundaries[i].size();
   unsigned int size = max[0] * max[1] * max[2];
 
   fEmpty.Clear();
@@ -118,9 +117,9 @@ void Surface::G4Voxelizer_Green::BuildVoxelLimits(
   // These quantities are stored in the array "fBoxes" (6 different values per
   // node
   //
-  if (G4int numNodes = solids.size()) // Number of nodes in "multiUnion"
+  if (G4int numNodes = solids.size())  // Number of nodes in "multiUnion"
   {
-    fBoxes.resize(numNodes); // Array which will store the half lengths
+    fBoxes.resize(numNodes);  // Array which will store the half lengths
     fNPerSlice = 1 + (fBoxes.size() - 1) / (8 * sizeof(unsigned int));
 
     // related to a particular node, but also
@@ -162,9 +161,9 @@ void Surface::G4Voxelizer_Green::BuildVoxelLimits(
   // These quantities are stored in the array "fBoxes" (6 different values per
   // node.
 
-  if (G4int numNodes = facets.size()) // Number of nodes
+  if (G4int numNodes = facets.size())  // Number of nodes
   {
-    fBoxes.resize(numNodes); // Array which will store the half lengths
+    fBoxes.resize(numNodes);  // Array which will store the half lengths
     fNPerSlice = 1 + (fBoxes.size() - 1) / (8 * sizeof(unsigned int));
 
     G4ThreeVector toleranceVector(10 * fTolerance, 10 * fTolerance,
@@ -209,7 +208,7 @@ void Surface::G4Voxelizer_Green::CreateSortedBoundary(
   // bounding fBoxes, along each axis. The created boundaries are stored
   // in the array "boundariesRaw"
 
-  G4int numNodes = fBoxes.size(); // Number of nodes in structure
+  G4int numNodes = fBoxes.size();  // Number of nodes in structure
 
   // Determination of the boundaries along x, y and z axis
   //
@@ -260,8 +259,7 @@ void Surface::G4Voxelizer_Green::BuildBoundaries() {
       for (G4int i = 0; i < 2 * numNodes; ++i) {
         G4double newBoundary = sortedBoundary[i];
 #ifdef G4SPECSDEBUG
-        if (j == 0)
-          G4cout << "Examining " << newBoundary << "..." << G4endl;
+        if (j == 0) G4cout << "Examining " << newBoundary << "..." << G4endl;
 #endif
         G4int size = boundary.size();
         if (!size || std::abs(boundary[size - 1] - newBoundary) > tolerance) {
@@ -282,8 +280,8 @@ void Surface::G4Voxelizer_Green::BuildBoundaries() {
       G4int n = boundary.size();
       G4int max = fMaxBoundary[j];
       if (n > max / 2) {
-        G4int skip = n / (max / 2); // n has to be 2x bigger then 50.000.
-                                    // therefore only from 100.000 reduced
+        G4int skip = n / (max / 2);  // n has to be 2x bigger then 50.000.
+                                     // therefore only from 100.000 reduced
         std::vector<G4double> reduced;
         for (G4int i = 0; i < n; ++i) {
           // 50 ok for 2k, 1000, 2000
@@ -321,8 +319,7 @@ void Surface::G4Voxelizer_Green::DisplayBoundaries(
   G4int oldprec = G4cout.precision(16);
   for (G4int i = 0; i < count; ++i) {
     G4cout << setw(10) << setiosflags(ios::fixed) << boundaries[i];
-    if (i != count - 1)
-      G4cout << "-> ";
+    if (i != count - 1) G4cout << "-> ";
   }
   G4cout << "|" << G4endl << "Number of boundaries: " << count << G4endl;
   G4cout.precision(oldprec);
@@ -368,15 +365,15 @@ void Surface::G4Voxelizer_Green::BuildBitmasks(
       //
       G4double p = fBoxes[j].pos[k], d = fBoxes[j].hlen[k];
 
-      G4double min = p - d; // - localTolerance;
-      G4double max = p + d; // + localTolerance;
+      G4double min = p - d;  // - localTolerance;
+      G4double max = p + d;  // + localTolerance;
 
       G4int i = BinarySearch(boundary, min);
       if (i < 0) {
         i = 0;
       }
 
-      do // Loop checking, 13.08.2015, G.Cosmo
+      do  // Loop checking, 13.08.2015, G.Cosmo
       {
         if (!countsOnly) {
           bitmask.SetBitNumber(i * bitsPerSlice + j);
@@ -513,8 +510,7 @@ void Surface::G4Voxelizer_Green::BuildReduceVoxels(
       G4int count = 0, currentCount;
       while ((currentCount = voxelSet.size()) > 2) {
         G4double currentRatio = 1 - (G4double)count / max;
-        if ((currentRatio <= reduction) && (currentCount <= 1000))
-          break;
+        if ((currentRatio <= reduction) && (currentCount <= 1000)) break;
         const G4int pos = *voxelSet.begin();
         mergings.push_back(pos + 1);
 
@@ -522,29 +518,28 @@ void Surface::G4Voxelizer_Green::BuildReduceVoxels(
         G4VoxelInfo &nextVoxel = voxels[voxel.next];
 
         if (voxelSet.erase(pos) != 1) {
-          ; // k = k;
+          ;  // k = k;
         }
         if (voxel.next != max - 1)
           if (voxelSet.erase(voxel.next) != 1) {
-            ; // k = k;
+            ;  // k = k;
           }
         if (voxel.previous != -1)
           if (voxelSet.erase(voxel.previous) != 1) {
-            ; // k = k;
+            ;  // k = k;
           }
         nextVoxel.count += voxel.count;
         voxel.count = 0;
         nextVoxel.previous = voxel.previous;
 
-        if (voxel.next != max - 1)
-          voxelSet.insert(voxel.next);
+        if (voxel.next != max - 1) voxelSet.insert(voxel.next);
 
         if (voxel.previous != -1) {
           voxels[voxel.previous].next = voxel.next;
           voxelSet.insert(voxel.previous);
         }
         ++count;
-      } // Loop checking, 13.08.2015, G.Cosmo
+      }  // Loop checking, 13.08.2015, G.Cosmo
     }
 
     if (mergings.size()) {
@@ -633,18 +628,14 @@ void Surface::G4Voxelizer_Green::BuildReduceVoxels2(
     std::vector<G4int> &candidatesCount = fCandidatesCounts[k];
     G4int max = candidatesCount.size();
     G4int total = 0;
-    for (G4int i = 0; i < max; ++i)
-      total += candidatesCount[i];
+    for (G4int i = 0; i < max; ++i) total += candidatesCount[i];
 
     G4double reduction = reductionRatio[k];
-    if (reduction == 0)
-      break;
+    if (reduction == 0) break;
 
     G4int destination = (G4int)(reduction * max) + 1;
-    if (destination > 1000)
-      destination = 1000;
-    if (destination < 2)
-      destination = 2;
+    if (destination > 1000) destination = 1000;
+    if (destination < 2) destination = 2;
     G4double average = ((G4double)total / max) / reduction;
 
     std::vector<G4int> mergings;
@@ -659,8 +650,7 @@ void Surface::G4Voxelizer_Green::BuildReduceVoxels2(
         G4double val = boundary[i];
         reducedBoundary[cur] = val;
         ++cur;
-        if (cur == destination)
-          break;
+        if (cur == destination) break;
       }
     }
     reducedBoundary[destination - 1] = boundary[max];
@@ -680,9 +670,9 @@ void Surface::G4Voxelizer_Green::Voxelize(
   G4cout << "Start BoundingBox" << G4endl;
   BuildBoundingBox();
   G4cout << "Start Empty" << G4endl;
-  BuildEmpty(); // this does not work well for multi-union,
-                // actually only makes performance slower,
-                // these are only pre-calculated but not used by multi-union
+  BuildEmpty();  // this does not work well for multi-union,
+                 // actually only makes performance slower,
+                 // these are only pre-calculated but not used by multi-union
 
   for (auto i = 0; i < 3; ++i) {
     fCandidatesCounts[i].resize(0);
@@ -708,8 +698,7 @@ void Surface::G4Voxelizer_Green::Voxelize(G4MultiUnion *munion) {
 void Surface::G4Voxelizer_Green::CreateMiniVoxels(
     std::vector<G4double> boundaries[], G4SurfBits bitmasks[]) {
   std::vector<G4int> voxel(3), maxVoxels(3);
-  for (auto i = 0; i <= 2; ++i)
-    maxVoxels[i] = boundaries[i].size();
+  for (auto i = 0; i <= 2; ++i) maxVoxels[i] = boundaries[i].size();
 
   G4ThreeVector point;
   for (voxel[2] = 0; voxel[2] < maxVoxels[2] - 1; ++voxel[2]) {
@@ -743,8 +732,7 @@ void Surface::G4Voxelizer_Green::Voxelize(std::vector<G4VFacet *> &facets) {
   G4int size = facets.size();
   if (size < 10) {
     for (G4int i = 0; i < (G4int)facets.size(); ++i) {
-      if (facets[i]->GetNumberOfVertices() > 3)
-        size++;
+      if (facets[i]->GetNumberOfVertices() > 3) size++;
     }
   }
 
@@ -769,8 +757,7 @@ void Surface::G4Voxelizer_Green::Voxelize(std::vector<G4VFacet *> &facets) {
 
     if (maxVoxels < 0 && reductionRatio == G4ThreeVector()) {
       maxVoxels = fTotalCandidates;
-      if (fTotalCandidates > 1000000)
-        maxVoxels = 1000000;
+      if (fTotalCandidates > 1000000) maxVoxels = 1000000;
     }
 
     SetReductionRatio(maxVoxels, reductionRatio);
@@ -873,8 +860,7 @@ void Surface::G4Voxelizer_Green::GetCandidatesVoxel(
   std::vector<G4int> candidates;
   G4int count = GetCandidatesVoxelArray(voxels, candidates);
   G4cout << "[ ";
-  for (G4int i = 0; i < count; ++i)
-    G4cout << candidates[i];
+  for (G4int i = 0; i < count; ++i) G4cout << candidates[i];
   G4cout << "]  " << G4endl;
 }
 
@@ -888,8 +874,7 @@ void Surface::G4Voxelizer_Green::FindComponentsFastest(unsigned int mask,
         if (maskByte & 1) {
           list.push_back(8 * (sizeof(unsigned int) * i + byte) + bit);
         }
-        if (!(maskByte >>= 1))
-          break;
+        if (!(maskByte >>= 1)) break;
       }
     }
     mask >>= 8;
@@ -904,10 +889,10 @@ void Surface::G4Voxelizer_Green::TransformLimits(
   // (representing the bounding box of a given solid in its local frame)
   // to the main frame, using "transformation"
 
-  G4ThreeVector vertices[8] = // Detemination of the vertices thanks to
-      {                       // the extension of each solid:
-       G4ThreeVector(min.x(), min.y(), min.z()), // 1st vertice:
-       G4ThreeVector(min.x(), max.y(), min.z()), // 2nd vertice:
+  G4ThreeVector vertices[8] =  // Detemination of the vertices thanks to
+      {                        // the extension of each solid:
+       G4ThreeVector(min.x(), min.y(), min.z()),  // 1st vertice:
+       G4ThreeVector(min.x(), max.y(), min.z()),  // 2nd vertice:
        G4ThreeVector(max.x(), max.y(), min.z()),
        G4ThreeVector(max.x(), min.y(), min.z()),
        G4ThreeVector(min.x(), min.y(), max.z()),
@@ -926,20 +911,14 @@ void Surface::G4Voxelizer_Green::TransformLimits(
     G4ThreeVector current = GetGlobalPoint(transformation, vertices[i]);
 
     // If need be, replacement of the min & max values:
-    if (current.x() > max.x())
-      max.setX(current.x());
-    if (current.x() < min.x())
-      min.setX(current.x());
+    if (current.x() > max.x()) max.setX(current.x());
+    if (current.x() < min.x()) min.setX(current.x());
 
-    if (current.y() > max.y())
-      max.setY(current.y());
-    if (current.y() < min.y())
-      min.setY(current.y());
+    if (current.y() > max.y()) max.setY(current.y());
+    if (current.y() < min.y()) min.setY(current.y());
 
-    if (current.z() > max.z())
-      max.setZ(current.z());
-    if (current.z() < min.z())
-      min.setZ(current.z());
+    if (current.z() > max.z()) max.setZ(current.z());
+    if (current.z() < min.z()) min.setZ(current.z());
   }
 }
 
@@ -965,25 +944,22 @@ G4int Surface::G4Voxelizer_Green::GetCandidatesVoxelArray(
       G4int slice;
       if (fBoundaries[0].size() > 2) {
         slice = BinarySearch(fBoundaries[0], point.x());
-        if (!(mask = ((unsigned int *)fBitmasks[0].fAllBits)[slice]))
-          return 0;
+        if (!(mask = ((unsigned int *)fBitmasks[0].fAllBits)[slice])) return 0;
       }
       if (fBoundaries[1].size() > 2) {
         slice = BinarySearch(fBoundaries[1], point.y());
-        if (!(mask &= ((unsigned int *)fBitmasks[1].fAllBits)[slice]))
-          return 0;
+        if (!(mask &= ((unsigned int *)fBitmasks[1].fAllBits)[slice])) return 0;
       }
       if (fBoundaries[2].size() > 2) {
         slice = BinarySearch(fBoundaries[2], point.z());
-        if (!(mask &= ((unsigned int *)fBitmasks[2].fAllBits)[slice]))
-          return 0;
+        if (!(mask &= ((unsigned int *)fBitmasks[2].fAllBits)[slice])) return 0;
       }
       if (crossed && (!(mask &= ~((unsigned int *)crossed->fAllBits)[0])))
         return 0;
 
       FindComponentsFastest(mask, list, 0);
     } else {
-      unsigned int *masks[3], mask; // masks for X,Y,Z axis
+      unsigned int *masks[3], mask;  // masks for X,Y,Z axis
       for (auto i = 0; i <= 2; ++i) {
         G4int slice = BinarySearch(fBoundaries[i], point[i]);
         masks[i] = ((unsigned int *)fBitmasks[i].fAllBits) + slice * fNPerSlice;
@@ -995,14 +971,10 @@ G4int Surface::G4Voxelizer_Green::GetCandidatesVoxelArray(
         // Logic "and" of the masks along the 3 axes x, y, z:
         // removing "if (!" and ") continue" => slightly slower
         //
-        if (!(mask = masks[0][i]))
-          continue;
-        if (!(mask &= masks[1][i]))
-          continue;
-        if (!(mask &= masks[2][i]))
-          continue;
-        if (maskCrossed && !(mask &= ~maskCrossed[i]))
-          continue;
+        if (!(mask = masks[0][i])) continue;
+        if (!(mask &= masks[1][i])) continue;
+        if (!(mask &= masks[2][i])) continue;
+        if (maskCrossed && !(mask &= ~maskCrossed[i])) continue;
 
         FindComponentsFastest(mask, list, i);
       }
@@ -1067,8 +1039,7 @@ G4int Surface::G4Voxelizer_Green::GetCandidatesVoxelArray(
   } else {
     if (fNPerSlice == 1) {
       unsigned int mask;
-      if (!(mask = ((unsigned int *)bitmasks[0].fAllBits)[voxels[0]]))
-        return 0;
+      if (!(mask = ((unsigned int *)bitmasks[0].fAllBits)[voxels[0]])) return 0;
       if (!(mask &= ((unsigned int *)bitmasks[1].fAllBits)[voxels[1]]))
         return 0;
       if (!(mask &= ((unsigned int *)bitmasks[2].fAllBits)[voxels[2]]))
@@ -1078,7 +1049,7 @@ G4int Surface::G4Voxelizer_Green::GetCandidatesVoxelArray(
 
       FindComponentsFastest(mask, list, 0);
     } else {
-      unsigned int *masks[3], mask; // masks for X,Y,Z axis
+      unsigned int *masks[3], mask;  // masks for X,Y,Z axis
       for (auto i = 0; i <= 2; ++i) {
         masks[i] =
             ((unsigned int *)bitmasks[i].fAllBits) + voxels[i] * fNPerSlice;
@@ -1090,14 +1061,10 @@ G4int Surface::G4Voxelizer_Green::GetCandidatesVoxelArray(
         // Logic "and" of the masks along the 3 axes x, y, z:
         // removing "if (!" and ") continue" => slightly slower
         //
-        if (!(mask = masks[0][i]))
-          continue;
-        if (!(mask &= masks[1][i]))
-          continue;
-        if (!(mask &= masks[2][i]))
-          continue;
-        if (maskCrossed && !(mask &= ~maskCrossed[i]))
-          continue;
+        if (!(mask = masks[0][i])) continue;
+        if (!(mask &= masks[1][i])) continue;
+        if (!(mask &= masks[2][i])) continue;
+        if (maskCrossed && !(mask &= ~maskCrossed[i])) continue;
 
         FindComponentsFastest(mask, list, i);
       }
@@ -1141,9 +1108,8 @@ G4double Surface::G4Voxelizer_Green::DistanceToBoundingBox(
 }
 
 //______________________________________________________________________________
-G4double
-Surface::G4Voxelizer_Green::MinDistanceToBox(const G4ThreeVector &aPoint,
-                                             const G4ThreeVector &f) {
+G4double Surface::G4Voxelizer_Green::MinDistanceToBox(
+    const G4ThreeVector &aPoint, const G4ThreeVector &f) {
   // Estimates the isotropic safety from a point outside the current solid
   // to any of its surfaces. The algorithm may be accurate or should provide
   // a fast underestimate.
@@ -1151,13 +1117,10 @@ Surface::G4Voxelizer_Green::MinDistanceToBox(const G4ThreeVector &aPoint,
   G4double safe, safx, safy, safz;
   safe = safx = -f.x() + std::abs(aPoint.x());
   safy = -f.y() + std::abs(aPoint.y());
-  if (safy > safe)
-    safe = safy;
+  if (safy > safe) safe = safy;
   safz = -f.z() + std::abs(aPoint.z());
-  if (safz > safe)
-    safe = safz;
-  if (safe < 0.0)
-    return 0.0; // point is inside
+  if (safz > safe) safe = safz;
+  if (safe < 0.0) return 0.0;  // point is inside
 
   G4double safsq = 0.0;
   G4int count = 0;
@@ -1173,19 +1136,17 @@ Surface::G4Voxelizer_Green::MinDistanceToBox(const G4ThreeVector &aPoint,
     safsq += safz * safz;
     ++count;
   }
-  if (count == 1)
-    return safe;
+  if (count == 1) return safe;
   return std::sqrt(safsq);
 }
 
 //______________________________________________________________________________
-G4double
-Surface::G4Voxelizer_Green::DistanceToNext(const G4ThreeVector &point,
-                                           const G4ThreeVector &direction,
-                                           std::vector<G4int> &curVoxel) const {
+G4double Surface::G4Voxelizer_Green::DistanceToNext(
+    const G4ThreeVector &point, const G4ThreeVector &direction,
+    std::vector<G4int> &curVoxel) const {
   G4double shift = kInfinity;
 
-  G4int cur = 0; // the smallest index, which would be than increased
+  G4int cur = 0;  // the smallest index, which would be than increased
   for (G4int i = 0; i <= 2; ++i) {
     // Looking for the next voxels on the considered direction X,Y,Z axis
     //
@@ -1194,8 +1155,7 @@ Surface::G4Voxelizer_Green::DistanceToNext(const G4ThreeVector &point,
     if (direction[i] >= 1e-10) {
       ++index;
     } else {
-      if (direction[i] > -1e-10)
-        continue;
+      if (direction[i] > -1e-10) continue;
     }
     G4double dif = boundary[index] - point[i];
     G4double distance = dif / direction[i];
@@ -1214,8 +1174,7 @@ Surface::G4Voxelizer_Green::DistanceToNext(const G4ThreeVector &point,
       if (++curVoxel[cur] >= (G4int)fBoundaries[cur].size() - 1)
         shift = kInfinity;
     } else {
-      if (--curVoxel[cur] < 0)
-        shift = kInfinity;
+      if (--curVoxel[cur] < 0) shift = kInfinity;
     }
   }
 
@@ -1262,17 +1221,14 @@ G4bool Surface::G4Voxelizer_Green::UpdateCurrentVoxel(
 
     if (direction[i] > 0) {
       if (point[i] >= boundary[++index])
-        if (++curVoxel[i] >= (G4int)boundary.size() - 1)
-          return false;
+        if (++curVoxel[i] >= (G4int)boundary.size() - 1) return false;
     } else {
       if (point[i] < boundary[index])
-        if (--curVoxel[i] < 0)
-          return false;
+        if (--curVoxel[i] < 0) return false;
     }
 #ifdef G4SPECSDEBUG
     G4int indexOK = BinarySearch(boundary, point[i]);
-    if (curVoxel[i] != indexOK)
-      curVoxel[i] = indexOK; // put breakpoint here
+    if (curVoxel[i] != indexOK) curVoxel[i] = indexOK;  // put breakpoint here
 #endif
   }
   return true;
@@ -1322,6 +1278,10 @@ G4int Surface::G4Voxelizer_Green::AllocatedMemory() {
   return size;
 }
 
-void Surface::G4Voxelizer_Green::SetMaxBoundary(G4ThreeVector aMaxBoundary) {
-  fMaxBoundary = aMaxBoundary;
+void Surface::G4Voxelizer_Green::SetMaxBoundary(const G4int maxX,
+                                                const G4int maxY,
+                                                const G4int maxZ) {
+  fMaxBoundary[0] = maxX;
+  fMaxBoundary[1] = maxY;
+  fMaxBoundary[2] = maxZ;
 }

@@ -4,6 +4,11 @@
 
 #include "DetectorConstruction.hh"
 
+#include <G4MultiUnion.hh>
+#include <G4RotationMatrix.hh>
+#include <G4ThreeVector.hh>
+#include <G4Transform3D.hh>
+
 #include "../../../src/Service/include/G4Voxelizer_Green.hh"
 #include "../../../src/Service/include/Locator.hh"
 #include "../../../src/SurfaceGenerator/include/Generator.hh"
@@ -15,13 +20,10 @@
 #include "G4SystemOfUnits.hh"
 #include "ParticleGenerator/include/SurfaceSource.hh"
 #include "SurfaceGenerator/include/Describer.hh"
-#include <G4MultiUnion.hh>
-#include <G4RotationMatrix.hh>
-#include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
 
 DetectorConstruction::DetectorConstruction()
-    : G4VUserDetectorConstruction(), fScoringVolume(0),
+    : G4VUserDetectorConstruction(),
+      fScoringVolume(0),
       fSurfaceGenerator(Surface::SurfaceGenerator()) {}
 
 DetectorConstruction::~DetectorConstruction() {}
@@ -39,23 +41,23 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4double world_sizeZ = 1 * m;
   G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
-  G4Box *solidWorld = new G4Box("World", // its name
+  G4Box *solidWorld = new G4Box("World",  // its name
                                 0.5 * world_sizeXY, 0.5 * world_sizeXY,
-                                0.5 * world_sizeZ); // its size
+                                0.5 * world_sizeZ);  // its size
 
-  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, // its solid
-                                                    world_mat,  // its material
-                                                    "World");   // its name
+  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld,  // its solid
+                                                    world_mat,   // its material
+                                                    "World");    // its name
 
   G4VPhysicalVolume *physWorld =
-      new G4PVPlacement(0,               // no rotation
-                        G4ThreeVector(), // at (0,0,0)
-                        logicWorld,      // its logical volume
-                        "World",         // its name
-                        0,               // its mother  volume
-                        false,           // no boolean operation
-                        0,               // copy number
-                        checkOverlaps);  // overlaps checking
+      new G4PVPlacement(0,                // no rotation
+                        G4ThreeVector(),  // at (0,0,0)
+                        logicWorld,       // its logical volume
+                        "World",          // its name
+                        0,                // its mother  volume
+                        false,            // no boolean operation
+                        0,                // copy number
+                        checkOverlaps);   // overlaps checking
 
   //
   // Box
@@ -64,13 +66,13 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4double box_sizeXY = 2 * cm;
   G4double box_sizeZ = 1 * cm;
   G4Material *box_mat = nist->FindOrBuildMaterial("G4_Si");
-  G4Box *solidBox = new G4Box("TestBox", // its name
+  G4Box *solidBox = new G4Box("TestBox",  // its name
                               0.5 * box_sizeXY, 0.5 * box_sizeXY,
-                              0.5 * box_sizeZ); // its size
+                              0.5 * box_sizeZ);  // its size
 
-  G4LogicalVolume *logicBox = new G4LogicalVolume(solidBox,   // its solid
-                                                  box_mat,    // its material
-                                                  "TestBox"); // its name
+  G4LogicalVolume *logicBox = new G4LogicalVolume(solidBox,    // its solid
+                                                  box_mat,     // its material
+                                                  "TestBox");  // its name
 
   //  new G4PVPlacement(0,               // no rotation
   //                    G4ThreeVector(), // at (0,0,0)
@@ -90,23 +92,23 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // G4ThreeVector subworldPlacement{40 * cm, 40 * cm, 40 * cm};
   G4ThreeVector subworldPlacement{0 * cm, 0 * cm, 0 * cm};
   G4Material *subworld_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Box *solidSubworld = new G4Box("Subworld", // its name
+  G4Box *solidSubworld = new G4Box("Subworld",  // its name
                                    0.5 * subworld_sizeXY, 0.5 * subworld_sizeXY,
-                                   0.5 * subworld_sizeZ); // its size
+                                   0.5 * subworld_sizeZ);  // its size
 
   G4LogicalVolume *logicSubworld =
-      new G4LogicalVolume(solidSubworld, // its solid
-                          subworld_mat,  // its material
-                          "Subworld");   // its name
+      new G4LogicalVolume(solidSubworld,  // its solid
+                          subworld_mat,   // its material
+                          "Subworld");    // its name
 
-  new G4PVPlacement(0,                 // no rotation
-                    subworldPlacement, //
-                    logicSubworld,     // its logical volume
-                    "Subworld",        // its name
-                    logicWorld,        // its mother  volume
-                    false,             // no boolean operation
-                    0,                 // copy number
-                    checkOverlaps);    // overlaps checking
+  new G4PVPlacement(0,                  // no rotation
+                    subworldPlacement,  //
+                    logicSubworld,      // its logical volume
+                    "Subworld",         // its name
+                    logicWorld,         // its mother  volume
+                    false,              // no boolean operation
+                    0,                  // copy number
+                    checkOverlaps);     // overlaps checking
 
   ///////////////////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////
@@ -158,7 +160,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //
   Surface::G4Voxelizer_Green &voxelizer =
       (Surface::G4Voxelizer_Green &)solidRoughness->GetVoxels();
-  voxelizer.SetMaxBoundary({10, 10, 2});
+  voxelizer.SetMaxBoundary(10, 10, 2);
   voxelizer.Voxelize(solidRoughness);
 
   G4LogicalVolume *logicRoughness =

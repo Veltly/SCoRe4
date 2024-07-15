@@ -1,20 +1,21 @@
-//
-//
-//
-//
-//	author: C.Gruener
-//
-//
-#include "../include/Spike.hh"
-#include "../include/Storage.hh"
-#include <G4RotationMatrix.hh>
-#include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
+
+#include "SurfaceGenerator/include/Spike.hh"
+
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+#include "SurfaceGenerator/include/Storage.hh"
 
 Surface::Spike::Spike(Spikeform aSpikeform, G4double aWidth_X,
                       G4double aWidth_Y, G4double aHeight, G4int aNLayer)
-    : fSpikeform(aSpikeform), fWidth_X(aWidth_X), fWidth_Y(aWidth_Y),
-      fHeight(aHeight), fNLayer(aNLayer){};
+    : fSpikeform(aSpikeform),
+      fWidth_X(aWidth_X),
+      fWidth_Y(aWidth_Y),
+      fHeight(aHeight),
+      fNLayer(aNLayer) {}
 
 std::vector<Surface::SolidDescription> Surface::Spike::GetSpikeDescription() {
   if (fSpikeDescription.empty()) {
@@ -25,15 +26,15 @@ std::vector<Surface::SolidDescription> Surface::Spike::GetSpikeDescription() {
 
 void Surface::Spike::GenerateSpike() {
   switch (fSpikeform) {
-  case Spikeform::Pyramid:
-    GeneratePyramide();
-    break;
-  case Spikeform::Bump:
-    GenerateBump();
-    break;
-  case Spikeform::Peak:
-    GeneratePeak();
-    break;
+    case Spikeform::Pyramid:
+      GeneratePyramide();
+      break;
+    case Spikeform::Bump:
+      GenerateBump();
+      break;
+    case Spikeform::Peak:
+      GeneratePeak();
+      break;
   }
 }
 
@@ -46,7 +47,7 @@ void Surface::Spike::GeneratePyramide() {
   description.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
   description.OuterSurface = std::vector<G4int>{
       2, 3, 4, 5,
-      6}; // All Facets except bottom (Facet 1) is defined as outer surface
+      6};  // All Facets except bottom (Facet 1) is defined as outer surface
   fSpikeDescription.emplace_back(std::move(description));
 }
 
@@ -79,7 +80,7 @@ void Surface::Spike::GenerateBump() {
   LastLayer.Transform = G4Transform3D(G4RotationMatrix(), MidPoint);
   LastLayer.OuterSurface = std::vector<G4int>{2, 3, 4, 5, 6};
   fSpikeDescription.emplace_back(std::move(LastLayer));
-};
+}
 
 void Surface::Spike::GeneratePeak() {
   G4double deltaHeight = fHeight / fNLayer;

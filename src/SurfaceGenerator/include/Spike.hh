@@ -1,29 +1,25 @@
-//
-//
-//
-//
-//	author: C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
 
-#ifndef SURFACE_SPIKE
-#define SURFACE_SPIKE
+#ifndef SRC_SURFACEGENERATOR_INCLUDE_SPIKE_HH_
+#define SRC_SURFACEGENERATOR_INCLUDE_SPIKE_HH_
 
-#include "Storage.hh"
 #include <vector>
+
+#include "SurfaceGenerator/include/Storage.hh"
 
 namespace Surface {
 
 class Spike {
-public:
+ public:
   enum class Spikeform { Pyramid, Bump, Peak };
 
-public:
+ public:
   Spike(Spikeform, G4double aWidth_X, G4double aWidth_Y, G4double aHeight,
         G4int aNLayer);
   std::vector<Surface::SolidDescription> GetSpikeDescription();
 
-private:
+ private:
   void GenerateSpike();
   void GeneratePyramide();
   void GenerateBump();
@@ -40,5 +36,5 @@ private:
   const G4double fWidthTop_Y{1e-6};
   std::vector<Surface::SolidDescription> fSpikeDescription{};
 };
-} // namespace Surface
-#endif
+}  // namespace Surface
+#endif  // SRC_SURFACEGENERATOR_INCLUDE_SPIKE_HH_
