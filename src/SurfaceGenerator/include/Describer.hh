@@ -1,29 +1,27 @@
-//
-//
-//
-//
-//	author: C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File: Describer to hold all information needed to build a rough surface
+// object
 
-#ifndef SURFACE_DESCRIBER
-#define SURFACE_DESCRIBER
+#ifndef SRC_SURFACEGENERATOR_INCLUDE_DESCRIBER_HH_
+#define SRC_SURFACEGENERATOR_INCLUDE_DESCRIBER_HH_
+
+#include <vector>
 
 #include "../../Service/include/Logger.hh"
-#include "RectangleDivider.hh"
-#include "Storage.hh"
-#include <G4Transform3D.hh>
-
+#include "G4Transform3D.hh"
+#include "SurfaceGenerator/include/RectangleDivider.hh"
+#include "SurfaceGenerator/include/Storage.hh"
 using Rectangle = Surface::RectangleDivider::Rectangle;
 
 namespace Surface {
 class DescriberMessenger;
 
 class Describer {
-public:
+ public:
   enum class Spikeform { StandardPyramide, UniformPyramide, Bump, Peak };
 
-public:
+ public:
   Describer() noexcept;
   void Generate();
 
@@ -39,19 +37,19 @@ public:
   std::vector<SolidDescription> GetSolidDescription() const;
   inline G4double GetSurfaceWidth_X() const {
     return fSpikeWidth_X * fNSpike_X;
-  };
+  }
   inline G4double GetSurfaceWidth_Y() const {
     return fSpikeWidth_Y * fNSpike_Y;
-  };
-  inline G4double GetSpikeWidth_X() const { return fSpikeWidth_X; };
-  inline G4double GetSpikeWidth_Y() const { return fSpikeWidth_Y; };
-  inline G4int GetSpikeNr_X() const { return fNSpike_X; };
-  inline G4int GetSpikeNr_Y() const { return fNSpike_Y; };
-  inline G4double GetMeanHeight() const { return fMeanHeight; };
-  inline G4double GetHeightDeviation() const { return fHeightDeviation; };
-  inline G4int GetNLayer() const { return fNLayer; };
+  }
+  inline G4double GetSpikeWidth_X() const { return fSpikeWidth_X; }
+  inline G4double GetSpikeWidth_Y() const { return fSpikeWidth_Y; }
+  inline G4int GetSpikeNr_X() const { return fNSpike_X; }
+  inline G4int GetSpikeNr_Y() const { return fNSpike_Y; }
+  inline G4double GetMeanHeight() const { return fMeanHeight; }
+  inline G4double GetHeightDeviation() const { return fHeightDeviation; }
+  inline G4int GetNLayer() const { return fNLayer; }
 
-private:
+ private:
   std::vector<SolidDescription> GetSpikeDescription(const Rectangle &);
   std::vector<SolidDescription> GetStandardPyramid(const Rectangle &);
   std::vector<SolidDescription> GetUniformPyramid(const Rectangle &);
@@ -74,5 +72,5 @@ private:
   std::vector<SolidDescription> fDescription;
   Surface::Logger fLogger;
 };
-} // namespace Surface
-#endif
+}  // namespace Surface
+#endif  // SRC_SURFACEGENERATOR_INCLUDE_DESCRIBER_HH_

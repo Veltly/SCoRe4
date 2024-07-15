@@ -1,18 +1,20 @@
+// Copyright [2024] C.Gruener
 // Author: C.Gruener
 // Date: 24-07-10
 // File: MultiportalHelper
 //
 
-#ifndef SURFACE_MULTIPORTALHELPER
-#define SURFACE_MULTIPORTALHELPER
+#ifndef SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH_
+#define SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH_
 
-#include "../../Portal/include/MultipleSubworld.hh"
-#include <G4LogicalVolume.hh>
+#include <vector>
+
+#include "G4LogicalVolume.hh"
+#include "Portal/include/MultipleSubworld.hh"
 
 namespace Surface {
 class MultiportalHelper {
-
-public:
+ public:
   MultiportalHelper(const G4int verboseLvl = 3);
 
   void Generate();
@@ -62,14 +64,14 @@ public:
   void PrintInfo() const;
   std::stringstream StreamInfo() const;
 
-private:
+ private:
   void CheckValues();
   void GenerateSubworlds();
   void GeneratePortal();
   void LinkPortalWithSubworlds();
   void FillSubworldmap();
 
-private:
+ private:
   // General Infos
   G4int fNOfDifferentSubworlds;
   G4bool fCheckOverlaps;
@@ -105,5 +107,5 @@ private:
   G4String fPortalName;
   G4String fSubName;
 };
-} // namespace Surface
-#endif // SURFACE_MULTIPORTALHELPER
+}  // namespace Surface
+#endif  // SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH_

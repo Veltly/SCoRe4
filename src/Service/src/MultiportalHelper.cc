@@ -1,4 +1,4 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-07-10
 // File: MultiportalHelper
 //
@@ -15,18 +15,16 @@
 #include <G4VPhysicalVolume.hh>
 
 Surface::MultiportalHelper::MultiportalHelper(const G4int verboseLvl)
-    : fLogger({"MultiPortalHelper", verboseLvl}){};
+    : fLogger({"MultiPortalHelper", verboseLvl}) {}
 
 void Surface::MultiportalHelper::CheckValues() {
   fLogger.WriteInfo("All values correct");
 }
 
 void Surface::MultiportalHelper::GenerateSubworlds() {
-
   Surface::PortalStore &portalStore = Surface::Locator::GetPortalStore();
 
   for (G4int i = 0; i < fNOfDifferentSubworlds; ++i) {
-
     const G4Transform3D transformation = fPlacementSub.at(i);
 
     // Create Trigger
@@ -64,7 +62,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
   }
   fLogger.WriteInfo("Generated " + std::to_string(fNOfDifferentSubworlds) +
                     " subworlds and trigger");
-};
+}
 
 void Surface::MultiportalHelper::GeneratePortal() {
   const G4String namePortal = fPortalName;
@@ -88,7 +86,7 @@ void Surface::MultiportalHelper::GeneratePortal() {
 
   portalStore.push_back(fPortal);
   fLogger.WriteInfo("Generated Portal " + namePortal);
-};
+}
 
 void Surface::MultiportalHelper::LinkPortalWithSubworlds() {
   fPortal->SetOtherPortal(fMultipleSubworld.at(0));
@@ -99,7 +97,6 @@ void Surface::MultiportalHelper::LinkPortalWithSubworlds() {
 }
 
 void Surface::MultiportalHelper::FillSubworldmap() {
-
   Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> mapHelper(
       fVerbose);
   for (G4int i = 0; i < fNOfDifferentSubworlds; ++i) {
@@ -129,47 +126,47 @@ void Surface::MultiportalHelper::Generate() {
 
   if (fLogger.WriteDetailInfo()) {
     PrintInfo();
-  };
+  }
 }
 
 // Setter
 
-void Surface::MultiportalHelper::SetDxPortal(const G4double val) { fDx = val; };
-void Surface::MultiportalHelper::SetDyPortal(const G4double val) { fDy = val; };
-void Surface::MultiportalHelper::SetDzPortal(const G4double val) { fDz = val; };
+void Surface::MultiportalHelper::SetDxPortal(const G4double val) { fDx = val; }
+void Surface::MultiportalHelper::SetDyPortal(const G4double val) { fDy = val; }
+void Surface::MultiportalHelper::SetDzPortal(const G4double val) { fDz = val; }
 
-void Surface::MultiportalHelper::SetDxSub(const G4double val) { fDxSub = val; };
-void Surface::MultiportalHelper::SetDySub(const G4double val) { fDySub = val; };
-void Surface::MultiportalHelper::SetDzSub(const G4double val) { fDzSub = val; };
+void Surface::MultiportalHelper::SetDxSub(const G4double val) { fDxSub = val; }
+void Surface::MultiportalHelper::SetDySub(const G4double val) { fDySub = val; }
+void Surface::MultiportalHelper::SetDzSub(const G4double val) { fDzSub = val; }
 
 void Surface::MultiportalHelper::AddSubworldPlacement(
     const G4Transform3D &trafo) {
   fPlacementSub.push_back(trafo);
-};
+}
 void Surface::MultiportalHelper::AddSubworldDensity(const G4double density) {
   fSubworldProb.push_back(density);
-};
+}
 
 void Surface::MultiportalHelper::SetPortalPlacement(
     const G4Transform3D &trafo) {
   fPlacementPortal = trafo;
-};
+}
 
 void Surface::MultiportalHelper::SetMotherVolume(
     G4LogicalVolume *motherVolume) {
   fMotherVolume = motherVolume;
-};
+}
 
 void Surface::MultiportalHelper::SetVerbose(const G4int verboseLvl) {
   fVerbose = verboseLvl;
-};
+}
 
 void Surface::MultiportalHelper::SetSubworldMaterial(G4Material *mat) {
   fSubworldMaterial = mat;
-};
+}
 
-void Surface::MultiportalHelper::SetNxSub(const G4int val) { fNx = val; };
-void Surface::MultiportalHelper::SetNySub(const G4int val) { fNy = val; };
+void Surface::MultiportalHelper::SetNxSub(const G4int val) { fNx = val; }
+void Surface::MultiportalHelper::SetNySub(const G4int val) { fNy = val; }
 
 void Surface::MultiportalHelper::SetNDifferentSubworlds(const G4int val) {
   fNOfDifferentSubworlds = val;
