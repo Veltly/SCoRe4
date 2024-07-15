@@ -20,7 +20,7 @@ namespace Surface {
 ///
 
 class Locator {
-public:
+ public:
   ///
   /// Returns reference to FacetStore
   ///
@@ -34,10 +34,10 @@ public:
   ///
   static Surface::PortalStore &GetPortalStore() { return fPortalStore; }
 
-private:
+ private:
   static Surface::FacetStore fFacetStore;
   static Surface::Logger fLogger;
   static Surface::PortalStore fPortalStore;
 };
-} // namespace Surface
+}  // namespace Surface
 #endif

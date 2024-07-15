@@ -1,21 +1,18 @@
-//
-//
-//
-//
-//  author C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 
-#include "../include/FacetStore.hh"
-// #include <CGAL/Kernel/Wutils.h>
-#include <G4ThreeVector.hh>
-#include <G4TriangularFacet.hh>
-#include <G4UIcommand.hh>
-#include <G4UImanager.hh>
-#include <Randomize.hh>
+#include "SurfaceGenerator/include/FacetStore.hh"
+
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+
+#include "G4ThreeVector.hh"
+#include "G4TriangularFacet.hh"
+#include "G4UIcommand.hh"
+#include "G4UImanager.hh"
+#include "Randomize.hh"
 
 void Surface::FacetStore::CloseFacetStore() {
   if (GetIsStoreClosed()) {
@@ -52,8 +49,8 @@ G4ThreeVector Surface::FacetStore::GetRandomPoint() const {
   return G4ThreeVector{0, 0, 0};
 }
 
-G4ThreeVector
-Surface::FacetStore::GetRandomPoint(G4ThreeVector &surfaceNormal) {
+G4ThreeVector Surface::FacetStore::GetRandomPoint(
+    G4ThreeVector &surfaceNormal) {
   G4double random = G4UniformRand();
   for (size_t i = 0; i < fFacetProbability.size(); ++i) {
     if (random <= fFacetProbability[i]) {
@@ -68,8 +65,8 @@ Surface::FacetStore::GetRandomPoint(G4ThreeVector &surfaceNormal) {
   return G4ThreeVector{0, 0, 0};
 }
 
-Surface::FacetStore::FacetEdges
-Surface::FacetStore::GetFacetLines(const G4TriangularFacet &aFacet) const {
+Surface::FacetStore::FacetEdges Surface::FacetStore::GetFacetLines(
+    const G4TriangularFacet &aFacet) const {
   G4String (*toStr)(G4double) = G4UIcommand::ConvertToString;
   G4String edgeAB, edgeBC, edgeCA, edgeAMid;
   auto vertexA = aFacet.GetVertex(0);
