@@ -2,54 +2,64 @@
 // Date: 24-06-16
 // File: ShiftTable
 
-#include "../include/ShiftTable.hh"
-#include "../include/ShiftTableMessenger.hh"
-#include "Randomize.hh"
-#include <G4Material.hh>
-#include <G4SystemOfUnits.hh>
-#include <G4ThreeVector.hh>
-#include <G4TransportationManager.hh>
-#include <G4Types.hh>
-#include <G4VPhysicalVolume.hh>
+#include "ParticleGenerator/include/ShiftTable.hh"
+
 #include <cstdlib>
 #include <fstream>
 #include <limits>
 #include <string>
 
+#include "../include/ShiftTableMessenger.hh"
+#include "G4Material.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4ThreeVector.hh"
+#include "G4TransportationManager.hh"
+#include "G4Types.hh"
+#include "G4VPhysicalVolume.hh"
+#include "Randomize.hh"
+
 Surface::Shift::Shift(const G4int verbose)
-    : fShiftTableReady(false), fMinShift(0.), fMaxShift(DBL_MAX),
-      fConfineMaterialName(""), fLogger({"Shift", verbose}),
-      fMessenger(new Surface::ShiftMessenger(this)){};
+    : fShiftTableReady(false),
+      fMinShift(0.),
+      fMaxShift(DBL_MAX),
+      fConfineMaterialName(""),
+      fLogger("Shift", verbose),
+      fMessenger(new Surface::ShiftMessenger(this)) {}
 
 Surface::Shift::Shift(const G4String &filename, const G4int verbose)
-    : fShiftTableReady(false), fMinShift(0.), fMaxShift(DBL_MAX),
-      fConfineMaterialName(""), fLogger({"Shift", verbose}),
+    : fShiftTableReady(false),
+      fMinShift(0.),
+      fMaxShift(DBL_MAX),
+      fConfineMaterialName(""),
+      fLogger("Shift", verbose),
       fMessenger(new Surface::ShiftMessenger(this)) {
   LoadShiftTable(filename);
-};
+}
 
-Surface::Shift::~Shift(){};
+Surface::Shift::~Shift() {}
 
 G4double Surface::Shift::CalcShift() {
   G4double random = G4UniformRand();
   for (size_t i = 0; i < fBarProbability.size(); ++i) {
     if (random <= fBarProbability[i]) {
       return Interpolate(i) * CLHEP::nm;
-    };
+    }
   }
+  exit(EXIT_FAILURE);  // Path should never happen
+  return 0;
 }
 
 void Surface::Shift::DoShift(G4ThreeVector &position,
                              const G4ThreeVector &direction) {
-  if (not fShiftTableReady) {
-    fLogger.WriteInfo("Shift called, but ShiftTable not ready\n"
-                      "No shift done!");
+  if (!fShiftTableReady) {
+    fLogger.WriteInfo(
+        "Shift called, but ShiftTable not ready\n"
+        "No shift done!");
     return;
   }
 
   G4int counter{0};
   while (true) {
-
     const G4double shift = CalcShift();
 
     const G4ThreeVector normedDirection = direction / direction.r();
@@ -57,17 +67,18 @@ void Surface::Shift::DoShift(G4ThreeVector &position,
 
     ++counter;
     if (counter > 10000) {
-      fLogger.WriteError("Counter of ShiftTable > 10,000! Now performing shift "
-                         "with value outside marked area");
+      fLogger.WriteError(
+          "Counter of ShiftTable > 10,000! Now performing shift "
+          "with value outside marked area");
       position = newPosition;
       return;
     }
 
-    if (fMinShift > shift or shift > fMaxShift) {
+    if (fMinShift > shift || shift > fMaxShift) {
       continue;
     }
 
-    if (not IsConfinedToMaterial(newPosition)) {
+    if (!IsConfinedToMaterial(newPosition)) {
       continue;
     }
     fLogger.WriteDebugInfo("Shift done: " + std::to_string(shift));
@@ -93,7 +104,7 @@ void Surface::Shift::PrintShiftTable() {
        << "\n";
   }
   fLogger.WriteInfo(ss.str());
-};
+}
 
 void Surface::Shift::LoadShiftTable(const std::string &filename) {
   std::ifstream file;
@@ -124,7 +135,7 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
     fBarProbability.push_back(probability);
   }
   fShiftTableReady = true;
-};
+}
 
 G4double Surface::Shift::Interpolate(const G4double xNormed,
                                      const G4double lowerY,
@@ -132,7 +143,7 @@ G4double Surface::Shift::Interpolate(const G4double xNormed,
   const G4double k = (upperY - lowerY);
   const G4double result = lowerY + xNormed * k;
   return result;
-};
+}
 
 G4double Surface::Shift::Interpolate(const G4int idx) {
   const G4double a = fProbability[idx];
@@ -195,7 +206,7 @@ G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
 
 void Surface::Shift::ConfineToMaterial(const G4String &materialName) {
   fConfineMaterialName = materialName;
-};
+}
 
 void Surface::Shift::SetVerboseLvl(const G4int verboseLvl) {
   fLogger.SetVerboseLvl(verboseLvl);

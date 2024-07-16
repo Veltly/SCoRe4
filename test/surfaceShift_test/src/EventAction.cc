@@ -28,14 +28,12 @@
 /// \brief Implementation of the EventAction class
 
 #include "EventAction.hh"
-#include "RunAction.hh"
 
 #include "G4CsvAnalysisManager.hh"
 #include "G4Event.hh"
 #include "G4RunManager.hh"
-#include <string>
-EventAction::EventAction(RunAction *runAction)
-    : G4UserEventAction(), fRunAction(runAction) {}
+#include "RunAction.hh"
+EventAction::EventAction() : G4UserEventAction() {}
 
 EventAction::~EventAction() {}
 

@@ -1,27 +1,25 @@
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 //
-//
-//
-//
-//	author: C.Gruener
-//
-//
-#include "../include/Assembler.hh"
-#include "../../Service/include/Locator.hh"
-#include "../include/FacetStore.hh"
-#include "../include/Storage.hh"
-#include <G4Box.hh>
-#include <G4MultiUnion.hh>
-#include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
-#include <G4Trd.hh>
-#include <G4TriangularFacet.hh>
-#include <G4VFacet.hh>
+#include "SurfaceGenerator/include/Assembler.hh"
+
 #include <string>
+
+#include "G4Box.hh"
+#include "G4MultiUnion.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+#include "G4Trd.hh"
+#include "G4TriangularFacet.hh"
+#include "G4VFacet.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
+#include "SurfaceGenerator/include/Storage.hh"
 
 using Volumetype = Surface::SolidDescription::Solid;
 
 Surface::Assembler::Assembler(FacetStore *store)
-    : fLogger({"Assembler", 3}), fFacetStore(store){};
+    : fLogger("Assembler"), fFacetStore(store) {}
 
 void Surface::Assembler::Assemble() {
   G4MultiUnion *AssembledSolid = new G4MultiUnion;
@@ -36,7 +34,7 @@ void Surface::Assembler::Assemble() {
 }
 
 void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
-  G4VSolid *newSolid = GetSingleSolid(aDescription);
+  const G4VSolid *newSolid = GetSingleSolid(aDescription);
   G4Polyhedron polyhedron{*newSolid->CreatePolyhedron()};
   polyhedron.Transform(aDescription.Transform);
   G4int NVertices;
@@ -58,13 +56,13 @@ void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
   delete newSolid;
 }
 
-G4VSolid *
-Surface::Assembler::GetSingleSolid(const SolidDescription &aDescription) {
+G4VSolid *Surface::Assembler::GetSingleSolid(
+    const SolidDescription &aDescription) {
   switch (aDescription.Volumetype) {
-  case Volumetype::Box:
-    return GetBox(aDescription);
-  case Volumetype::Trd:
-    return GetTrd(aDescription);
+    case Volumetype::Box:
+      return GetBox(aDescription);
+    case Volumetype::Trd:
+      return GetTrd(aDescription);
   }
 }
 
@@ -89,8 +87,8 @@ G4VSolid *Surface::Assembler::GetTrd(const SolidDescription &aDescription) {
   return newTrd;
 }
 
-G4String
-Surface::Assembler::GenerateSolidName(const SolidDescription &aDescription) {
+G4String Surface::Assembler::GenerateSolidName(
+    const SolidDescription &aDescription) {
   G4String name;
   for (G4double string : aDescription.Volumeparameter) {
     name += std::to_string(string);

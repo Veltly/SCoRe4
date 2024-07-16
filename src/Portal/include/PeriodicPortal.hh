@@ -1,20 +1,19 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-06-04
 // File: PeriodicPortal
 
-#ifndef PERIODICPORTAL_HH
-#define PERIODICPORTAL_HH
+#ifndef SRC_PORTAL_INCLUDE_PERIODICPORTAL_HH_
+#define SRC_PORTAL_INCLUDE_PERIODICPORTAL_HH_
 
-#include "../../Service/include/Logger.hh"
 #include "G4Step.hh"
+#include "G4ThreeVector.hh"
 #include "G4VPhysicalVolume.hh"
-#include "VPortal.hh"
-#include <G4ThreeVector.hh>
+#include "Portal/include/VPortal.hh"
+#include "Service/include/Logger.hh"
 
 namespace Surface {
 
 class PeriodicPortal : public VPortal {
-
   enum class SingleSurface {
     X_UP,
     X_DOWN,
@@ -29,13 +28,13 @@ class PeriodicPortal : public VPortal {
   };
   enum class PortationType { ENTER, EXIT, PERIODIC };
 
-public:
-  PeriodicPortal(G4String name, G4VPhysicalVolume *volume, G4ThreeVector &vec,
-                 G4int verbose);
+ public:
+  PeriodicPortal(const G4String &name, G4VPhysicalVolume *volume,
+                 const G4ThreeVector &vec, const G4int verbose);
 
-  virtual void DoPortation(const G4Step *step);
+  virtual void DoPortation(G4Step *step);
   // Setter
-  void SetGrid(int nX, int nY);
+  void SetGrid(const int nX, const int nY);
   void SetAsPortal() { fIsPortal = true; }
   void SetOtherPortal(PeriodicPortal *otherPortal);
   // Getter
@@ -46,10 +45,10 @@ public:
   // Check
   inline G4bool IsPortal() const { return fIsPortal; }
 
-private:
-  void DoPeriodicPortation(const G4Step *step, SingleSurface);
-  void EnterPortal(const G4Step *step, SingleSurface);
-  void ExitPortal(const G4Step *step, SingleSurface);
+ private:
+  void DoPeriodicPortation(G4Step *step, const SingleSurface);
+  void EnterPortal(G4Step *step);
+  void ExitPortal(G4Step *step);
 
   SingleSurface GetNearestSurface(const G4Step *step);
   PortationType GetPortationType(SingleSurface) const;
@@ -59,12 +58,11 @@ private:
   void TransformPortalToSubworld(G4ThreeVector &vec);
   G4double TransformZBetweenPortals(G4double val);
 
-private:
+ private:
   Logger fLogger;
   PeriodicPortal *fOtherPortal;
-  G4VPhysicalVolume *fTrigger;
-  G4bool fIsPortal; // True if it is the portal, false if it is the periodic
-                    // subworld
+  G4bool fIsPortal;  // True if it is the portal, false if it is the periodic
+                     // subworld
   G4int fMaxNX;
   G4int fMaxNY;
   G4int fCurrentNX;
@@ -72,5 +70,5 @@ private:
   // order of Grid such that (fCurrentNX, fCurrentNy) = (0,0)
   // has the lowest local (x,y) coordinate in the portal
 };
-} // namespace Surface
-#endif // PERIODICPORTAL_HH
+}  // namespace Surface
+#endif  // SRC_PORTAL_INCLUDE_PERIODICPORTAL_HH_

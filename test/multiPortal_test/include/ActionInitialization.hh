@@ -35,7 +35,7 @@
 /// Action initialization class.
 
 class ActionInitialization : public G4VUserActionInitialization {
-public:
+ public:
   ActionInitialization();
   virtual ~ActionInitialization();
 

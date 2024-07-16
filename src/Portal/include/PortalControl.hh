@@ -1,29 +1,32 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-05-25
 // File: PortalControl
 
-#ifndef PORTALCONTROL_HH
-#define PORTALCONTROL_HH
+#ifndef SRC_PORTAL_INCLUDE_PORTALCONTROL_HH_
+#define SRC_PORTAL_INCLUDE_PORTALCONTROL_HH_
 
-#include "../../Service/include/Logger.hh"
-#include "G4UserSteppingAction.hh"
-#include "PortalStore.hh"
 #include <G4VPhysicalVolume.hh>
+
+#include "G4UserSteppingAction.hh"
+#include "Portal/include/PortalStore.hh"
+#include "Service/include/Logger.hh"
 namespace Surface {
 
 class PortalControl {
-public:
-  PortalControl(G4int verbose = 3);
+ public:
+  PortalControl();
+  PortalControl(const G4int verboseLvl);
+  void DoStep(G4Step *step);
   void DoStep(const G4Step *step);
-  void DoPortation(const G4Step *step, G4VPhysicalVolume *volume);
-  void EnterPortal(const G4Step *step);
-  void LeavePortal(const G4Step *step);
+  void DoPortation(G4Step *step, const G4VPhysicalVolume *volume);
+  void EnterPortal(G4Step *step);
+  void LeavePortal(G4Step *step);
   G4bool EnterPortalCheck(const G4Step *step);
-  void SetVerbose(G4int verbose);
+  void SetVerbose(const G4int verboseLvl);
   G4bool IsVolumeInsidePortal(const G4VPhysicalVolume *volume) const;
-  void UsePortal(const G4Step *step);
+  void UsePortal(G4Step *step);
 
-private:
+ private:
   PortalStore &fPortalStore;
   Logger fLogger;
   G4bool fJustPorted;
@@ -31,5 +34,5 @@ private:
   G4StepPoint fRecentStepPoint;
   G4bool fInPortal;
 };
-} // namespace Surface
-#endif // PORTALCONTROL_HH
+}  // namespace Surface
+#endif  // SRC_PORTAL_INCLUDE_PORTALCONTROL_HH_

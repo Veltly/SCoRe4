@@ -228,9 +228,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   G4UserLimits *limit_subworld = new G4UserLimits(maxStepsize_subworld);
   logicWorld->SetUserLimits(limit);
-  // subA->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
-  // subB->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
-  // subC->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
+  subA->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
+  subB->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
+  subC->GetVolume()->GetLogicalVolume()->SetUserLimits(limit_subworld);
   //
   //    always return the physical World
   //

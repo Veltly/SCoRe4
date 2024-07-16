@@ -18,7 +18,9 @@ typedef Describer::Spikeform Spikeform;
 
 class RoughnessHelper {
  public:
-  RoughnessHelper(const G4int verboseLvl = 6);
+  RoughnessHelper(const G4String &name);
+  RoughnessHelper(const G4String &name, const G4int verboseLvl);
+
   void Generate();
   // Getter
   Describer &Describer();
@@ -56,7 +58,6 @@ class RoughnessHelper {
  private:
   // Ctrl
   Logger fLogger;
-  G4double fBasis_Z;
   SurfaceGenerator fGenerator;
   G4MultiUnion *fRoughness;
   G4LogicalVolume *fLogicRoughness;

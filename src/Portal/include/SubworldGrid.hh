@@ -1,26 +1,32 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-06-11
 // File: SubworldGrid
 // Info: Header only
 
-#ifndef SUBWORLDGRID_HH
-#define SUBWORLDGRID_HH
+#ifndef SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH_
+#define SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH_
 
-#include "../../Service/include/Logger.hh"
-#include "G4Box.hh"
-#include "Randomize.hh"
-#include <algorithm>
+#include <map>
 #include <numeric>
 #include <set>
 #include <sstream>
+#include <vector>
+
+#include "Randomize.hh"
+#include "Service/include/Logger.hh"
 
 namespace Surface {
 
-template <class T> class SubworldGrid {
-public:
+template <class T>
+class SubworldGrid {
+ public:
   SubworldGrid(const G4int sizeX, const G4int sizeY, G4int verbose = 5)
-      : fColumnSize(sizeY), fMaxX(sizeX), fMaxY(sizeY), fCurrentX(-1),
-        fCurrentY(-1), fLogger(Logger{"SubworldGrid", verbose}) {
+      : fColumnSize(sizeY),
+        fMaxX(sizeX),
+        fMaxY(sizeY),
+        fCurrentX(-1),
+        fCurrentY(-1),
+        fLogger("SubworldGrid", verbose) {
     // col major order
     fGrid = new T *[sizeX * sizeY];
     fLogger.WriteDebugInfo("SubworldGrid of size " +
@@ -28,26 +34,26 @@ public:
   }
   ~SubworldGrid() {
     delete[] fGrid;
-  } // only destructs the array of pointers but not the Portals, they are
-    // handled in the PortalStore
+  }  // only destructs the array of pointers but not the Portals, they are
+     // handled in the PortalStore
 
   void SetSubworld(const G4int x, const G4int y, T *subworld) {
     fLogger.WriteDebugInfo("Set Subworld " + subworld->GetName() + " at X: " +
                            std::to_string(x) + " Y: " + std::to_string(y) +
                            " at id: " + std::to_string(x * fColumnSize + y));
     fGrid[x * fColumnSize + y] = subworld;
-  };
+  }
 
   T *GetSubworld(const G4int x, const G4int y) const {
     return fGrid[x * fColumnSize + y];
-  };
+  }
 
-  T *GetSubworld() const { return GetSubworld(fCurrentX, fCurrentY); };
+  T *GetSubworld() const { return GetSubworld(fCurrentX, fCurrentY); }
 
   inline G4int MaxX() const { return fMaxX; }
   inline G4int MaxY() const { return fMaxY; }
-  inline G4int CurrentPosX() const { return fCurrentX; };
-  inline G4int CurrentPosY() const { return fCurrentY; };
+  inline G4int CurrentPosX() const { return fCurrentX; }
+  inline G4int CurrentPosY() const { return fCurrentY; }
 
   inline void SetCurrentX(const G4int x) { fCurrentX = x; }
   inline void SetCurrentY(const G4int y) { fCurrentY = y; }
@@ -61,15 +67,15 @@ public:
                                const G4int minY, const G4int maxY) {
     std::stringstream ss;
     auto symbols = GetLegend();
-    for (size_t x = minX; x < maxX; ++x) {
-      for (size_t y = minY; y < maxY; ++y) {
+    for (G4int x = minX; x < maxX; ++x) {
+      for (G4int y = minY; y < maxY; ++y) {
         T *subworld = fGrid[x * fColumnSize + y];
         ss << symbols[subworld] << " ";
       }
       ss << "\n";
     }
     return ss;
-  };
+  }
 
   void PrintGrid(const G4int minX, const G4int maxX, const G4int minY,
                  const G4int maxY) {
@@ -122,7 +128,7 @@ public:
          << "% \n";
     }
     return ss;
-  };
+  }
 
   void PrintStatistic() { G4cout << StreamStatistic().str() << G4endl; }
 
@@ -137,7 +143,7 @@ public:
 
   void PrintLegend() { G4cout << StreamLegend().str() << G4endl; }
 
-private:
+ private:
   std::map<T *, char> GetLegend() {
     std::set<T *> uniqueSubworlds = GetUniqueSubworlds();
 
@@ -151,7 +157,7 @@ private:
     return legend;
   }
 
-private:
+ private:
   const G4int fColumnSize;
   const G4int fMaxX;
   const G4int fMaxY;
@@ -162,10 +168,11 @@ private:
   T **fGrid;
 };
 
-template <class T> class HelperFillSubworldGrid {
-public:
-  HelperFillSubworldGrid(G4int verbose = 5)
-      : fLogger(Logger{"HelperFillSubworldGrid", verbose}){};
+template <class T>
+class HelperFillSubworldGrid {
+ public:
+  HelperFillSubworldGrid(G4int verboseLvl = 5)
+      : fLogger("HelperFillSubworldGrid", verboseLvl) {}
 
   void AddAvailableSubworld(T *subworld, const G4double density) {
     fLogger.WriteDetailInfo(std::stringstream()
@@ -200,8 +207,8 @@ public:
                             << "Start filling Grid of size:\n"
                             << "Nx : " << gridMaxX << "\n"
                             << "Ny : " << gridMaxY << "\n");
-    for (size_t x = 0; x < gridMaxX; ++x) {
-      for (size_t y = 0; y < gridMaxY; ++y) {
+    for (G4int x = 0; x < gridMaxX; ++x) {
+      for (G4int y = 0; y < gridMaxY; ++y) {
         G4double random = G4UniformRand();
         for (size_t i = 0; i < probability.size(); ++i) {
           if (random <= probability.at(i)) {
@@ -213,11 +220,11 @@ public:
     }
   }
 
-private:
-  std::vector<T *> fAvailableSubworlds; // available subworlds for filling grid
+ private:
+  std::vector<T *> fAvailableSubworlds;  // available subworlds for filling grid
   std::vector<G4double>
-      fDensity; // Expected density of subworld in grid. Value between 0 and 1
+      fDensity;  // Expected density of subworld in grid. Value between 0 and 1
   Logger fLogger;
 };
-} // namespace Surface
-#endif // SUBWORLDGRID_HH
+}  // namespace Surface
+#endif  // SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH_

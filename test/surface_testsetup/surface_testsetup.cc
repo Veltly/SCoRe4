@@ -3,17 +3,12 @@
 // File: TestSetup for G4Surface development
 // Testsetup is based on example
 
-#include "ActionInitialization.hh"
 #include "DetectorConstruction.hh"
 #include "G4RunManager.hh"
-#include "PhysicsList.hh"
-
-#include "G4UImanager.hh"
-
 #include "G4UIExecutive.hh"
+#include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
-
-#include "Randomize.hh"
+#include "PhysicsList.hh"
 
 int main(int argc, char **argv) {
   G4cout << "Surface Testapplication starting ..." << G4endl;
@@ -36,9 +31,6 @@ int main(int argc, char **argv) {
   //
   // Detector construction
   runManager->SetUserInitialization(new DetectorConstruction());
-
-  // User action initialization
-  runManager->SetUserInitialization(new ActionInitialization());
 
   // Get the pointer to the User Interface manager
   G4UImanager *UImanager = G4UImanager::GetUIpointer();

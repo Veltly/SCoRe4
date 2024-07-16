@@ -1,44 +1,46 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-05-24
 // File: VirtualPortal
 
-#include "../include/VPortal.hh"
-#include "../../Service/include/Logger.hh"
-#include <G4EventManager.hh>
-#include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
-#include <G4VPhysicalVolume.hh>
+#include "Portal/include/VPortal.hh"
+
 #include <cstdlib>
 
-Surface::VPortal::VPortal(G4String name, G4VPhysicalVolume *volume,
-                          PortalType type)
-    : fName(name), fVolume(volume), fPortalType(type), fGlobalCoordSet(false) {
+#include "G4EventManager.hh"
+#include "G4ThreeVector.hh"
+#include "G4VPhysicalVolume.hh"
+#include "Service/include/Logger.hh"
 
-  Logger logger{"VPortal", 3};
-  logger.WriteDebugInfo("No global coord set for " + fName);
-};
+Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
+                          const PortalType type)
+    : fName(name),
+      fLogger("VPortal_" + name),
+      fVolume(volume),
+      fPortalType(type),
+      fGlobalCoordSet(false) {
+  fLogger.WriteDebugInfo("No global coord set for " + fName);
+}
 
-Surface::VPortal::VPortal(G4String name, G4VPhysicalVolume *volume,
-                          PortalType type, G4ThreeVector &globalCoord)
-    : fName(name), fVolume(volume), fPortalType(type),
-      fGlobalCoord(globalCoord), fGlobalCoordSet(true) {
-  Logger logger{"VPortal", 3};
-  logger.WriteDebugInfo("Global coord of " + fName +
-                        " is set to x: " + std::to_string(fGlobalCoord.x()) +
-                        " y: " + std::to_string(fGlobalCoord.y()) +
-                        " z: " + std::to_string(fGlobalCoord.z()));
-};
-
-G4ThreeVector Surface::VPortal::GetLocalCoordSystem(G4VPhysicalVolume *volume) {
-  // To do: Implement routine to find global coordinate for given volume
-  exit(EXIT_FAILURE);
+Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
+                          PortalType type, const G4ThreeVector &globalCoord)
+    : fName(name),
+      fLogger("VPortal_" + name),
+      fVolume(volume),
+      fPortalType(type),
+      fGlobalCoord(globalCoord),
+      fGlobalCoordSet(true) {
+  fLogger.WriteDebugInfo("Global coord of " + fName +
+                         " is set to x: " + std::to_string(fGlobalCoord.x()) +
+                         " y: " + std::to_string(fGlobalCoord.y()) +
+                         " z: " + std::to_string(fGlobalCoord.z()));
 }
 
 G4ThreeVector Surface::VPortal::GetLocalCoordSystem() {
   if (fGlobalCoordSet) {
     return fGlobalCoord;
   }
-  return GetLocalCoordSystem(fVolume);
+  fLogger.WriteError("Global coodinates not set for: " + fName);
+  exit(EXIT_FAILURE);
 }
 
 void Surface::VPortal::SetGlobalCoord(G4ThreeVector vec) {

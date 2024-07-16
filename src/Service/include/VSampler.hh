@@ -1,19 +1,22 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-06-18
 // File: VSampler
 
-#ifndef VSAMPLER_HH
-#define VSAMPLER_HH
-#include "../../Service/include/Logger.hh"
-#include "Randomize.hh"
+#ifndef SRC_SERVICE_INCLUDE_VSAMPLER_HH_
+#define SRC_SERVICE_INCLUDE_VSAMPLER_HH_
+
 #include <cstdlib>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include "Randomize.hh"
+#include "Service/include/Logger.hh"
+
 namespace Surface {
-template <class T> class VSampler {
-private:
+template <class T>
+class VSampler {
+ private:
   void PrepareProbability() {
     if (fIsClosed) {
       return;
@@ -30,9 +33,12 @@ private:
     fIsClosed = true;
   }
 
-public:
-  VSampler(const G4String name = "VSampler", const G4int verbose = 6)
-      : fIsClosed(false), fLogger({name, verbose}), fName(name){};
+ public:
+  VSampler(const G4String &name)
+      : fIsClosed(false), fLogger("VSampler_" + name), fName(name) {}
+
+  VSampler(const G4String &name, const G4int verbose)
+      : fIsClosed(false), fLogger("VSampler_" + name, verbose), fName(name) {}
 
   void AppendValue(const T value) {
     if (!fIsClosed) {
@@ -81,12 +87,12 @@ public:
     fLogger.WriteInfo(ss.str());
   }
 
-private:
+ private:
   std::vector<G4double> fProbability;
   std::vector<T> fValues;
   G4bool fIsClosed;
   Logger fLogger;
   const G4String fName;
 };
-} // namespace Surface
-#endif // VSAMPLER_HH
+}  // namespace Surface
+#endif  // SRC_SERVICE_INCLUDE_VSAMPLER_HH_

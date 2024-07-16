@@ -1,10 +1,14 @@
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 
-#include "../include/Logger.hh"
+#include "Service/include/Logger.hh"
+
 #include <G4ThreeVector.hh>
 #include <G4ios.hh>
 
 Surface::Logger::Logger(G4String aId, G4int aVerboseLvl)
-    : fId(aId), fVerboseLvl(aVerboseLvl){};
+    : fId(aId), fVerboseLvl(aVerboseLvl) {}
 
 void Surface::Logger::WriteInfo(G4String &aMsg) {
   if (fVerboseLvl > fVerboseInfo) {

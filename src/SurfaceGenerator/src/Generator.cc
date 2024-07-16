@@ -1,20 +1,31 @@
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 //
-//
-//
-//
-//	author: C.Gruener
-//
-//
-#include "../include/Generator.hh"
-#include "../include/Assembler.hh"
-#include "../include/Calculator.hh"
-#include "../include/Describer.hh"
-#include "../include/FacetStore.hh"
-#include <G4MultiUnion.hh>
-#include <G4Transform3D.hh>
-Surface::SurfaceGenerator::SurfaceGenerator(G4String name) noexcept
-    : fSolidhandle(nullptr), fDescriber(Surface::Describer()),
-      fLogger({"SurfaceGenerator", 3}), fFacetStore(new FacetStore{name}),
+#include "SurfaceGenerator/include/Generator.hh"
+
+#include "G4MultiUnion.hh"
+#include "Service/include/Logger.hh"
+#include "SurfaceGenerator/include/Assembler.hh"
+#include "SurfaceGenerator/include/Calculator.hh"
+#include "SurfaceGenerator/include/Describer.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
+
+Surface::SurfaceGenerator::SurfaceGenerator(const G4String &name) noexcept
+    : fSolidhandle(nullptr),
+      fDescriber(Surface::Describer()),
+      fLogger("SurfaceGenerator_" + name),
+      fFacetStore(new FacetStore{name}),
+      fName(name) {
+  fLogger.WriteInfo("initialized");
+}
+
+Surface::SurfaceGenerator::SurfaceGenerator(const G4String &name,
+                                            const G4int verboseLvl) noexcept
+    : fSolidhandle(nullptr),
+      fDescriber(Surface::Describer()),
+      fLogger("SurfaceGenerator_" + name, verboseLvl),
+      fFacetStore(new FacetStore{name}),
       fName(name) {
   fLogger.WriteInfo("initialized");
 }

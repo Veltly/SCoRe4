@@ -28,16 +28,12 @@
 /// \brief Implementation of the SteppingAction class
 
 #include "SteppingAction.hh"
-#include "DetectorConstruction.hh"
-#include "EventAction.hh"
 
-#include "G4Event.hh"
-#include "G4LogicalVolume.hh"
-#include "G4RunManager.hh"
-#include "G4Step.hh"
+#include <G4ThreeVector.hh>
 
 #include "../../../src/Portal/include/PortalControl.hh"
-#include <G4ThreeVector.hh>
+#include "G4RunManager.hh"
+#include "G4Step.hh"
 
 SteppingAction::SteppingAction() : G4UserSteppingAction() {}
 

@@ -1,23 +1,22 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-06-11
 // File: MultipleSubworlds
 
-#ifndef MULTIPLESUBWORLD_HH
-#define MULTIPLESUBWORLD_HH
+#ifndef SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH_
+#define SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH_
 
-#include "../../Service/include/Logger.hh"
-#include "../../SurfaceGenerator/include/FacetStore.hh"
 #include "G4Step.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4VPhysicalVolume.hh"
-#include "SubworldGrid.hh"
+#include "Portal/include/SubworldGrid.hh"
+#include "Service/include/Logger.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
 #include "VPortal.hh"
-#include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
 
 namespace Surface {
 
 class MultipleSubworld : public VPortal {
-
   enum class SingleSurface {
     X_UP,
     X_SAME,
@@ -35,18 +34,18 @@ class MultipleSubworld : public VPortal {
   };
   enum class PortationType { ENTER, EXIT, PERIODIC };
 
-public:
+ public:
   MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
-                   G4ThreeVector &vec, const G4int verbose,
+                   const G4ThreeVector &vec, const G4int verbose,
                    FacetStore *facetStore = nullptr);
 
   MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
-                   G4Transform3D transform, const G4int verbose,
+                   const G4Transform3D transform, const G4int verbose,
                    FacetStore *facetStore = nullptr);
 
   ~MultipleSubworld();
 
-  virtual void DoPortation(const G4Step *step);
+  virtual void DoPortation(G4Step *step);
 
   // Setter
   void SetGrid(const G4int nX, const G4int nY, const G4int verbose = 3);
@@ -70,14 +69,14 @@ public:
 
   void SetSubworldEdge(G4double edgeX, G4double edgeY, G4double edgeZ);
 
-  FacetStore *GetFacetStore() { return fFacetStore; };
+  FacetStore *GetFacetStore() { return fFacetStore; }
 
-private:
+ private:
   void DoPeriodicPortation(const G4Step *step, const SingleSurface);
 
-  void EnterPortal(const G4Step *step, const SingleSurface);
+  void EnterPortal(G4Step *step);
 
-  void ExitPortal(const G4Step *step, const SingleSurface);
+  void ExitPortal(G4Step *step);
 
   SingleSurface GetNearestSurface(const G4Step *step);
 
@@ -93,19 +92,18 @@ private:
 
   void LoggCurrentStatus();
 
-private:
+ private:
   Logger fLogger;
-  MultipleSubworld *fPortal; // TO DO: replace this or delete it!! In transform
-                             // function, example values must be set
+  MultipleSubworld *fPortal;  // TO DO: replace this or delete it!! In transform
+                              // function, example values must be set
   G4double fEdgeX, fEdgeY, fEdgeZ;
-  G4VPhysicalVolume *fTrigger;
-  G4bool fIsPortal; // True if it is the portal, false if it is the periodic
-                    // subworld
+  G4bool fIsPortal;  // True if it is the portal, false if it is the periodic
+                     // subworld
   SubworldGrid<MultipleSubworld> *fSubworldGrid;
   // order of Grid such that (fCurrentNX, fCurrentNy) = (0,0)
   // has the lowest local (x,y) coordinate in the portal
   // Grid will only be initialized if called
   FacetStore *fFacetStore;
 };
-} // namespace Surface
-#endif // MULTIPLESUBWORLD_HH
+}  // namespace Surface
+#endif  // SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH_

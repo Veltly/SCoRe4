@@ -28,18 +28,13 @@
 /// \brief Implementation of the RunAction class
 
 #include "RunAction.hh"
-#include "DetectorConstruction.hh"
-#include "PrimaryGeneratorAction.hh"
-// #include "Run.hh"
 
-#include "G4AccumulableManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4LogicalVolumeStore.hh"
+#include <G4CsvAnalysisManager.hh>
+
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4UnitsTable.hh"
-#include <G4CsvAnalysisManager.hh>
+#include "PrimaryGeneratorAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -48,7 +43,7 @@ RunAction::RunAction() : G4UserRunAction() {
   analysis->SetVerboseLevel(1);
   analysis->SetFirstHistoId(1);
   analysis->CreateH1("depth", "Postition", 2000, 0,
-                     0.0002); // histogram from 0 to 200 nm
+                     0.0002);  // histogram from 0 to 200 nm
   analysis->OpenFile("depth");
   G4cout << "test analysis" << G4endl;
 }
@@ -60,11 +55,3 @@ RunAction::~RunAction() {
   analysis->Write();
   analysis->CloseFile();
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void RunAction::BeginOfRunAction(const G4Run *) {}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void RunAction::EndOfRunAction(const G4Run *run) {}

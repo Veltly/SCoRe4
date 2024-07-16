@@ -3,19 +3,20 @@
 // File: MultiportalHelper
 //
 
-#include "../include/MultiportalHelper.hh"
+#include "Service/include/MultiportalHelper.hh"
+
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4Transform3D.hh"
+#include "G4VPhysicalVolume.hh"
 #include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/PortalStore.hh"
 #include "Portal/include/SubworldGrid.hh"
 #include "Service/include/Locator.hh"
 
-#include <G4LogicalVolume.hh>
-#include <G4PVPlacement.hh>
-#include <G4Transform3D.hh>
-#include <G4VPhysicalVolume.hh>
-
 Surface::MultiportalHelper::MultiportalHelper(const G4int verboseLvl)
-    : fLogger({"MultiPortalHelper", verboseLvl}) {}
+    : fLogger("MultiPortalHelper", verboseLvl) {}
 
 void Surface::MultiportalHelper::CheckValues() {
   fLogger.WriteInfo("All values correct");
@@ -172,8 +173,8 @@ void Surface::MultiportalHelper::SetNDifferentSubworlds(const G4int val) {
   fNOfDifferentSubworlds = val;
 }
 
-Surface::MultipleSubworld *
-Surface::MultiportalHelper::GetSubworld(const G4int id) {
+Surface::MultipleSubworld *Surface::MultiportalHelper::GetSubworld(
+    const G4int id) {
   return fMultipleSubworld.at(id);
 }
 

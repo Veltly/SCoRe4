@@ -1,17 +1,13 @@
-//
-//
-//
-//
-//      Author: C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 
-#include "../include/SurfaceSource.hh"
-#include "../../Service/include/Locator.hh"
-#include "../include/SurfaceSourceMessenger.hh"
+#include "ParticleGenerator/include/SurfaceSource.hh"
+
 #include "G4Event.hh"
 #include "G4GeneralParticleSource.hh"
-#include "G4TriangularFacet.hh"
+#include "ParticleGenerator/include/SurfaceSourceMessenger.hh"
+#include "Service/include/Locator.hh"
 Surface::SurfaceSource::SurfaceSource()
     : fMessenger(new SurfaceSourceMessenger(this)),
       fParticleGenerator(new G4GeneralParticleSource) {}
@@ -36,6 +32,6 @@ void Surface::SurfaceSource::GeneratePrimaryVertex(G4Event *argEvent) {
 
 void Surface::SurfaceSource::ShowSurface() { fFacetStore.DrawFacets(); }
 
-void Surface::SurfaceSource::LogSurface(G4String &aFilename) {
+void Surface::SurfaceSource::LogSurface(const G4String &aFilename) {
   fFacetStore.LogFacetStore(aFilename);
 }

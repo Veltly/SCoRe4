@@ -4,6 +4,14 @@
 
 #include "DetectorConstruction.hh"
 
+#include <G4MultiUnion.hh>
+#include <G4Region.hh>
+#include <G4RotationMatrix.hh>
+#include <G4ThreeVector.hh>
+#include <G4Transform3D.hh>
+#include <G4UserLimits.hh>
+#include <cfloat>
+
 #include "../../../src/Portal/include/MultipleSubworld.hh"
 #include "../../../src/Portal/include/PortalStore.hh"
 #include "../../../src/Service/include/Locator.hh"
@@ -15,13 +23,6 @@
 #include "G4SystemOfUnits.hh"
 #include "Portal/include/SubworldGrid.hh"
 #include "Portal/include/VPortal.hh"
-#include <G4MultiUnion.hh>
-#include <G4Region.hh>
-#include <G4RotationMatrix.hh>
-#include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
-#include <G4UserLimits.hh>
-#include <cfloat>
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fScoringVolume(0) {}
@@ -41,23 +42,23 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4double world_sizeZ = 1 * m;
   G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
-  G4Box *solidWorld = new G4Box("World", // its name
+  G4Box *solidWorld = new G4Box("World",  // its name
                                 0.5 * world_sizeXY, 0.5 * world_sizeXY,
-                                0.5 * world_sizeZ); // its size
+                                0.5 * world_sizeZ);  // its size
 
-  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, // its solid
-                                                    world_mat,  // its material
-                                                    "World");   // its name
+  G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld,  // its solid
+                                                    world_mat,   // its material
+                                                    "World");    // its name
 
   G4VPhysicalVolume *physWorld =
-      new G4PVPlacement(0,               // no rotation
-                        G4ThreeVector(), // at (0,0,0)
-                        logicWorld,      // its logical volume
-                        "World",         // its name
-                        0,               // its mother  volume
-                        false,           // no boolean operation
-                        0,               // copy number
-                        checkOverlaps);  // overlaps checking
+      new G4PVPlacement(0,                // no rotation
+                        G4ThreeVector(),  // at (0,0,0)
+                        logicWorld,       // its logical volume
+                        "World",          // its name
+                        0,                // its mother  volume
+                        false,            // no boolean operation
+                        0,                // copy number
+                        checkOverlaps);   // overlaps checking
 
   //
   // Box
@@ -99,99 +100,99 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4Material *subworldTrigger_mat = nist->FindOrBuildMaterial("G4_AIR");
 
   G4Box *solidSubworldTrigger =
-      new G4Box("SubworldTrigger", // its name
+      new G4Box("SubworldTrigger",  // its name
                 0.5 * subworldTrigger_sizeXY, 0.5 * subworldTrigger_sizeXY,
-                0.5 * subworldTrigger_sizeZ); // its size
+                0.5 * subworldTrigger_sizeZ);  // its size
 
   G4LogicalVolume *logicSubworldTriggerA =
-      new G4LogicalVolume(solidSubworldTrigger, // its solid
-                          subworldTrigger_mat,  // its material
-                          "SubworldTriggerA");  // its name
+      new G4LogicalVolume(solidSubworldTrigger,  // its solid
+                          subworldTrigger_mat,   // its material
+                          "SubworldTriggerA");   // its name
 
   G4LogicalVolume *logicSubworldTriggerB =
-      new G4LogicalVolume(solidSubworldTrigger, // its solid
-                          subworldTrigger_mat,  // its material
-                          "SubworldTriggerB");  // its name
+      new G4LogicalVolume(solidSubworldTrigger,  // its solid
+                          subworldTrigger_mat,   // its material
+                          "SubworldTriggerB");   // its name
 
   G4LogicalVolume *logicSubworldTriggerC =
-      new G4LogicalVolume(solidSubworldTrigger, // its solid
-                          subworldTrigger_mat,  // its material
-                          "SubworldTriggerC");  // its name
+      new G4LogicalVolume(solidSubworldTrigger,  // its solid
+                          subworldTrigger_mat,   // its material
+                          "SubworldTriggerC");   // its name
   // Subworld
 
   G4Material *subworld_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Box *solidSubworld = new G4Box("Subworld", // its name
+  G4Box *solidSubworld = new G4Box("Subworld",  // its name
                                    0.5 * subworld_sizeXY, 0.5 * subworld_sizeXY,
-                                   0.5 * subworld_sizeZ); // its size
+                                   0.5 * subworld_sizeZ);  // its size
 
   G4LogicalVolume *logicSubworld =
-      new G4LogicalVolume(solidSubworld, // its solid
-                          subworld_mat,  // its material
-                          "Subworld");   // its name
+      new G4LogicalVolume(solidSubworld,  // its solid
+                          subworld_mat,   // its material
+                          "Subworld");    // its name
 
   G4ThreeVector subworldTriggerPlacementA{5 * cm, 5 * cm, 22 * cm};
   G4ThreeVector subworldTriggerPlacementB{5 * cm, 5 * cm, 20 * cm};
   G4ThreeVector subworldTriggerPlacementC{5 * cm, 5 * cm, 18 * cm};
 
   G4VPhysicalVolume *physSubworldTriggerA =
-      new G4PVPlacement(0,                         // no rotation
-                        subworldTriggerPlacementA, //
-                        logicSubworldTriggerA,     // its logical volume
-                        "SubworldTriggerA",        // its name
-                        logicWorld,                // its mother  volume
-                        false,                     // no boolean operation
-                        0,                         // copy number
-                        checkOverlaps);            // overlaps checking
+      new G4PVPlacement(0,                          // no rotation
+                        subworldTriggerPlacementA,  //
+                        logicSubworldTriggerA,      // its logical volume
+                        "SubworldTriggerA",         // its name
+                        logicWorld,                 // its mother  volume
+                        false,                      // no boolean operation
+                        0,                          // copy number
+                        checkOverlaps);             // overlaps checking
 
   G4VPhysicalVolume *physSubworldTriggerB =
-      new G4PVPlacement(0,                         // no rotation
-                        subworldTriggerPlacementB, //
-                        logicSubworldTriggerB,     // its logical volume
-                        "SubworldTriggerB",        // its name
-                        logicWorld,                // its mother  volume
-                        false,                     // no boolean operation
-                        0,                         // copy number
-                        checkOverlaps);            // overlaps checking
+      new G4PVPlacement(0,                          // no rotation
+                        subworldTriggerPlacementB,  //
+                        logicSubworldTriggerB,      // its logical volume
+                        "SubworldTriggerB",         // its name
+                        logicWorld,                 // its mother  volume
+                        false,                      // no boolean operation
+                        0,                          // copy number
+                        checkOverlaps);             // overlaps checking
 
   G4VPhysicalVolume *physSubworldTriggerC =
-      new G4PVPlacement(0,                         // no rotation
-                        subworldTriggerPlacementC, //
-                        logicSubworldTriggerC,     // its logical volume
-                        "SubworldTriggerC",        // its name
-                        logicWorld,                // its mother  volume
-                        false,                     // no boolean operation
-                        0,                         // copy number
-                        checkOverlaps);            // overlaps checking
+      new G4PVPlacement(0,                          // no rotation
+                        subworldTriggerPlacementC,  //
+                        logicSubworldTriggerC,      // its logical volume
+                        "SubworldTriggerC",         // its name
+                        logicWorld,                 // its mother  volume
+                        false,                      // no boolean operation
+                        0,                          // copy number
+                        checkOverlaps);             // overlaps checking
 
   G4ThreeVector subworldPlacement{0, 0, 0};
 
   G4VPhysicalVolume *physSubworldA =
-      new G4PVPlacement(0,                     // no rotation
-                        subworldPlacement,     //
-                        logicSubworld,         // its logical volume
-                        "Subworld-A",          // its name
-                        logicSubworldTriggerA, // its mother  volume
-                        false,                 // no boolean operation
-                        0,                     // copy number
-                        checkOverlaps);        // overlaps checking
+      new G4PVPlacement(0,                      // no rotation
+                        subworldPlacement,      //
+                        logicSubworld,          // its logical volume
+                        "Subworld-A",           // its name
+                        logicSubworldTriggerA,  // its mother  volume
+                        false,                  // no boolean operation
+                        0,                      // copy number
+                        checkOverlaps);         // overlaps checking
   G4VPhysicalVolume *physSubworldB =
-      new G4PVPlacement(0,                     // no rotation
-                        subworldPlacement,     //
-                        logicSubworld,         // its logical volume
-                        "Subworld-B",          // its name
-                        logicSubworldTriggerB, // its mother  volume
-                        false,                 // no boolean operation
-                        0,                     // copy number
-                        checkOverlaps);        // overlaps checking
+      new G4PVPlacement(0,                      // no rotation
+                        subworldPlacement,      //
+                        logicSubworld,          // its logical volume
+                        "Subworld-B",           // its name
+                        logicSubworldTriggerB,  // its mother  volume
+                        false,                  // no boolean operation
+                        0,                      // copy number
+                        checkOverlaps);         // overlaps checking
   G4VPhysicalVolume *physSubworldC =
-      new G4PVPlacement(0,                     // no rotation
-                        subworldPlacement,     //
-                        logicSubworld,         // its logical volume
-                        "Subworld-C",          // its name
-                        logicSubworldTriggerC, // its mother  volume
-                        false,                 // no boolean operation
-                        0,                     // copy number
-                        checkOverlaps);        // overlaps checking
+      new G4PVPlacement(0,                      // no rotation
+                        subworldPlacement,      //
+                        logicSubworld,          // its logical volume
+                        "Subworld-C",           // its name
+                        logicSubworldTriggerC,  // its mother  volume
+                        false,                  // no boolean operation
+                        0,                      // copy number
+                        checkOverlaps);         // overlaps checking
 
   //
   // Portal entrance

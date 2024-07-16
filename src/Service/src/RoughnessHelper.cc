@@ -12,11 +12,22 @@
 #include "SurfaceGenerator/include/Describer.hh"
 #include "SurfaceGenerator/include/Generator.hh"
 
-Surface::RoughnessHelper::RoughnessHelper(const G4int verboseLvl)
-    : fLogger("RoughnessHelper", verboseLvl),
-      fGenerator(verboseLvl),
+Surface::RoughnessHelper::RoughnessHelper(const G4String &name)
+    : fLogger("RoughnessHelper_" + name),
+      fGenerator(name),
       fRoughness(nullptr),
       fLogicRoughness(nullptr),
+      fName(name),
+      fStepLimit(nullptr),
+      fMaterial(nullptr) {}
+
+Surface::RoughnessHelper::RoughnessHelper(const G4String &name,
+                                          const G4int verboseLvl)
+    : fLogger("RoughnessHelper_" + name, verboseLvl),
+      fGenerator(name, verboseLvl),
+      fRoughness(nullptr),
+      fLogicRoughness(nullptr),
+      fName(name),
       fStepLimit(nullptr),
       fMaterial(nullptr) {}
 
@@ -93,6 +104,7 @@ void Surface::RoughnessHelper::CheckValues() {
   if (fStepLimit == nullptr) {
     const G4double min = std::min(fDxSpike, fDySpike);
     fStepLimit = new G4UserLimits(0.01 * min);
+    fLogger.WriteDetailInfo("Minimum set to " + std::to_string(0.01 * min));
   }
 }
 

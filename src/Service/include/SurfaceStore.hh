@@ -5,11 +5,10 @@
 #ifndef SRC_SERVICE_INCLUDE_SURFACESTORE_HH_
 #define SRC_SERVICE_INCLUDE_SURFACESTORE_HH_
 
-#include <string>
 #include <vector>
 
+#include "Service/include/Logger.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
-
 namespace Surface {
 
 class SurfaceStore {
@@ -22,10 +21,11 @@ class SurfaceStore {
   ~SurfaceStore() {
     for (auto *surface : fSurfaceStore) {
       delete surface;
+      surface = nullptr;
     }
   }
 
-  void AddSurface(const FacetStore &store);
+  void AddSurface(FacetStore *store);
   FacetStore *Surface(const G4String &surfaceName);
 
  private:
@@ -33,6 +33,7 @@ class SurfaceStore {
 
  private:
   static SurfaceStore *fStore;
+  Logger fLogger;
   std::vector<Surface::FacetStore *> fSurfaceStore;
 };
 }  // namespace Surface

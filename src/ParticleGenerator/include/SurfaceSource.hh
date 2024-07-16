@@ -1,17 +1,13 @@
-//
-//
-//
-//
-//      Author: C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 
-#ifndef SURFACE_SURFACESOURCE
-#define SURFACE_SURFACESOURCE
+#ifndef SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH_
+#define SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH_
 
-#include "../../SurfaceGenerator/include/FacetStore.hh"
 #include "G4VPrimaryGenerator.hh"
-#include "SurfaceSourceMessenger.hh"
+#include "ParticleGenerator/include/SurfaceSourceMessenger.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
 
 class G4Event;
 class G4Navigator;
@@ -21,23 +17,21 @@ class G4GeneralParticleSource;
 
 namespace Surface {
 
-//@brief Generates a particle as a primary event on the surface.
+// @brief Generates a particle as a primary event on the surface.
 // Surface has to be detected before first event can be executed.
 
 class SurfaceSource : public G4VPrimaryGenerator {
-
-public:
+ public:
   SurfaceSource();
   ~SurfaceSource();
   void GeneratePrimaryVertex(G4Event *argEvent);
   void ShowSurface();
-  void LogSurface(G4String &aFilename);
+  void LogSurface(const G4String &aFilename);
 
-private:
+ private:
   Surface::SurfaceSourceMessenger *fMessenger;
   G4GeneralParticleSource *fParticleGenerator;
   Surface::FacetStore fFacetStore;
-  G4bool fWithShift;
 };
-} // namespace Surface
-#endif // SURFACE_SURFACESOURCE
+}  // namespace Surface
+#endif  // SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH_

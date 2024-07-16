@@ -1,38 +1,37 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-05-24
 // File: SimplePortal
 
 // Simple Portal combines two Boxes
-#ifndef SIMPLE_PORTAL_HH
-#define SIMPLE_PORTAL_HH
-#include "../../Service/include/Logger.hh"
-#include "VPortal.hh"
-#include <G4Step.hh>
-#include <G4ThreeVector.hh>
-#include <G4VPhysicalVolume.hh>
+#ifndef SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_
+#define SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_
+
+#include "G4Step.hh"
+#include "G4ThreeVector.hh"
+#include "G4VPhysicalVolume.hh"
+#include "Portal/include/VPortal.hh"
+#include "Service/include/Logger.hh"
 
 namespace Surface {
 
 class SimplePortal : public VPortal {
-private:
-  G4ThreeVector TransformBetweenPortals(G4ThreeVector &vec);
+ private:
+  G4ThreeVector TransformBetweenPortals(const G4ThreeVector &vec);
 
-public:
-  SimplePortal(G4String name, G4VPhysicalVolume *volume, G4ThreeVector &vec,
-               G4int verbose)
+ public:
+  SimplePortal(const G4String &name, G4VPhysicalVolume *volume,
+               const G4ThreeVector &vec, const G4int verbose)
       : VPortal(name, volume, PortalType::SimplePortal, vec),
-        fLogger({"SimplePortal" + name, verbose}){};
-  //  virtual void DoPortation(G4StepPoint *point) override;
-  virtual void DoPortation(const G4Step *step) override;
+        fLogger("SimplePortal_" + name, verbose) {}
+
+  void DoPortation(G4Step *step) override;
   void SetOtherPortal(SimplePortal *otherPortal);
   void SetVerbose(G4int verbose);
-  //  void UpdateTouchable(G4Track *track, G4StepPoint *stepPoint,
-  //                     G4ThreeVector &newPosition);
 
-private:
+ private:
   SimplePortal *fOtherPortal;
   Logger fLogger;
 };
 
-} // namespace Surface
-#endif // SIMPLE_PORTAL_HH
+}  // namespace Surface
+#endif  // SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_

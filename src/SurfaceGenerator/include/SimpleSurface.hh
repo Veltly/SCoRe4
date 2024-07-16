@@ -1,22 +1,22 @@
-//Author: C.Gruener
-//Date: 24-05-24
-//File: Surface.hh
+// Copyright [2024] C.Gruener
+// Date: 24-05-24
+// File: Surface.hh
 
-
-#ifndef SIMPLESURFACE_HH
-#define SIMPLESURFACE_HH
+#ifndef SRC_SURFACEGENERATOR_INCLUDE_SIMPLESURFACE_HH_
+#define SRC_SURFACEGENERATOR_INCLUDE_SIMPLESURFACE_HH_
 
 #include <G4LogicalVolume.hh>
-namespace Surface{
+namespace Surface {
 
-class SimpleSurface{
-public:
+class SimpleSurface {
+ public:
   SimpleSurface();
   G4LogicalVolume *GetRoughSurface();
-  G4LogicalVolume *GetSurface();
+  // G4LogicalVolume *GetSurface();
   void SetSizeX(G4double sizeX);
   void SetSizeY(G4double sizeY);
-private:
+
+ private:
   G4LogicalVolume *fRoughSurface;
   G4double sizeX;
   G4double sizeY;
@@ -27,5 +27,5 @@ private:
   G4Material *subworldMaterial;
   G4Material *roughnessMaterial;
 };
-}
-#endif //SIMPLESURFACE_HH
+}  // namespace Surface
+#endif  // SRC_SURFACEGENERATOR_INCLUDE_SIMPLESURFACE_HH_

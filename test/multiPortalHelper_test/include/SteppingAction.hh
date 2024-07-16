@@ -41,15 +41,14 @@ class G4LogicalVolume;
 ///
 
 class SteppingAction : public G4UserSteppingAction {
-public:
+ public:
   SteppingAction();
   virtual ~SteppingAction();
 
   // method from the base class
   virtual void UserSteppingAction(const G4Step *);
 
-private:
-  EventAction *fEventAction;
+ private:
   Surface::PortalControl fPortalControl{-1};
 };
 

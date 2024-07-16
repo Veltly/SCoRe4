@@ -1,77 +1,79 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-06-11
 // File: MultipleSubworlds
 
-#include "../include/MultipleSubworld.hh"
-#include "../include/SubworldGrid.hh"
-#include "../include/VPortal.hh"
-
-#include "G4Step.hh"
-#include "G4ThreeVector.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4VSolid.hh"
-#include <G4Transform3D.hh>
-#include <G4Types.hh>
 #include <cstdlib>
 #include <string>
 
-Surface::MultipleSubworld::MultipleSubworld(const G4String name,
-                                            G4VPhysicalVolume *volume,
-                                            G4ThreeVector &vec,
-                                            const G4int verbose,
-                                            FacetStore *facetStore)
-    : VPortal(name, volume, PortalType::MultipleSubworld),
-      fLogger({"MultiplePortal", verbose}), fIsPortal(false),
-      fSubworldGrid(nullptr), fFacetStore(facetStore) {
-  SetGlobalCoord(vec);
-};
+#include "G4Step.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
+#include "G4Types.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4VSolid.hh"
+#include "Portal/include/MultipleSubworld.hh"
+#include "Portal/include/SubworldGrid.hh"
+#include "Portal/include/VPortal.hh"
 
 Surface::MultipleSubworld::MultipleSubworld(const G4String name,
                                             G4VPhysicalVolume *volume,
-                                            G4Transform3D transform,
+                                            const G4ThreeVector &vec,
                                             const G4int verbose,
                                             FacetStore *facetStore)
     : VPortal(name, volume, PortalType::MultipleSubworld),
-      fLogger({"MultiplePortal", verbose}), fIsPortal(false),
-      fSubworldGrid(nullptr), fFacetStore(facetStore) {
+      fLogger("MultiplePortal_ " + name, verbose),
+      fIsPortal(false),
+      fSubworldGrid(nullptr),
+      fFacetStore(facetStore) {
+  SetGlobalCoord(vec);
+}
+
+Surface::MultipleSubworld::MultipleSubworld(const G4String name,
+                                            G4VPhysicalVolume *volume,
+                                            const G4Transform3D transform,
+                                            const G4int verbose,
+                                            FacetStore *facetStore)
+    : VPortal(name, volume, PortalType::MultipleSubworld),
+      fLogger("MultiplePortal_" + name, verbose),
+      fIsPortal(false),
+      fSubworldGrid(nullptr),
+      fFacetStore(facetStore) {
   const G4ThreeVector vec = transform.getTranslation();
   SetGlobalCoord(vec);
-};
+}
 
 Surface::MultipleSubworld::~MultipleSubworld() {
   if (fSubworldGrid !=
-      nullptr) // substitution for a shared pointer, be carefull, will be
-               // deleted if any subworld is deleted.
+      nullptr)  // substitution for a shared pointer, be carefull, will be
+                // deleted if any subworld is deleted.
     delete fSubworldGrid;
   fSubworldGrid = nullptr;
-};
+}
 
-void Surface::MultipleSubworld::DoPortation(const G4Step *step) {
+void Surface::MultipleSubworld::DoPortation(G4Step *step) {
   // select portation method by checking Grid and side of exit portal
   SingleSurface surface = GetNearestSurface(step);
   PortationType portationType = GetPortationType(surface);
   switch (portationType) {
-  case PortationType::ENTER: {
-    fLogger.WriteDebugInfo("Doing portation of type: Enter");
-    EnterPortal(step, surface);
-    break;
+    case PortationType::ENTER: {
+      fLogger.WriteDebugInfo("Doing portation of type: Enter");
+      EnterPortal(step);
+      break;
+    }
+    case PortationType::EXIT: {
+      fLogger.WriteDebugInfo("Doing portation of type: Exit");
+      ExitPortal(step);
+      break;
+    }
+    case PortationType::PERIODIC: {
+      fLogger.WriteDebugInfo("Doing portation of type: Periodic");
+      DoPeriodicPortation(step, surface);
+      break;
+    }
   }
-  case PortationType::EXIT: {
-    fLogger.WriteDebugInfo("Doing portation of type: Exit");
-    ExitPortal(step, surface);
-    break;
-  }
-  case PortationType::PERIODIC: {
-    fLogger.WriteDebugInfo("Doing portation of type: Periodic");
-    DoPeriodicPortation(step, surface);
-    break;
-  }
-  }
-};
+}
 
-void Surface::MultipleSubworld::EnterPortal(const G4Step *step,
-                                            const SingleSurface enterSurface) {
-
+void Surface::MultipleSubworld::EnterPortal(G4Step *step) {
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   // fLogger.WriteDebugInfo(
   //     "Current position    x: " + std::to_string(position.x()) + " y: " +
@@ -93,8 +95,7 @@ void Surface::MultipleSubworld::EnterPortal(const G4Step *step,
   UpdatePosition(step, position);
 }
 
-void Surface::MultipleSubworld::ExitPortal(const G4Step *step,
-                                           const SingleSurface exitSurface) {
+void Surface::MultipleSubworld::ExitPortal(G4Step *step) {
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   TransformToLocalCoordinate(position);
   TransformSubworldToPortal(position);
@@ -112,34 +113,32 @@ void Surface::MultipleSubworld::DoPeriodicPortation(
 
 Surface::MultipleSubworld::PortationType
 Surface::MultipleSubworld::GetPortationType(const SingleSurface surface) {
-  if (fIsPortal)
-    return PortationType::ENTER;
+  if (fIsPortal) return PortationType::ENTER;
   const G4int currentNX = fSubworldGrid->CurrentPosX();
   const G4int currentNY = fSubworldGrid->CurrentPosY();
   const G4int maxNX = fSubworldGrid->MaxX();
   const G4int maxNY = fSubworldGrid->MaxY();
   // Periodic exit at a surface
-  if (surface == SingleSurface::X_UP and currentNX < maxNX - 1)
+  if (surface == SingleSurface::X_UP && currentNX < maxNX - 1)
     return PortationType::PERIODIC;
-  if (surface == SingleSurface::X_DOWN and currentNX > 0)
+  if (surface == SingleSurface::X_DOWN && currentNX > 0)
     return PortationType::PERIODIC;
-  if (surface == SingleSurface::Y_UP and currentNY < maxNY - 1)
+  if (surface == SingleSurface::Y_UP && currentNY < maxNY - 1)
     return PortationType::PERIODIC;
-  if (surface == SingleSurface::Y_DOWN and currentNY > 0)
+  if (surface == SingleSurface::Y_DOWN && currentNY > 0)
     return PortationType::PERIODIC;
 
   // Periodic exit at an edge
-  if (surface == SingleSurface::X_UP_Y_UP and currentNY < maxNX - 1 and
+  if (surface == SingleSurface::X_UP_Y_UP && currentNY < maxNX - 1 &&
       currentNY < maxNY - 1)
     return PortationType::PERIODIC;
-  if (surface == SingleSurface::X_UP_Y_DOWN and currentNX < maxNX - 1 and
+  if (surface == SingleSurface::X_UP_Y_DOWN && currentNX < maxNX - 1 &&
       currentNY > 0)
     return PortationType::PERIODIC;
-  if (surface == SingleSurface::X_DOWN_Y_UP and currentNX > 0 and
+  if (surface == SingleSurface::X_DOWN_Y_UP && currentNX > 0 &&
       currentNY < maxNY - 1)
     return PortationType::PERIODIC;
-  if (surface == SingleSurface::X_DOWN_Y_DOWN and currentNX > 0 and
-      currentNY > 0)
+  if (surface == SingleSurface::X_DOWN_Y_DOWN && currentNX > 0 && currentNY > 0)
     return PortationType::PERIODIC;
   // exit at a Z Surface, also including corners.
   return PortationType::EXIT;
@@ -172,11 +171,11 @@ Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
   SingleSurface X, Y, Z;
 
   // X
-  if (IsZero_X) { // extra case because of comparison double with 0.
+  if (IsZero_X) {  // extra case because of comparison double with 0.
     X = SingleSurface::X_SAME;
-  } else if (result.x() > 0. and direction.x() > 0.) {
+  } else if (result.x() > 0. && direction.x() > 0.) {
     X = SingleSurface::X_UP;
-  } else if (result.x() < 0. and direction.x() < 0.) {
+  } else if (result.x() < 0. && direction.x() < 0.) {
     X = SingleSurface::X_DOWN;
   } else {
     X = SingleSurface::X_SAME;
@@ -185,9 +184,9 @@ Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
   // Y
   if (IsZero_Y) {
     Y = SingleSurface::Y_SAME;
-  } else if (result.y() > 0. and direction.y() > 0.) {
+  } else if (result.y() > 0. && direction.y() > 0.) {
     Y = SingleSurface::Y_UP;
-  } else if (result.y() < 0. and direction.y() < 0.) {
+  } else if (result.y() < 0. && direction.y() < 0.) {
     Y = SingleSurface::Y_DOWN;
   } else {
     Y = SingleSurface::Y_SAME;
@@ -196,9 +195,9 @@ Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
   // Z
   if (IsZero_Z) {
     Z = SingleSurface::Z_SAME;
-  } else if (result.z() > 0. and direction.z() > 0.) {
+  } else if (result.z() > 0. && direction.z() > 0.) {
     Z = SingleSurface::Z_UP;
-  } else if (result.z() < 0. and direction.z() < 0.) {
+  } else if (result.z() < 0. && direction.z() < 0.) {
     Z = SingleSurface::Z_DOWN;
   } else {
     Z = SingleSurface::Z_SAME;
@@ -208,13 +207,13 @@ Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
     return SingleSurface::Z_UP;
   } else if (Z == SingleSurface::Z_DOWN) {
     return SingleSurface::Z_DOWN;
-  } else if (X == SingleSurface::X_UP and Y == SingleSurface::Y_UP) {
+  } else if (X == SingleSurface::X_UP && Y == SingleSurface::Y_UP) {
     return SingleSurface::X_UP_Y_UP;
-  } else if (X == SingleSurface::X_UP and Y == SingleSurface::Y_DOWN) {
+  } else if (X == SingleSurface::X_UP && Y == SingleSurface::Y_DOWN) {
     return SingleSurface::X_UP_Y_DOWN;
-  } else if (X == SingleSurface::X_DOWN and Y == SingleSurface::Y_UP) {
+  } else if (X == SingleSurface::X_DOWN && Y == SingleSurface::Y_UP) {
     return SingleSurface::X_DOWN_Y_UP;
-  } else if (X == SingleSurface::X_DOWN and Y == SingleSurface::Y_DOWN) {
+  } else if (X == SingleSurface::X_DOWN && Y == SingleSurface::Y_DOWN) {
     return SingleSurface::X_DOWN_Y_DOWN;
   } else if (X == SingleSurface::X_UP) {
     return SingleSurface::X_UP;
@@ -235,55 +234,55 @@ void Surface::MultipleSubworld::DoPeriodicTransform(
   G4ThreeVector pMin, pMax;
   volume->GetLogicalVolume()->GetSolid()->BoundingLimits(pMin, pMax);
   const G4ThreeVector volumeSize = pMax - pMin;
-  TransformToLocalCoordinate(vec); // transform to local coord
+  TransformToLocalCoordinate(vec);  // transform to local coord
   const G4ThreeVector oldPosition = vec;
   // I assume that all subworlds have the same dimension
   switch (surface) {
-  case SingleSurface::X_UP:
-    vec.setX(oldPosition.x() - volumeSize.x());
-    fSubworldGrid->IncrX();
-    break;
-  case SingleSurface::X_DOWN:
-    vec.setX(oldPosition.x() + volumeSize.x());
-    fSubworldGrid->DecrX();
-    break;
-  case SingleSurface::Y_UP:
-    vec.setY(oldPosition.y() - volumeSize.y());
-    fSubworldGrid->IncrY();
-    break;
-  case SingleSurface::Y_DOWN:
-    vec.setY(oldPosition.y() + volumeSize.y());
-    fSubworldGrid->DecrY();
-    break;
-  case SingleSurface::X_UP_Y_UP:
-    vec.setX(oldPosition.x() - volumeSize.x());
-    fSubworldGrid->IncrX();
-    vec.setY(oldPosition.y() - volumeSize.y());
-    fSubworldGrid->IncrY();
-    break;
-  case SingleSurface::X_UP_Y_DOWN:
-    vec.setX(oldPosition.x() - volumeSize.x());
-    fSubworldGrid->IncrX();
-    vec.setY(oldPosition.y() + volumeSize.y());
-    fSubworldGrid->DecrY();
-    break;
-  case SingleSurface::X_DOWN_Y_UP:
-    vec.setX(oldPosition.x() + volumeSize.x());
-    fSubworldGrid->DecrX();
-    vec.setY(oldPosition.y() - volumeSize.y());
-    fSubworldGrid->IncrY();
-    break;
-  case SingleSurface::X_DOWN_Y_DOWN:
-    vec.setX(oldPosition.x() + volumeSize.x());
-    fSubworldGrid->DecrX();
-    vec.setY(oldPosition.y() + volumeSize.y());
-    fSubworldGrid->DecrY();
-    break;
-  default:
-    exit(EXIT_FAILURE); // should never happen
+    case SingleSurface::X_UP:
+      vec.setX(oldPosition.x() - volumeSize.x());
+      fSubworldGrid->IncrX();
+      break;
+    case SingleSurface::X_DOWN:
+      vec.setX(oldPosition.x() + volumeSize.x());
+      fSubworldGrid->DecrX();
+      break;
+    case SingleSurface::Y_UP:
+      vec.setY(oldPosition.y() - volumeSize.y());
+      fSubworldGrid->IncrY();
+      break;
+    case SingleSurface::Y_DOWN:
+      vec.setY(oldPosition.y() + volumeSize.y());
+      fSubworldGrid->DecrY();
+      break;
+    case SingleSurface::X_UP_Y_UP:
+      vec.setX(oldPosition.x() - volumeSize.x());
+      fSubworldGrid->IncrX();
+      vec.setY(oldPosition.y() - volumeSize.y());
+      fSubworldGrid->IncrY();
+      break;
+    case SingleSurface::X_UP_Y_DOWN:
+      vec.setX(oldPosition.x() - volumeSize.x());
+      fSubworldGrid->IncrX();
+      vec.setY(oldPosition.y() + volumeSize.y());
+      fSubworldGrid->DecrY();
+      break;
+    case SingleSurface::X_DOWN_Y_UP:
+      vec.setX(oldPosition.x() + volumeSize.x());
+      fSubworldGrid->DecrX();
+      vec.setY(oldPosition.y() - volumeSize.y());
+      fSubworldGrid->IncrY();
+      break;
+    case SingleSurface::X_DOWN_Y_DOWN:
+      vec.setX(oldPosition.x() + volumeSize.x());
+      fSubworldGrid->DecrX();
+      vec.setY(oldPosition.y() + volumeSize.y());
+      fSubworldGrid->DecrY();
+      break;
+    default:
+      exit(EXIT_FAILURE);  // should never happen
   }
   fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(
-      vec); // transform to coord of new subworld
+      vec);  // transform to coord of new subworld
   const std::string subworldName = fSubworldGrid->GetSubworld()->GetName();
   LoggCurrentStatus();
 }
@@ -319,10 +318,8 @@ void Surface::MultipleSubworld::TransformPortalToSubworld(G4ThreeVector &vec) {
   fLogger.WriteDebugInfo("Calculate gridposition x: " + std::to_string(divNX) +
                          " y: " + std::to_string(divNY) + " rounded x: " +
                          std::to_string(NX) + " y: " + std::to_string(NY));
-  if (NX == fSubworldGrid->MaxX())
-    --NX;
-  if (NY == fSubworldGrid->MaxY())
-    --NY;
+  if (NX == fSubworldGrid->MaxX()) --NX;
+  if (NY == fSubworldGrid->MaxY()) --NY;
   vec.setX(shiftedVec.x() - NX * otherVolumeDistance.x() -
            otherVolumeDistance.x() / 2.);
   vec.setY(shiftedVec.y() - NY * otherVolumeDistance.y() -
@@ -333,8 +330,8 @@ void Surface::MultipleSubworld::TransformPortalToSubworld(G4ThreeVector &vec) {
   LoggCurrentStatus();
 }
 
-G4double
-Surface::MultipleSubworld::TransformZBetweenPortals(const G4double val) {
+G4double Surface::MultipleSubworld::TransformZBetweenPortals(
+    const G4double val) {
   G4ThreeVector pMin, pMax;
   GetVolume()->GetLogicalVolume()->GetSolid()->BoundingLimits(pMin, pMax);
   G4double volumeDistanceZ = pMax.z() - pMin.z();
@@ -369,10 +366,8 @@ void Surface::MultipleSubworld::SetOtherPortal(
 
 void Surface::MultipleSubworld::AddSubworldToGrid(
     const G4int x, const G4int y, Surface::MultipleSubworld *subworld) {
-  if (fSubworldGrid == nullptr)
-    exit(EXIT_FAILURE);
-  if (subworld->GetSubworldGrid() != nullptr)
-    exit(EXIT_FAILURE);
+  if (fSubworldGrid == nullptr) exit(EXIT_FAILURE);
+  if (subworld->GetSubworldGrid() != nullptr) exit(EXIT_FAILURE);
   fSubworldGrid->SetSubworld(x, y, subworld);
 }
 

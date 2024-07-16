@@ -1,23 +1,23 @@
-//
-//
-//
-//
-//	author:C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date 23-06-01
+// File:
 
-#ifndef SURFACE_LOGGER
-#define SURFACE_LOGGER
-#include <G4String.hh>
-#include <G4ThreeVector.hh>
+#ifndef SRC_SERVICE_INCLUDE_LOGGER_HH_
+#define SRC_SERVICE_INCLUDE_LOGGER_HH_
+
 #include <sstream>
+
+#include "G4String.hh"
+#include "G4ThreeVector.hh"
+
 namespace Surface {
 ///
 /// Logger Class to standardize logging
 ///
 class Logger {
-public:
-  Logger(G4String aId, G4int aVerboseLvl);
+ public:
+  Logger(G4String aId, G4int aVerboseLvl = 4);
+
   void WriteInfo(G4String &);
   void WriteInfo(G4String &&);
   void WriteInfo(std::stringstream &&);
@@ -47,7 +47,7 @@ public:
 
   void SetVerboseLvl(G4int aVerboseLvl);
 
-private:
+ private:
   G4String fId;
   G4int fVerboseLvl;
   G4int fVerboseError{0};
@@ -56,5 +56,5 @@ private:
   G4int fVerboseDetailInfo{2};
   G4int fVerboseDebugInfo{3};
 };
-} // namespace Surface
-#endif
+}  // namespace Surface
+#endif  // SRC_SERVICE_INCLUDE_LOGGER_HH_
