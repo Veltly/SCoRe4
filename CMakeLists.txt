@@ -24,6 +24,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_COMPILER clang++)
 
+option(COMPILE_TEST "Compile tests which also function as examples" ON)
+
 add_subdirectory(src)
 
-add_subdirectory(test)
+if(COMPILE_TEST)
+  add_subdirectory(test)
+endif()

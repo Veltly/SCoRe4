@@ -1,39 +1,43 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-06-20
 // File MultiSubworldSampler
 
-#include "../../Portal/include/MultipleSubworld.hh"
-#include "../../Portal/include/PortalStore.hh"
-#include "../../Portal/include/SubworldGrid.hh"
-#include "../../Service/include/Locator.hh"
-#include "../../SurfaceGenerator/include/Calculator.hh"
-#include "../../SurfaceGenerator/include/FacetStore.hh"
-#include "../include/MultiSubworldSampler.hh"
-#include <G4GeneralParticleSource.hh>
-#include <G4ThreeVector.hh>
+#include "G4GeneralParticleSource.hh"
+#include "G4ThreeVector.hh"
+#include "ParticleGenerator/include/MultiSubworldSampler.hh"
+#include "Portal/include/MultipleSubworld.hh"
+#include "Portal/include/PortalStore.hh"
+#include "Portal/include/SubworldGrid.hh"
+#include "Service/include/Locator.hh"
+#include "SurfaceGenerator/include/Calculator.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(const G4String &name,
                                                     const G4String &portalName,
                                                     const G4int verboseLvl)
-    : fName(name), fPortalName(portalName), fShift(), fShiftActive(false),
+    : fName(name),
+      fPortalName(portalName),
+      fShift(),
+      fShiftActive(false),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
       fSamplerReady(false),
       fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
-      fParticleGenerator(new G4GeneralParticleSource){};
+      fParticleGenerator(new G4GeneralParticleSource) {}
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(
     const G4String &name, const G4String &portalName,
     const G4String &shiftFilename, const G4int verboseLvl)
-    : fName(name), fPortalName(portalName), fShift(shiftFilename),
+    : fName(name),
+      fPortalName(portalName),
+      fShift(shiftFilename),
       fShiftActive(true),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
       fSamplerReady(false),
       fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
-      fParticleGenerator(new G4GeneralParticleSource){};
+      fParticleGenerator(new G4GeneralParticleSource) {}
 
 void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
-
-  if (!fSamplerReady) { // if Sampler not ready
+  if (!fSamplerReady) {  // if Sampler not ready
     Surface::PortalStore pStore = Surface::Locator::GetPortalStore();
     G4int portalId = pStore.FindPortalId(fPortalName);
     Surface::MultipleSubworld *subworld =
@@ -52,10 +56,10 @@ G4ThreeVector Surface::MultiSubworldSampler::GetRandom() {
     PrepareSampler();
   }
 
-  const Coord randCoord = fSubworldSampler.GetRandom();
+  const Coord randomCoord = fSubworldSampler.GetRandom();
 
-  fSubworld->SetCurrentX(randCoord.x);
-  fSubworld->SetCurrentY(randCoord.y);
+  fSubworld->SetCurrentX(randomCoord.x);
+  fSubworld->SetCurrentY(randomCoord.y);
 
   MultipleSubworld *subworld = fSubworld->GetSubworld();
   FacetStore *facetStore = subworld->GetFacetStore();
@@ -71,10 +75,11 @@ G4ThreeVector Surface::MultiSubworldSampler::GetRandom() {
     fShift.DoShift(randomPoint, surfaceNormal);
   }
 
-  fLogger.WriteDebugInfo("Selected Subworld X: " + std::to_string(randCoord.x) +
-                         " Y: " + std::to_string(randCoord.y));
+  fLogger.WriteDebugInfo(
+      "Selected Subworld X: " + std::to_string(randomCoord.x) +
+      " Y: " + std::to_string(randomCoord.y));
   return randomPoint;
-};
+}
 
 void Surface::MultiSubworldSampler::PrepareSampler() {
   const std::set<MultipleSubworld *> unique = fSubworld->GetUniqueSubworlds();

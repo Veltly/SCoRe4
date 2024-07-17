@@ -1,16 +1,16 @@
-// Author: C.Gruener
+// Author: Copyright [2024] C.Gruener
 // Date: 24-06-18
 // File: MultiSubworldSampler
 
-#ifndef MULTISUBWORLDSAMPLER_HH
-#define MULTISUBWORLDSAMPLER_HH
+#ifndef SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH_
+#define SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH_
 
-#include "../../Portal/include/MultipleSubworld.hh"
-#include "../../Portal/include/SubworldGrid.hh"
-#include "../../Service/include/VSampler.hh"
 #include "G4GeneralParticleSource.hh"
 #include "G4VPrimaryGenerator.hh"
-#include "ShiftTable.hh"
+#include "ParticleGenerator/include/ShiftTable.hh"
+#include "Portal/include/MultipleSubworld.hh"
+#include "Portal/include/SubworldGrid.hh"
+#include "Service/include/VSampler.hh"
 
 namespace Surface {
 
@@ -20,22 +20,25 @@ struct Coord {
 };
 
 class MultiSubworldSampler : public G4VPrimaryGenerator {
-private:
-  void PrepareSampler();
-  G4ThreeVector GetRandom();
-
-public:
+ public:
   MultiSubworldSampler(const G4String &name, const G4String &portalName,
                        const G4String &shiftFilename,
                        const G4int verboseLvl = 6);
+
   MultiSubworldSampler(const G4String &name, const G4String &portalName,
                        const G4int verboseLvl = 6);
 
   void GeneratePrimaryVertex(G4Event *argEvent);
-  inline G4bool IsSamplerReady() const { return fSamplerReady; };
+
   void SetSubworld(SubworldGrid<MultipleSubworld> *);
 
-private:
+  inline G4bool IsSamplerReady() const { return fSamplerReady; }
+
+ private:
+  void PrepareSampler();
+  G4ThreeVector GetRandom();
+
+ private:
   G4String fName;
   G4String fPortalName;
   SubworldGrid<MultipleSubworld> *fSubworld;
@@ -46,6 +49,6 @@ private:
   Logger fLogger;
   G4GeneralParticleSource *fParticleGenerator;
 };
-} // namespace Surface
+}  // namespace Surface
 
-#endif // MULTISUBWORLDSAMPLER
+#endif  // SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH_

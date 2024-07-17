@@ -5,8 +5,17 @@ include(${Geant4_USE_FILE})
 file(GLOB_RECURSE sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB_RECURSE headers ${PROJECT_SOURCE_DIR}/src/*.hh)
 
-add_library(surface_lib ${sources} ${headers})
+add_library(surface ${sources} ${headers})
 
-target_include_directories(surface_lib PUBLIC ${PROJECT_SOURCE_DIR}/src/)
+set_target_properties(surface PROPERTIES PUBLIC_HEADER "${headers}")
 
-target_link_libraries(surface_lib ${Geant4_LIBRARIES})
+target_include_directories(surface PUBLIC ${PROJECT_SOURCE_DIR}/src/)
+
+target_link_libraries(surface ${Geant4_LIBRARIES})
+
+install(
+  TARGETS surface
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# set_target_properties(surface PROPERTIES VERSION ${PROJECT_VERSION})
