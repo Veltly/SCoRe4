@@ -10,7 +10,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/test/multiSurface_test/include/*.hh)
 
 add_executable(multiSurfaceTest multiSurface_test.cc ${sources} ${headers})
 
-target_link_libraries(multiSurfaceTest ${Geant4_LIBRARIES} surface_lib)
+target_link_libraries(multiSurfaceTest ${Geant4_LIBRARIES} surface)
 
 file(COPY ${PROJECT_SOURCE_DIR}/test/multiSurface_test/macros
      DESTINATION ${PROJECT_BINARY_DIR}/test/multiSurface_test/)

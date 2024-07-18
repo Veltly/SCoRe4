@@ -10,7 +10,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/test/multiPortal_test/include/*.hh)
 
 add_executable(multiPortalTest multiPortal_test.cc ${sources} ${headers})
 
-target_link_libraries(multiPortalTest ${Geant4_LIBRARIES} surface_lib)
+target_link_libraries(multiPortalTest ${Geant4_LIBRARIES} surface)
 
 file(COPY ${PROJECT_SOURCE_DIR}/test/multiPortal_test/macros
      DESTINATION ${PROJECT_BINARY_DIR}/test/multiPortal_test/)

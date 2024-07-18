@@ -10,7 +10,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/test/simplePortal_test/include/*.hh)
 
 add_executable(SimplePortalTest simplePortal_test.cc ${sources} ${headers})
 
-target_link_libraries(SimplePortalTest ${Geant4_LIBRARIES} surface_lib)
+target_link_libraries(SimplePortalTest ${Geant4_LIBRARIES} surface)
 
 file(COPY ${PROJECT_SOURCE_DIR}/test/simplePortal_test/macros
      DESTINATION ${PROJECT_BINARY_DIR}/test/simplePortal_test/)

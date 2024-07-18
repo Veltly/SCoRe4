@@ -12,7 +12,7 @@ file(GLOB headers
 add_executable(multiPortalHelperTest multiPortalHelper_test.cc ${sources}
                                      ${headers})
 
-target_link_libraries(multiPortalHelperTest ${Geant4_LIBRARIES} surface_lib)
+target_link_libraries(multiPortalHelperTest ${Geant4_LIBRARIES} surface)
 
 file(COPY ${PROJECT_SOURCE_DIR}/test/multiPortalHelper_test/macros
      DESTINATION ${PROJECT_BINARY_DIR}/test/multiPortalHelper_test/)
