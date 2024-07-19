@@ -20,18 +20,32 @@ namespace Surface {
 template <class T>
 class SubworldGrid {
  public:
-  SubworldGrid(const G4int sizeX, const G4int sizeY, G4int verbose = 5)
+  SubworldGrid(const G4int sizeX, const G4int sizeY)
       : fColumnSize(sizeY),
         fMaxX(sizeX),
         fMaxY(sizeY),
         fCurrentX(-1),
         fCurrentY(-1),
-        fLogger("SubworldGrid", verbose) {
+        fLogger("SubworldGrid") {
     // col major order
     fGrid = new T *[sizeX * sizeY];
     fLogger.WriteDebugInfo("SubworldGrid of size " +
                            std::to_string(sizeX * sizeY) + " initialized");
   }
+
+  SubworldGrid(const G4int sizeX, const G4int sizeY, const G4int verboseLvl)
+      : fColumnSize(sizeY),
+        fMaxX(sizeX),
+        fMaxY(sizeY),
+        fCurrentX(-1),
+        fCurrentY(-1),
+        fLogger("SubworldGrid", verboseLvl) {
+    // col major order
+    fGrid = new T *[sizeX * sizeY];
+    fLogger.WriteDebugInfo("SubworldGrid of size " +
+                           std::to_string(sizeX * sizeY) + " initialized");
+  }
+
   ~SubworldGrid() {
     delete[] fGrid;
   }  // only destructs the array of pointers but not the Portals, they are
@@ -171,7 +185,9 @@ class SubworldGrid {
 template <class T>
 class HelperFillSubworldGrid {
  public:
-  HelperFillSubworldGrid(G4int verboseLvl = 5)
+  HelperFillSubworldGrid() : fLogger("HelperFillSubworldGrid") {}
+
+  HelperFillSubworldGrid(const G4int verboseLvl)
       : fLogger("HelperFillSubworldGrid", verboseLvl) {}
 
   void AddAvailableSubworld(T *subworld, const G4double density) {
@@ -209,7 +225,7 @@ class HelperFillSubworldGrid {
                             << "Ny : " << gridMaxY << "\n");
     for (G4int x = 0; x < gridMaxX; ++x) {
       for (G4int y = 0; y < gridMaxY; ++y) {
-        G4double random = G4UniformRand();
+        const G4double random = G4UniformRand();
         for (size_t i = 0; i < probability.size(); ++i) {
           if (random <= probability.at(i)) {
             grid->SetSubworld(x, y, fAvailableSubworlds[i]);

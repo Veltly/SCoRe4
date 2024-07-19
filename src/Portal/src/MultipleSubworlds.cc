@@ -104,7 +104,7 @@ void Surface::MultipleSubworld::ExitPortal(G4Step *step) {
 }
 
 void Surface::MultipleSubworld::DoPeriodicPortation(
-    const G4Step *step, const SingleSurface exitSurface) {
+    G4Step *step, const SingleSurface exitSurface) {
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   DoPeriodicTransform(position, exitSurface);
   UpdatePosition(step, position);
@@ -143,7 +143,6 @@ Surface::MultipleSubworld::GetPortationType(const SingleSurface surface) {
   // exit at a Z Surface, also including corners.
   return PortationType::EXIT;
 }
-
 // Function to decide in which direction the particle left the volume
 Surface::MultipleSubworld::SingleSurface
 Surface::MultipleSubworld::GetNearestSurface(const G4Step *step) {
@@ -385,4 +384,8 @@ void Surface::MultipleSubworld::LoggCurrentStatus() {
   const std::string nY = std::to_string(fSubworldGrid->CurrentPosY());
   fLogger.WriteInfo("Current subworld is: " + name + " at X: " + nX +
                     " Y: " + nY);
+}
+
+void Surface::MultipleSubworld::SetFacetStore(FacetStore *store) {
+  fFacetStore = store;
 }

@@ -22,7 +22,8 @@ Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
 }
 
 Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
-                          PortalType type, const G4ThreeVector &globalCoord)
+                          const PortalType type,
+                          const G4ThreeVector &globalCoord)
     : fName(name),
       fLogger("VPortal_" + name),
       fVolume(volume),
@@ -43,10 +44,10 @@ G4ThreeVector Surface::VPortal::GetLocalCoordSystem() {
   exit(EXIT_FAILURE);
 }
 
-void Surface::VPortal::SetGlobalCoord(G4ThreeVector vec) {
+void Surface::VPortal::SetGlobalCoord(const G4ThreeVector vec) {
   fGlobalCoord = vec;
   fGlobalCoordSet = true;
-  Logger logger{"VPortal", 3};
+  Logger logger{"VPortal"};
   logger.WriteDebugInfo("Global coord of " + fName +
                         " is set to x: " + std::to_string(fGlobalCoord.x()) +
                         " y: " + std::to_string(fGlobalCoord.y()) +
@@ -67,14 +68,14 @@ void Surface::VPortal::SetTrigger(G4VPhysicalVolume *volume) {
   fTrigger = volume;
 }
 
-void Surface::VPortal::UpdatePosition(const G4Step *step,
-                                      G4ThreeVector &newPosition) {
+void Surface::VPortal::UpdatePosition(G4Step *step,
+                                      const G4ThreeVector &newPosition) {
   G4ThreeVector direction = step->GetPostStepPoint()->GetMomentumDirection();
   UpdatePositionMomentum(step, newPosition, direction);
 }
-void Surface::VPortal::UpdatePositionMomentum(const G4Step *step,
-                                              G4ThreeVector &newPosition,
-                                              G4ThreeVector &newDirection) {
+void Surface::VPortal::UpdatePositionMomentum(
+    G4Step *step, const G4ThreeVector &newPosition,
+    const G4ThreeVector &newDirection) {
   G4EventManager *eventManager = G4EventManager::GetEventManager();
   G4TrackingManager *trackingManager = eventManager->GetTrackingManager();
   G4SteppingManager *steppingManager = trackingManager->GetSteppingManager();

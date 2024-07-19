@@ -39,11 +39,11 @@ class MultiSubworldSampler : public G4VPrimaryGenerator {
   G4ThreeVector GetRandom();
 
  private:
-  G4String fName;
-  G4String fPortalName;
+  const G4String fName;
+  const G4String fPortalName;
   SubworldGrid<MultipleSubworld> *fSubworld;
   Surface::Shift fShift;
-  G4bool fShiftActive;
+  const G4bool fShiftActive;
   VSampler<Coord> fSubworldSampler;
   G4bool fSamplerReady;
   Logger fLogger;

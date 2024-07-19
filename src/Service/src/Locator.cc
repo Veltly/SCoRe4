@@ -7,6 +7,6 @@
 #include "Portal/include/PortalStore.hh"
 #include "Service/include/Logger.hh"
 
-Surface::FacetStore Surface::Locator::fFacetStore;
+Surface::FacetStore Surface::Locator::fFacetStore{"Locator"};
 Surface::Logger Surface::Locator::fLogger{"StandardLogger", 3};
 Surface::PortalStore Surface::Locator::fPortalStore;

@@ -15,6 +15,9 @@
 #include "Portal/include/SubworldGrid.hh"
 #include "Service/include/Locator.hh"
 
+Surface::MultiportalHelper::MultiportalHelper()
+    : fLogger("MultiPortalHelper") {}
+
 Surface::MultiportalHelper::MultiportalHelper(const G4int verboseLvl)
     : fLogger("MultiPortalHelper", verboseLvl) {}
 
@@ -123,6 +126,7 @@ void Surface::MultiportalHelper::Generate() {
   // Create Helper, fill and use it
   FillSubworldmap();
 
+  AddRoughness();
   fLogger.WriteInfo("Generated Portal with Subworlds");
 
   if (fLogger.WriteDetailInfo()) {
@@ -250,4 +254,31 @@ G4Material *Surface::MultiportalHelper::GetSubworldMaterial() const {
 
 G4Transform3D Surface::MultiportalHelper::GetSubworldPlacement(const G4int id) {
   return fPlacementSub.at(id);
+}
+
+void Surface::MultiportalHelper::AddRoughness() {
+  if (fRoughness.size() == 0) {
+    return;
+  }
+  for (size_t id = 0; id < fRoughness.size(); ++id) {
+    const G4String name = fSubName + "_roughness" + std::to_string(id);
+    G4LogicalVolume *roughness = fRoughness.at(id);
+    G4LogicalVolume *motherVolume =
+        fMultipleSubworld.at(id)->GetVolume()->GetLogicalVolume();
+    const G4Transform3D trafo = fTransformRoughness.at(id);
+
+    new G4PVPlacement(trafo, roughness, name, motherVolume, false, 0,
+                      fCheckOverlaps);
+
+    // Set FacetStore
+    fMultipleSubworld.at(id)->SetFacetStore(fFacetStore.at(id));
+  }
+}
+
+void Surface::MultiportalHelper::AddRoughness(G4LogicalVolume *vol,
+                                              G4Transform3D &trafo,
+                                              FacetStore *facetStore) {
+  fRoughness.push_back(vol);
+  fTransformRoughness.push_back(trafo);
+  fFacetStore.push_back(facetStore);
 }

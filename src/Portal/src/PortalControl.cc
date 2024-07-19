@@ -23,7 +23,7 @@ Surface::PortalControl::PortalControl()
   fLogger.WriteInfo("PortalControl initialized");
 }
 
-Surface::PortalControl::PortalControl(G4int verboseLvl)
+Surface::PortalControl::PortalControl(const G4int verboseLvl)
     : fPortalStore(Surface::Locator::GetPortalStore()),
       fLogger("PortalControl", verboseLvl) {
   fLogger.WriteInfo("PortalControl initialized");
@@ -35,17 +35,17 @@ void Surface::PortalControl::DoStep(const G4Step *step) {
 }
 
 void Surface::PortalControl::DoStep(G4Step *step) {
-  G4StepPoint *postStepPoint = step->GetPostStepPoint();
-  G4StepPoint *preStepPoint = step->GetPreStepPoint();
+  const G4StepPoint *postStepPoint = step->GetPostStepPoint();
+  const G4StepPoint *preStepPoint = step->GetPreStepPoint();
 
-  G4VPhysicalVolume *prePhysVol = preStepPoint->GetPhysicalVolume();
-  G4VPhysicalVolume *postPhysVol = postStepPoint->GetPhysicalVolume();
+  const G4VPhysicalVolume *prePhysVol = preStepPoint->GetPhysicalVolume();
+  const G4VPhysicalVolume *postPhysVol = postStepPoint->GetPhysicalVolume();
 
   G4bool checkPortation = false;
 
   if (postPhysVol != nullptr) {
-    G4String preVolName = prePhysVol->GetName();
-    G4String postVolName = postPhysVol->GetName();
+    const G4String preVolName = prePhysVol->GetName();
+    const G4String postVolName = postPhysVol->GetName();
     if (preVolName != postVolName) {
       checkPortation = true;
     }
@@ -54,23 +54,19 @@ void Surface::PortalControl::DoStep(G4Step *step) {
   }
   // if (checkPortation && !fJustPorted) {
   if (checkPortation) {
-    fLogger.WriteDebugInfo("Boundary reached!");
-    // postStep
     fLogger.WriteDebugInfo(
+        "Boundary reached!\n"
         "Volume of preStepPoint is: " +
             step->GetPreStepPoint()->GetPhysicalVolume()->GetName() + " at ",
         preStepPoint->GetPosition());
-    fLogger.WriteDebugInfo("Volume of postStepPoint is: " +
-                               postStepPoint->GetPhysicalVolume()->GetName() +
-                               " at ",
-                           postStepPoint->GetPosition());
 
     if (EnterPortalCheck(step)) {
       UsePortal(step);
     }
   }
+
   std::stringstream stream;
-  G4StepPoint *postStep = step->GetPostStepPoint();
+  const G4StepPoint *postStep = step->GetPostStepPoint();
   if (postStep->GetPhysicalVolume() != nullptr) {
     stream << " Volume is: " << postStep->GetPhysicalVolume()->GetName()
            << " at ";

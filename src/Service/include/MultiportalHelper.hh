@@ -15,7 +15,8 @@
 namespace Surface {
 class MultiportalHelper {
  public:
-  MultiportalHelper(const G4int verboseLvl = 3);
+  MultiportalHelper();
+  MultiportalHelper(const G4int verboseLvl);
 
   void Generate();
 
@@ -47,6 +48,8 @@ class MultiportalHelper {
   void SetPortalName(const G4String name);
   void SetSubworldName(const G4String name);
 
+  void AddRoughness(G4LogicalVolume *, G4Transform3D &, FacetStore *);
+
   // Getter
   Surface::MultipleSubworld *GetSubworld(const G4int id);
 
@@ -70,6 +73,7 @@ class MultiportalHelper {
   void GeneratePortal();
   void LinkPortalWithSubworlds();
   void FillSubworldmap();
+  void AddRoughness();
 
  private:
   // General Infos
@@ -106,6 +110,11 @@ class MultiportalHelper {
 
   G4String fPortalName;
   G4String fSubName;
+
+  // Roughness (optional)
+  std::vector<G4LogicalVolume *> fRoughness;
+  std::vector<FacetStore *> fFacetStore;
+  std::vector<G4Transform3D> fTransformRoughness;
 };
 }  // namespace Surface
 #endif  // SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH_

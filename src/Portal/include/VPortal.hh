@@ -18,12 +18,10 @@ enum class PortalType { SimplePortal, PeriodicPortal, MultipleSubworld };
 
 class VPortal {
  public:
-  virtual void DoPortation(G4Step *) {
-    exit(EXIT_FAILURE);
-  }  // Function must be overwritten
-  //
-  VPortal(const G4String &name, G4VPhysicalVolume *, PortalType);
-  VPortal(const G4String &name, G4VPhysicalVolume *, PortalType,
+  virtual void DoPortation(G4Step *) = 0;  //
+
+  VPortal(const G4String &name, G4VPhysicalVolume *, const PortalType);
+  VPortal(const G4String &name, G4VPhysicalVolume *, const PortalType,
           const G4ThreeVector &globalCoord);
   // Getter
   inline G4VPhysicalVolume *GetVolume() const { return fVolume; }
@@ -31,25 +29,24 @@ class VPortal {
   inline PortalType GetPortalType() const { return fPortalType; }
   inline G4VPhysicalVolume *GetTrigger() const { return fTrigger; }
   // Setter
-  void SetGlobalCoord(G4ThreeVector vec);
-  void SetVerbose(G4int verbose);
+  void SetGlobalCoord(const G4ThreeVector vec);
+  void SetVerbose(const G4int verboseLvl);
   void SetTrigger(G4VPhysicalVolume *volume);
 
  protected:
-  // TODO: G4ThreeVector GetLocalCoordSystem(G4VPhysicalVolume *volume);
   G4ThreeVector GetLocalCoordSystem();
 
   void TransformToLocalCoordinate(G4ThreeVector &vec);
   void TransformToGlobalCoordinate(G4ThreeVector &vec);
-  void UpdatePosition(const G4Step *step, G4ThreeVector &newPosition);
-  void UpdatePositionMomentum(const G4Step *step, G4ThreeVector &newPosition,
-                              G4ThreeVector &newDirection);
+  void UpdatePosition(G4Step *step, const G4ThreeVector &newPosition);
+  void UpdatePositionMomentum(G4Step *step, const G4ThreeVector &newPosition,
+                              const G4ThreeVector &newDirection);
 
  private:
-  G4String fName;
+  const G4String fName;
   Logger fLogger;
   G4VPhysicalVolume *fVolume;
-  PortalType fPortalType;
+  const PortalType fPortalType;
   G4ThreeVector fGlobalCoord;
   G4bool fGlobalCoordSet;
   G4VPhysicalVolume *fTrigger;

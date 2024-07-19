@@ -15,3 +15,5 @@ add_subdirectory(multiPortalHelper_test)
 add_subdirectory(surfaceShift_test)
 
 add_subdirectory(multiSurface_test)
+
+add_subdirectory(default_test)

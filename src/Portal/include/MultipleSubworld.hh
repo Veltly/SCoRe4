@@ -32,6 +32,7 @@ class MultipleSubworld : public VPortal {
     Z_SAME,
     Z_DOWN
   };
+
   enum class PortationType { ENTER, EXIT, PERIODIC };
 
  public:
@@ -59,6 +60,8 @@ class MultipleSubworld : public VPortal {
 
   void SetOtherPortal(MultipleSubworld *otherPortal);
 
+  void SetFacetStore(FacetStore *);
+
   // Getter
   SubworldGrid<MultipleSubworld> *GetSubworldGrid() const {
     return fSubworldGrid;
@@ -72,7 +75,7 @@ class MultipleSubworld : public VPortal {
   FacetStore *GetFacetStore() { return fFacetStore; }
 
  private:
-  void DoPeriodicPortation(const G4Step *step, const SingleSurface);
+  void DoPeriodicPortation(G4Step *step, const SingleSurface);
 
   void EnterPortal(G4Step *step);
 

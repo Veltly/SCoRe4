@@ -10,7 +10,8 @@
 #include "Service/include/Locator.hh"
 Surface::SurfaceSource::SurfaceSource()
     : fMessenger(new SurfaceSourceMessenger(this)),
-      fParticleGenerator(new G4GeneralParticleSource) {}
+      fParticleGenerator(new G4GeneralParticleSource),
+      fFacetStore("SurfaceSource") {}
 
 Surface::SurfaceSource::~SurfaceSource() {
   delete fParticleGenerator;

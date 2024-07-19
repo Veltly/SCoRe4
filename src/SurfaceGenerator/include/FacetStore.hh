@@ -26,7 +26,7 @@ class FacetStore {
   };
 
  public:
-  FacetStore(G4String name = "") : fStoreName(name) {}
+  FacetStore(const G4String &name) : fName("FacetStore_" + name) {}
   ///
   /// Closes Facet Store and prepares it for usage in simulation.
   ///
@@ -64,7 +64,7 @@ class FacetStore {
     fTransform = transformation;
   }
 
-  inline G4String GetStoreName() const { return fStoreName; }
+  inline G4String GetStoreName() const { return fName; }
 
  private:
   ///
@@ -87,7 +87,7 @@ class FacetStore {
   G4bool fClosed{false};  ///< Indicates if Facet Store is closed and facets can
                           ///< not be added anymore.
   G4ThreeVector fTransform;
-  G4String fStoreName;
+  G4String fName;
 };
 }  // namespace Surface
 #endif  // SRC_SURFACEGENERATOR_INCLUDE_FACETSTORE_HH_

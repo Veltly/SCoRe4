@@ -48,7 +48,13 @@ Surface::Describer &Surface::RoughnessHelper::Describer() {
   return fGenerator.GetDescriber();
 }
 
-G4MultiUnion *Surface::RoughnessHelper::Roughness() const { return fRoughness; }
+G4MultiUnion *Surface::RoughnessHelper::SolidRoughness() const {
+  return fRoughness;
+}
+
+G4LogicalVolume *Surface::RoughnessHelper::LogicRoughness() const {
+  return new G4LogicalVolume(fRoughness, fMaterial, fName);
+}
 
 void Surface::RoughnessHelper::SpikeWidth_X(const G4double val) {
   fDxSpike = val;
@@ -149,4 +155,8 @@ void Surface::RoughnessHelper::Finalize() {
   fLogicRoughness = new G4LogicalVolume(fRoughness, fMaterial, name);
   fLogicRoughness->SetUserLimits(fStepLimit);
   fLogger.WriteDetailInfo("Build Logical Volume " + name);
+}
+
+Surface::FacetStore *Surface::RoughnessHelper::FacetStore() {
+  return fGenerator.GetFacetStore();
 }

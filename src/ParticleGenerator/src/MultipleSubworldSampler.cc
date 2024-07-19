@@ -2,6 +2,8 @@
 // Date: 24-06-20
 // File MultiSubworldSampler
 
+#include <cstdlib>
+
 #include "G4GeneralParticleSource.hh"
 #include "G4ThreeVector.hh"
 #include "ParticleGenerator/include/MultiSubworldSampler.hh"
@@ -38,8 +40,21 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(
 
 void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
   if (!fSamplerReady) {  // if Sampler not ready
+    fLogger.WriteInfo("Sampler not ready -> now preparing ...");
+
     Surface::PortalStore pStore = Surface::Locator::GetPortalStore();
-    G4int portalId = pStore.FindPortalId(fPortalName);
+    const G4int portalId = pStore.FindPortalId(fPortalName);
+    if (portalId < 0) {
+      fLogger.WriteError("Error: No portal with name \"" + fPortalName +
+                         "\" found!!");
+      fLogger.WriteError("Possible portals in Store are:");
+      for (auto &portal : pStore) {
+        fLogger.WriteError(portal->GetName());
+      }
+
+      exit(EXIT_FAILURE);
+    }
+
     Surface::MultipleSubworld *subworld =
         static_cast<Surface::MultipleSubworld *>(pStore[portalId]);
     SetSubworld(subworld->GetSubworldGrid());
@@ -84,9 +99,10 @@ G4ThreeVector Surface::MultiSubworldSampler::GetRandom() {
 void Surface::MultiSubworldSampler::PrepareSampler() {
   const std::set<MultipleSubworld *> unique = fSubworld->GetUniqueSubworlds();
   std::map<MultipleSubworld *, G4double> surfaceArea;
-
   for (auto *subworld : unique) {
-    auto *facetStore = subworld->GetFacetStore();
+    fLogger.WriteDetailInfo("From Subworld: " + subworld->GetName());
+    FacetStore *facetStore = subworld->GetFacetStore();
+    fLogger.WriteDetailInfo("get FacetStore: " + facetStore->GetStoreName());
     Calculator calc(facetStore);
     surfaceArea[subworld] = calc.GetArea();
   }
@@ -102,11 +118,11 @@ void Surface::MultiSubworldSampler::PrepareSampler() {
   }
 
   fSamplerReady = true;
-  fLogger.WriteDebugInfo("Prepared MultiSubworldSampler");
+  fLogger.WriteInfo("MultiSubworldSampler is ready.");
 }
 
 void Surface::MultiSubworldSampler::SetSubworld(
     SubworldGrid<MultipleSubworld> *subworldGrid) {
   fSubworld = subworldGrid;
-  fLogger.WriteDebugInfo("SubworldGrid set");
+  fLogger.WriteInfo("SubworldGrid set");
 }

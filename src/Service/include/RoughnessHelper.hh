@@ -24,8 +24,9 @@ class RoughnessHelper {
   void Generate();
   // Getter
   Describer &Describer();
-  G4MultiUnion *Roughness() const;
-
+  G4MultiUnion *SolidRoughness() const;
+  G4LogicalVolume *LogicRoughness() const;
+  FacetStore *FacetStore();
   // Setter
   void SpikeWidth_X(const G4double);
   void SpikeWidth_Y(const G4double);
@@ -59,34 +60,34 @@ class RoughnessHelper {
   // Ctrl
   Logger fLogger;
   SurfaceGenerator fGenerator;
-  G4MultiUnion *fRoughness;
-  G4LogicalVolume *fLogicRoughness;
+  G4MultiUnion *fRoughness{nullptr};
+  G4LogicalVolume *fLogicRoughness{nullptr};
 
   // General
-  G4String fName;
-  G4UserLimits *fStepLimit;
+  const G4String fName;
+  G4UserLimits *fStepLimit{nullptr};
 
   // Spike
-  G4double fDxSpike;
-  G4double fDySpike;
-  G4double fDzSpikeMean;
-  G4double fDzSpikeDev;
-  G4int fNxSpike;
-  G4int fNySpike;
-  G4int fNLayer;
+  G4double fDxSpike{0};
+  G4double fDySpike{0};
+  G4double fDzSpikeMean{0};
+  G4double fDzSpikeDev{0};
+  G4int fNxSpike{0};
+  G4int fNySpike{0};
+  G4int fNLayer{1};
   Describer::Spikeform fSpikeform;
 
   // Bulk
-  G4double fDxBasis;
-  G4double fDyBasis;
-  G4double fDzBasis;
+  G4double fDxBasis{0};
+  G4double fDyBasis{0};
+  G4double fDzBasis{0};
 
-  G4Material *fMaterial;
+  G4Material *fMaterial{nullptr};
 
   // Voxelizer
-  G4int fNxBoundary;
-  G4int fNyBoundary;
-  G4int fNzBoundary;
+  G4int fNxBoundary{100000};
+  G4int fNyBoundary{100000};
+  G4int fNzBoundary{100000};
 };
 
 }  // namespace Surface
