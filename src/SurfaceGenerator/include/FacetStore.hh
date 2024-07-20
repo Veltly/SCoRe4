@@ -4,11 +4,13 @@
 
 #ifndef SRC_SURFACEGENERATOR_INCLUDE_FACETSTORE_HH_
 #define SRC_SURFACEGENERATOR_INCLUDE_FACETSTORE_HH_
+
 #include <vector>
 
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 #include "G4TriangularFacet.hh"
+#include "Service/include/Logger.hh"
 
 namespace Surface {
 
@@ -26,7 +28,8 @@ class FacetStore {
   };
 
  public:
-  FacetStore(const G4String &name) : fName("FacetStore_" + name) {}
+  explicit FacetStore(const G4String &name)
+      : fName("FacetStore_" + name), fLogger("FacetStore_" + name) {}
   ///
   /// Closes Facet Store and prepares it for usage in simulation.
   ///
@@ -58,6 +61,9 @@ class FacetStore {
   ///
   void LogFacetStore(const G4String &aFilename) const;
   void LogFacetStore(const G4String &&aFilename) const;
+  void PrintInfo() const;
+  std::stringstream StreamInfo() const;
+
   std::vector<G4TriangularFacet *>::const_iterator GetIterBegin() const;
   std::vector<G4TriangularFacet *>::const_iterator GetIterEnd() const;
   void SetTransformation(const G4ThreeVector &transformation) {
@@ -90,6 +96,7 @@ class FacetStore {
                           ///< not be added anymore.
   G4ThreeVector fTransform;
   G4String fName;
+  Surface::Logger fLogger;
 };
 }  // namespace Surface
 #endif  // SRC_SURFACEGENERATOR_INCLUDE_FACETSTORE_HH_

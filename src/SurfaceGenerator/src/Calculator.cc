@@ -403,9 +403,9 @@ void Surface::Calculator::PrintSurfaceInformation() const {
 std::stringstream Surface::Calculator::StreamSurfaceInformation() const {
   std::stringstream ss;
   ss << G4endl;
-  ss << "**************************************************" << "\n";
-  ss << "************** Surface  Information **************" << "\n";
-  ss << "**************************************************" << "\n";
+  ss << "**************************************************\n";
+  ss << "*              Surface  Information              *\n";
+  ss << "**************************************************\n";
   ss << "FacetStore name: " << fFacetStore->GetStoreName() << "\n";
   ss << "Covered Surface: " << GetProjectedSurface() / (CLHEP::mm * CLHEP::mm)
      << " mm^2\n";
@@ -419,7 +419,8 @@ std::stringstream Surface::Calculator::StreamSurfaceInformation() const {
   ss << "Sku            : " << GetSku() << "\n";
   ss << "Area           : " << GetArea() / (CLHEP::mm * CLHEP::mm) << " mm^2\n";
   ss << "Nr of elements : " << fFacetStore->Size() << "\n";
-  ss << "\n\n";
+  ss << "\n";
+  ss << "**************************************************\n";
   return ss;
 }
 

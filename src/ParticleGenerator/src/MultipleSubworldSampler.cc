@@ -14,6 +14,11 @@
 #include "SurfaceGenerator/include/Calculator.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
 
+std::ostream &Surface::operator<<(std::ostream &os, const Coord &coord) {
+  os << coord.x << ":" << coord.y;
+  return os;
+}
+
 Surface::MultiSubworldSampler::MultiSubworldSampler(const G4String &name,
                                                     const G4String &portalName,
                                                     const G4int verboseLvl)
@@ -144,7 +149,7 @@ void Surface::MultiSubworldSampler::PrepareSampler() {
 #if NDEBUG
   fFileLogger->WriteLine(StreamInformation().str());
   fFileLogger->WriteLine(
-      "Grid_X,Grid_y,Point_X,Point_Y,Point_Z,Shift_X,Shift_y,Shift_Z,Direction_"
+      "Grid_X,Grid_Y,Point_X,Point_Y,Point_Z,Shift_X,Shift_y,Shift_Z,Direction_"
       "X,Direction_Y,Direction_Z\n");
 #endif
 }

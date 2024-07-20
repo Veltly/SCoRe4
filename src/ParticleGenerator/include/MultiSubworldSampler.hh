@@ -21,6 +21,8 @@ struct Coord {
   G4int y;
 };
 
+std::ostream &operator<<(std::ostream &os, const Coord &coord);
+
 class MultiSubworldSampler : public G4VPrimaryGenerator {
  public:
   MultiSubworldSampler(const G4String &name, const G4String &portalName,

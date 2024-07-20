@@ -31,10 +31,11 @@ class VSampler {
       val = prob;
     }
     fIsClosed = true;
+    PrintSampler();
   }
 
  public:
-  VSampler(const G4String &name)
+  explicit VSampler(const G4String &name)
       : fIsClosed(false), fLogger("VSampler_" + name), fName(name) {}
 
   VSampler(const G4String &name, const G4int verbose)
@@ -79,12 +80,27 @@ class VSampler {
       fLogger.WriteError("Sampler not finished, can not be printed");
       return;
     }
+    fLogger.WriteDetailInfo(StreamInfo().str());
+  }
+
+  std::stringstream StreamInfo() const {
     std::stringstream ss;
-    ss << "Printing Sampler: " << fName << "\n";
+    ss << "**************************************************\n";
+    ss << "*                  Sampler Info                  *\n";
+    ss << "**************************************************\n";
+    ss << "\n";
+    ss << "Sampler: " << fName << "\n";
+    ss << "\n";
+    ss << "Value Probability\n";
+    G4double previousProbability{0};
     for (size_t i = 0; i < fProbability.size(); ++i) {
-      ss << "Probability: " << fProbability.at(i) << "\n";
+      ss << fValues.at(i) << " " << std::setw(25) << std::setprecision(16)
+         << (fProbability.at(i) - previousProbability) * 100 << " %\n";
+      previousProbability = fProbability.at(i);
     }
-    fLogger.WriteInfo(ss.str());
+    ss << "\n";
+    ss << "**************************************************\n";
+    return ss;
   }
 
  private:

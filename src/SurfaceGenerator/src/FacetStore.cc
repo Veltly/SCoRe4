@@ -8,8 +8,10 @@
 #include <iomanip>
 #include <iostream>
 
+#include "G4SystemOfUnits.hh"
 #include "G4ThreeVector.hh"
 #include "G4TriangularFacet.hh"
+#include "G4Types.hh"
 #include "G4UIcommand.hh"
 #include "G4UImanager.hh"
 #include "Randomize.hh"
@@ -20,6 +22,7 @@ void Surface::FacetStore::CloseFacetStore() {
   }
   CalculateFacetProbability();
   fClosed = true;
+  fLogger.WriteInfo(StreamInfo().str());
 }
 
 void Surface::FacetStore::CalculateFacetProbability() {
@@ -136,6 +139,50 @@ void Surface::FacetStore::LogFacetStore(const G4String &aFilename) const {
         << "\n";
   }
   out.close();
+}
+
+std::stringstream Surface::FacetStore::StreamInfo() const {
+  std::stringstream ss;
+  ss << "\n";
+  ss << "**************************************************\n";
+  ss << "*         Information FacetStoreSampler          *\n";
+  ss << "**************************************************\n";
+  ss << "\n";
+  ss << "Name: " << fName << "\n";
+  ss << "Number of Facets: " << fFacetVector.size() << "\n";
+
+  if (fLogger.WriteDetailInfo()) {
+    ss << "\n";
+    if (fLogger.WriteDebugInfo()) {
+      ss << "Idx, P1,P2,P3,Area[mm^2],Probability %\n";
+    } else {
+      ss << "Idx, Area[mm^2],Probability %\n";
+    }
+    ss << "\n";
+    G4double previousProbability{0};
+    for (size_t i = 0; i < fFacetVector.size(); ++i) {
+      const auto *facet = fFacetVector.at(i);
+      ss << std::setw(5) << i << ",";
+      if (fLogger.WriteDebugInfo()) {
+        ss << std::fixed << std::setprecision(10) << facet->GetVertex(0) << ",";
+        ss << std::fixed << std::setprecision(10) << facet->GetVertex(1) << ",";
+        ss << std::fixed << std::setprecision(10) << facet->GetVertex(2) << ",";
+      }
+      ss << std::fixed << std::setprecision(10)
+         << facet->GetArea() / (CLHEP::mm * CLHEP::mm) << ",";
+      ss << std::fixed << std::setprecision(10)
+         << (fFacetProbability.at(i) - previousProbability) * 100. << "\n";
+      previousProbability = fFacetProbability.at(i);
+    }
+
+    ss << "\n";
+    ss << "**************************************************\n";
+  }
+  return ss;
+}
+
+void Surface::FacetStore::PrintInfo() const {
+  G4cout << StreamInfo().str() << G4endl;
 }
 
 std::vector<G4TriangularFacet *>::const_iterator

@@ -79,16 +79,19 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   Surface::MultiportalHelper helper(5);
 
+  const G4int subworlds_x{100};
+  const G4int subworlds_y{100};
+
   helper.SetDxPortal(10 * cm);
   helper.SetDyPortal(10 * cm);
   helper.SetDzPortal(5. * mm);
 
-  helper.SetDxSub(0.5 * mm);
-  helper.SetDySub(0.5 * mm);
+  helper.SetDxSub(helper.GetPortalDx() / subworlds_x);
+  helper.SetDySub(helper.GetPortalDy() / subworlds_y);
   helper.SetDzSub(5. * mm);
 
-  helper.SetNxSub(200);
-  helper.SetNySub(200);
+  helper.SetNxSub(subworlds_x);
+  helper.SetNySub(subworlds_y);
 
   helper.AddSubworldPlacement(trafoA);
   helper.AddSubworldPlacement(trafoB);
@@ -112,11 +115,13 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   Surface::RoughnessHelper roughnessB("RoughnessB");
   Surface::RoughnessHelper roughnessC("RoughnessC");
 
-  roughnessA.NSpike_X(10);
-  roughnessA.NSpike_Y(10);
-  roughnessA.SpikeWidth_X(helper.GetSubworldDx() / 10);
-  roughnessA.SpikeWidth_Y(helper.GetSubworldDy() / 10);
-  roughnessA.SpikeMeanHeight(0.01 * mm);
+  const G4int spikes{2};
+
+  roughnessA.NSpike_X(spikes);
+  roughnessA.NSpike_Y(spikes);
+  roughnessA.SpikeWidth_X(helper.GetSubworldDx() / spikes);
+  roughnessA.SpikeWidth_Y(helper.GetSubworldDy() / spikes);
+  roughnessA.SpikeMeanHeight(1. * mm);
   roughnessA.BasisWidth_X(helper.GetSubworldDx());
   roughnessA.BasisWidth_Y(helper.GetSubworldDy());
   roughnessA.BasisHeight(1 * mm);
@@ -124,11 +129,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   roughnessA.Material(roughnessMaterial);
   roughnessA.Generate();
 
-  roughnessB.NSpike_X(10);
-  roughnessB.NSpike_Y(10);
-  roughnessB.SpikeWidth_X(helper.GetSubworldDx() / 10);
-  roughnessB.SpikeWidth_Y(helper.GetSubworldDy() / 10);
-  roughnessB.SpikeMeanHeight(0.05 * mm);
+  roughnessB.NSpike_X(spikes);
+  roughnessB.NSpike_Y(spikes);
+  roughnessB.SpikeWidth_X(helper.GetSubworldDx() / spikes);
+  roughnessB.SpikeWidth_Y(helper.GetSubworldDy() / spikes);
+  roughnessB.SpikeMeanHeight(2. * mm);
   roughnessB.BasisWidth_X(helper.GetSubworldDx());
   roughnessB.BasisWidth_Y(helper.GetSubworldDy());
   roughnessB.BasisHeight(1 * mm);
@@ -136,11 +141,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   roughnessB.Material(roughnessMaterial);
   roughnessB.Generate();
 
-  roughnessC.NSpike_X(10);
-  roughnessC.NSpike_Y(10);
-  roughnessC.SpikeWidth_X(helper.GetSubworldDx() / 10);
-  roughnessC.SpikeWidth_Y(helper.GetSubworldDy() / 10);
-  roughnessC.SpikeMeanHeight(0.1 * mm);
+  roughnessC.NSpike_X(spikes);
+  roughnessC.NSpike_Y(spikes);
+  roughnessC.SpikeWidth_X(helper.GetSubworldDx() / spikes);
+  roughnessC.SpikeWidth_Y(helper.GetSubworldDy() / spikes);
+  roughnessC.SpikeMeanHeight(3. * mm);
   roughnessC.BasisWidth_X(helper.GetSubworldDx());
   roughnessC.BasisWidth_Y(helper.GetSubworldDy());
   roughnessC.BasisHeight(1 * mm);
