@@ -1,36 +1,33 @@
-/*
- * RectangleDivider.cc
- *
- *  Created on: May 14, 2023
- *      Author: cgruner
- */
-#include "../include/RectangleDivider.hh"
+// Copyright [2024] C.Gruener
+// Date: 23-05-14
+// File:
+
+#include "SurfaceGenerator/include/RectangleDivider.hh"
+
+#include "G4Types.hh"
 #include "G4ios.hh"
 #include "Randomize.hh"
-#include <G4Types.hh>
-#include <fstream>
 
-Surface::RectangleDivider::RectangleDivider(G4double minSize,
-                                                        G4double minX,
-                                                        G4double maxX,
-                                                        G4double minY,
-                                                        G4double maxY)
+Surface::RectangleDivider::RectangleDivider(const G4double minSize,
+                                            const G4double minX,
+                                            const G4double maxX,
+                                            const G4double minY,
+                                            const G4double maxY)
     : fminSize(minSize) {
   fRectangle.emplace_back(Rectangle{minX, maxX, minY, maxY});
   fFraction.emplace_back(1.);
 }
 
 void Surface::RectangleDivider::SplitRectangleUniform() {
-
   G4int RandomRectangle =
       static_cast<G4int>(G4UniformRand() * fRectangle.size());
 
   G4double split = G4UniformRand();
-
   G4bool Direction{false};
   if (G4UniformRand() > 0.5) {
     Direction = true;
   }
+
   G4int counter{0};
   while (!SplitRectangleAt(RandomRectangle, split, Direction)) {
     split = G4UniformRand();
@@ -44,16 +41,15 @@ void Surface::RectangleDivider::SplitRectangleUniform() {
 
 // not finished
 void Surface::RectangleDivider::SplitRectangleGaussian() {
-
   G4int RandomRectangle =
       static_cast<G4int>(G4UniformRand() * fRectangle.size());
 
   G4double split = G4UniformRand();
-
   G4bool Direction{false};
   if (G4UniformRand() > 0.5) {
     Direction = true;
   }
+
   G4int counter{0};
   while (!SplitRectangleAt(RandomRectangle, split, Direction)) {
     split = G4UniformRand();
@@ -65,16 +61,17 @@ void Surface::RectangleDivider::SplitRectangleGaussian() {
   }
 }
 
-bool Surface::RectangleDivider::SplitRectangleAt(
-    G4int argRectangle, G4double argSplit, G4bool argDirection) {
+bool Surface::RectangleDivider::SplitRectangleAt(const G4int argRectangle,
+                                                 const G4double argSplit,
+                                                 const G4bool argDirection) {
   // Split one of the stored rectangles in two
   // Split Dimension, false splits in X direction, true in Y direction
-  Rectangle SelectedRec = fRectangle[argRectangle];
-  G4double SelectedFrac = fFraction[argRectangle];
+  const Rectangle SelectedRec = fRectangle[argRectangle];
+  const G4double SelectedFrac = fFraction[argRectangle];
   if (argDirection) {
     // split Y direction
     G4double diffY = (SelectedRec.maxY - SelectedRec.minY);
-    if (diffY * argSplit < fminSize or diffY * (1. - argSplit) < fminSize) {
+    if (diffY * argSplit < fminSize || diffY * (1. - argSplit) < fminSize) {
       return false;
     }
     diffY *= argSplit;
@@ -85,7 +82,7 @@ bool Surface::RectangleDivider::SplitRectangleAt(
   } else {
     // split X direction
     G4double diffX = (SelectedRec.maxX - SelectedRec.minX);
-    if (diffX * argSplit < fminSize or diffX * (1. - argSplit) < fminSize) {
+    if (diffX * argSplit < fminSize || diffX * (1. - argSplit) < fminSize) {
       return false;
     }
     diffX *= argSplit;
@@ -99,26 +96,26 @@ bool Surface::RectangleDivider::SplitRectangleAt(
   return true;
 }
 
-void Surface::RectangleDivider::SplitRectangleEven(G4int argX,
-                                                               G4int argY) {
-  Rectangle bigRectangle = fRectangle[0];
+void Surface::RectangleDivider::SplitRectangleEven(const G4int argX,
+                                                   const G4int argY) {
+  const Rectangle bigRectangle = fRectangle[0];
   fRectangle.pop_back();
   fFraction.pop_back();
-  G4double lenX = (bigRectangle.maxX - bigRectangle.minX) / argX;
-  G4double lenY = (bigRectangle.maxY - bigRectangle.minY) / argY;
+  const G4double lenX = (bigRectangle.maxX - bigRectangle.minX) / argX;
+  const G4double lenY = (bigRectangle.maxY - bigRectangle.minY) / argY;
   for (G4int x = 0; x < argX; ++x) {
     for (G4int y = 0; y < argY; ++y) {
-      G4double minX = bigRectangle.minX + x * lenX;
-      G4double maxX = bigRectangle.minX + (x + 1) * lenX;
-      G4double minY = bigRectangle.minY + y * lenX;
-      G4double maxY = bigRectangle.minY + (y + 1) * lenY;
+      const G4double minX = bigRectangle.minX + x * lenX;
+      const G4double maxX = bigRectangle.minX + (x + 1) * lenX;
+      const G4double minY = bigRectangle.minY + y * lenX;
+      const G4double maxY = bigRectangle.minY + (y + 1) * lenY;
       fRectangle.emplace_back(Rectangle{minX, maxX, minY, maxY});
       fFraction.push_back(1. / (argX * argY));
     }
   }
 }
 
-void Surface::RectangleDivider::SplitRectangle(G4int SplitNRounds) {
+void Surface::RectangleDivider::SplitRectangle(const G4int SplitNRounds) {
   for (G4int i = 0; i < SplitNRounds; ++i) {
     SplitRectangleUniform();
   }
@@ -135,6 +132,6 @@ Surface::RectangleDivider::GetIterEnd() {
   return fRectangle.end();
 }
 
-G4int Surface::RectangleDivider::GetNumberOfRectangles() {
+G4int Surface::RectangleDivider::GetNumberOfRectangles() const {
   return fRectangle.size();
 }

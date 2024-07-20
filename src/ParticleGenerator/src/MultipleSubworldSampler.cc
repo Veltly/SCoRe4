@@ -19,24 +19,30 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(const G4String &name,
                                                     const G4int verboseLvl)
     : fName(name),
       fPortalName(portalName),
-      fShift(),
+      fShift(verboseLvl),
       fShiftActive(false),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
       fSamplerReady(false),
       fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
-      fParticleGenerator(new G4GeneralParticleSource) {}
+      fParticleGenerator(new G4GeneralParticleSource) {
+  fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
+}
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(
     const G4String &name, const G4String &portalName,
     const G4String &shiftFilename, const G4int verboseLvl)
     : fName(name),
       fPortalName(portalName),
-      fShift(shiftFilename),
+      fShift(shiftFilename, verboseLvl),
       fShiftActive(true),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
       fSamplerReady(false),
       fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
-      fParticleGenerator(new G4GeneralParticleSource) {}
+      fParticleGenerator(new G4GeneralParticleSource) {
+  fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
+}
+
+Surface::MultiSubworldSampler::~MultiSubworldSampler() { delete fFileLogger; }
 
 void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
   if (!fSamplerReady) {  // if Sampler not ready
@@ -75,7 +81,6 @@ G4ThreeVector Surface::MultiSubworldSampler::GetRandom() {
 
   fSubworld->SetCurrentX(randomCoord.x);
   fSubworld->SetCurrentY(randomCoord.y);
-
   MultipleSubworld *subworld = fSubworld->GetSubworld();
   FacetStore *facetStore = subworld->GetFacetStore();
 
@@ -85,11 +90,27 @@ G4ThreeVector Surface::MultiSubworldSampler::GetRandom() {
 
   G4ThreeVector surfaceNormal;
   G4ThreeVector randomPoint = facetStore->GetRandomPoint(surfaceNormal);
+#if NDEBUG
+  *fFileLogger << std::to_string(randomCoord.x) + "," +
+                      std::to_string(randomCoord.y) + ",";
 
+  *fFileLogger << std::to_string(randomPoint.x()) + "," +
+                      std::to_string(randomPoint.y()) + "," +
+                      std::to_string(randomPoint.z()) + ",";
+#endif
   if (fShiftActive) {
     fShift.DoShift(randomPoint, surfaceNormal);
   }
+#if NDEBUG
+  *fFileLogger << std::to_string(randomPoint.x()) + "," +
+                      std::to_string(randomPoint.y()) + "," +
+                      std::to_string(randomPoint.z()) + ",";
 
+  *fFileLogger << std::to_string(surfaceNormal.x()) + "," +
+                      std::to_string(surfaceNormal.y()) + "," +
+                      std::to_string(surfaceNormal.z());
+  fFileLogger->WriteLine();
+#endif
   fLogger.WriteDebugInfo(
       "Selected Subworld X: " + std::to_string(randomCoord.x) +
       " Y: " + std::to_string(randomCoord.y));
@@ -119,10 +140,51 @@ void Surface::MultiSubworldSampler::PrepareSampler() {
 
   fSamplerReady = true;
   fLogger.WriteInfo("MultiSubworldSampler is ready.");
+  fLogger.WriteDetailInfo(StreamInformation().str());
+#if NDEBUG
+  fFileLogger->WriteLine(StreamInformation().str());
+  fFileLogger->WriteLine(
+      "Grid_X,Grid_y,Point_X,Point_Y,Point_Z,Shift_X,Shift_y,Shift_Z,Direction_"
+      "X,Direction_Y,Direction_Z\n");
+#endif
 }
 
 void Surface::MultiSubworldSampler::SetSubworld(
     SubworldGrid<MultipleSubworld> *subworldGrid) {
   fSubworld = subworldGrid;
   fLogger.WriteInfo("SubworldGrid set");
+}
+
+void Surface::MultiSubworldSampler::PrintInformation() {
+  G4cout << StreamInformation().str() << G4endl;
+}
+
+std::stringstream Surface::MultiSubworldSampler::StreamInformation() const {
+  std::stringstream ss;
+  ss << "**************************************************\n";
+  ss << "*        Information MultiSubworldSampler        *\n";
+  ss << "**************************************************\n";
+  ss << "\n";
+  ss << "Subworlds: (Name) , (FacetStoreName) , (SurfaceArea)\n";
+  ss << "\n";
+
+  const std::set<MultipleSubworld *> unique = fSubworld->GetUniqueSubworlds();
+  std::map<MultipleSubworld *, G4double> surfaceArea;
+  for (auto *subworld : unique) {
+    FacetStore *facetStore = subworld->GetFacetStore();
+    Calculator calc(facetStore);
+    ss << std::setw(20) << std::right << subworld->GetName()
+       << " FacetStore: " << std::setw(20) << facetStore->GetStoreName()
+       << " Area: " << calc.GetArea() / (CLHEP::mm * CLHEP::mm) << " mm^2\n";
+  }
+  ss << "\n";
+  ss << fSubworld->StreamStatistic().str();
+  ss << "\n";
+  ss << fSubworld->StreamLegend().str();
+  ss << "\n";
+  ss << fSubworld->StreamGrid(0, fSubworld->MaxX(), 0, fSubworld->MaxY()).str();
+  ss << "\n";
+  ss << "**************************************************\n";
+  ss << "**************************************************\n";
+  return ss;
 }

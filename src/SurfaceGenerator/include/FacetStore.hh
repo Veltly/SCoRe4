@@ -66,6 +66,8 @@ class FacetStore {
 
   inline G4String GetStoreName() const { return fName; }
 
+  inline G4int Size() const { return fFacetVector.size(); }
+
  private:
   ///
   /// Fills the fFacetProbability variable.

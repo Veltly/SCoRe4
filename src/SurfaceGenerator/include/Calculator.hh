@@ -1,16 +1,12 @@
-//
-//
-//
-//
-//	author: C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// 23-06-01
+// File:
 
-#ifndef SURFACE_CALCULATOR
-#define SURFACE_CALCULATOR
+#ifndef SRC_SURFACEGENERATOR_INCLUDE_CALCULATOR_HH_
+#define SRC_SURFACEGENERATOR_INCLUDE_CALCULATOR_HH_
 
-#include "FacetStore.hh"
-#include <G4ThreeVector.hh>
+#include "G4ThreeVector.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
 
 namespace Surface {
 ///
@@ -25,18 +21,18 @@ class Calculator {
   ///
   /// Function Parameters for Integrating functions.
   /// Parameter are the heights of vertices of triangle.
-  ///\param a : height of (0,0)
-  ///\param b : height of (1,0)
-  ///\param c : height of (0,1)
+  /// \param a : height of (0,0)
+  /// \param b : height of (1,0)
+  /// \param c : height of (0,1)
   struct FunctionParameter {
     G4double a, b, c;
   };
 
-public:
+ public:
   ///
   /// Instantiates calculator.
-  ///\param FacetStore has to be passed
-  Calculator(Surface::FacetStore *);
+  /// \param FacetStore has to be passed
+  explicit Calculator(Surface::FacetStore *);
   ///
   /// Recalculates all values.
   void Recalculate();
@@ -53,8 +49,11 @@ public:
   ///
   /// Print Surface Information to console.
   void PrintSurfaceInformation() const;
+  ///
+  /// Return stream object with surface information
+  std::stringstream StreamSurfaceInformation() const;
 
-private:
+ private:
   ///
   /// Calculate projected surface.
   /// \f$ A = \int \int_A dxdy \f$
@@ -120,35 +119,39 @@ private:
   /// Integration of a surface function over a triangle surface.
   /// Integration is done over a triangle with points (x,y):
   /// (0,0), (1,0), (0,1).
-  ///\param aVertices defines triangle.
-  ///\param aIntegration is pointer to integrating function.
-  G4double
-  IntegrationRoutine(Vertices &aVertices,
-                     G4double (*aIntegration)(const FunctionParameter &));
+  /// \param aVertices defines triangle.
+  /// \param aIntegration is pointer to integrating function.
+  G4double IntegrationRoutine(
+      Vertices &aVertices, G4double (*aIntegration)(const FunctionParameter &));
 
   static G4double Integrate_f_0();
   static G4double Integrate_f_1(const FunctionParameter &aParameter);
   static G4double Integrate_f_2(const FunctionParameter &aParameter);
   static G4double Integrate_f_3(const FunctionParameter &aParameter);
   static G4double Integrate_f_4(const FunctionParameter &aParameter);
-  G4bool IsIntersected(Vertices &);
+
+  G4bool IsIntersected(const Vertices &) const;
+
   std::array<Vertices, 3> Split(Vertices &);
   G4ThreeVector SplitEdge(const G4ThreeVector &, const G4ThreeVector &);
   void MoveSinglePointToP1(Vertices &);
+
   static G4ThreeVector GetLowestVertex(const Vertices &);
   static G4ThreeVector GetHighestVertex(const Vertices &);
   static void TransformFunctionparameter(FunctionParameter &, const Vertices &);
+
+ private:
   Surface::FacetStore *fFacetStore;
-  G4double MeanHeight;       ///< Mean height
-  G4double ProjectedSurface; ///< Area of projected surface
-  G4double Sz;               ///< Maximum Height
-  G4double Sa;               ///< Arithmetical mean height
-  G4double Sv;               ///< Maximum pit height
-  G4double Sp;               ///< Maximum peak height
-  G4double Sku;              ///< Kurtosis
-  G4double Ssk;              ///< Skewness
-  G4double Sq;               ///< Root mean square height
-  G4double area;             ///< Area of surface
+  G4double MeanHeight;        ///< Mean height
+  G4double ProjectedSurface;  ///< Area of projected surface
+  G4double Sz;                ///< Maximum Height
+  G4double Sa;                ///< Arithmetical mean height
+  G4double Sv;                ///< Maximum pit height
+  G4double Sp;                ///< Maximum peak height
+  G4double Sku;               ///< Kurtosis
+  G4double Ssk;               ///< Skewness
+  G4double Sq;                ///< Root mean square height
+  G4double area;              ///< Area of surface
 };
-} // namespace Surface
-#endif
+}  // namespace Surface
+#endif  // SRC_SURFACEGENERATOR_INCLUDE_CALCULATOR_HH_

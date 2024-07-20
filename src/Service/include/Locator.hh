@@ -1,17 +1,14 @@
-//
-//
-//
-//
-//	author:C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 
-#ifndef SURFACE_LOCATOR
-#define SURFACE_LOCATOR
+#ifndef SRC_SERVICE_INCLUDE_LOCATOR_HH_
+#define SRC_SERVICE_INCLUDE_LOCATOR_HH_
 
-#include "../../Portal/include/PortalStore.hh"
-#include "../../SurfaceGenerator/include/FacetStore.hh"
-#include "Logger.hh"
+#include "Portal/include/PortalStore.hh"
+#include "Service/include/Logger.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
+
 namespace Surface {
 
 ///
@@ -40,4 +37,4 @@ class Locator {
   static Surface::PortalStore fPortalStore;
 };
 }  // namespace Surface
-#endif
+#endif  // SRC_SERVICE_INCLUDE_LOCATOR_HH_

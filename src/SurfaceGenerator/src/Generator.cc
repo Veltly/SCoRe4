@@ -37,24 +37,27 @@ void Surface::SurfaceGenerator::GenerateSurface() {
 }
 
 void Surface::SurfaceGenerator::Assemble() {
-  fLogger.WriteDebugInfo("calling assemble");
-  auto description = fDescriber.GetSolidDescription();
+  fLogger.WriteDetailInfo("Calling assemble");
+  const auto description = fDescriber.GetSolidDescription();
+
   Surface::Assembler Assembler(fFacetStore);
   Assembler.SetDescription(description);
   Assembler.Assemble();
+
   fSolidhandle = Assembler.GetSolid();
-  G4MultiUnion *test = static_cast<G4MultiUnion *>(fSolidhandle);
-  fLogger.WriteDebugInfo(std::to_string(test->GetNumberOfSolids()));
+  const G4MultiUnion *test = static_cast<G4MultiUnion *>(fSolidhandle);
+  fLogger.WriteDetailInfo("Number of solids used for Assemble: " +
+                          std::to_string(test->GetNumberOfSolids()));
 }
 
 void Surface::SurfaceGenerator::Calculate() {
-  fLogger.WriteDebugInfo("calling calculate");
-  Calculator calculator{fFacetStore};
+  fLogger.WriteDetailInfo("Calling calculate");
+  const Calculator calculator{fFacetStore};
   calculator.PrintSurfaceInformation();
 }
 
 void Surface::SurfaceGenerator::GenerateDescription() {
-  fLogger.WriteDebugInfo("calling descrition");
+  fLogger.WriteDetailInfo("Calling descrition");
   fDescriber.Generate();
   fLogger.WriteDebugInfo(fDescriber.GetInfoDescription());
 }

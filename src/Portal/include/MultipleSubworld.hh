@@ -70,9 +70,10 @@ class MultipleSubworld : public VPortal {
   // Check
   inline G4bool IsPortal() const { return fIsPortal; }
 
-  void SetSubworldEdge(G4double edgeX, G4double edgeY, G4double edgeZ);
+  void SetSubworldEdge(const G4double edgeX, const G4double edgeY,
+                       const G4double edgeZ);
 
-  FacetStore *GetFacetStore() { return fFacetStore; }
+  inline FacetStore *GetFacetStore() const { return fFacetStore; }
 
  private:
   void DoPeriodicPortation(G4Step *step, const SingleSurface);
@@ -85,7 +86,7 @@ class MultipleSubworld : public VPortal {
 
   PortationType GetPortationType(const SingleSurface);
 
-  void DoPeriodicTransform(G4ThreeVector &vec, SingleSurface);
+  void DoPeriodicTransform(G4ThreeVector &vec, const SingleSurface);
 
   void TransformSubworldToPortal(G4ThreeVector &vec);
 
@@ -93,7 +94,7 @@ class MultipleSubworld : public VPortal {
 
   G4double TransformZBetweenPortals(const G4double val);
 
-  void LoggCurrentStatus();
+  void LogCurrentStatus();
 
  private:
   Logger fLogger;

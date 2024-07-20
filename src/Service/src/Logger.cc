@@ -10,82 +10,90 @@
 Surface::Logger::Logger(G4String aId, G4int aVerboseLvl)
     : fId(aId), fVerboseLvl(aVerboseLvl) {}
 
-void Surface::Logger::WriteInfo(G4String &aMsg) {
+void Surface::Logger::WriteInfo(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseInfo) {
     G4cout << " ----Info---------> " << fId << ": " << aMsg << G4endl;
   }
 }
 
-void Surface::Logger::WriteInfo(G4String &&aMsg) { WriteInfo(aMsg); }
+void Surface::Logger::WriteInfo(const G4String &&aMsg) const {
+  WriteInfo(aMsg);
+}
 
-void Surface::Logger::WriteInfo(std::stringstream &&aMsg) {
+void Surface::Logger::WriteInfo(const std::stringstream &&aMsg) const {
   WriteInfo(aMsg.str());
 }
 
-void Surface::Logger::WriteDetailInfo(G4String &aMsg) {
+void Surface::Logger::WriteDetailInfo(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseDetailInfo) {
     G4cout << " ----Info---------> " << fId << ": " << aMsg << G4endl;
   }
 }
 
-G4bool Surface::Logger::WriteInfo() { return fVerboseLvl > fVerboseInfo; }
+G4bool Surface::Logger::WriteInfo() const { return fVerboseLvl > fVerboseInfo; }
 
-void Surface::Logger::WriteDetailInfo(G4String &&aMsg) {
+void Surface::Logger::WriteDetailInfo(const G4String &&aMsg) const {
   WriteDetailInfo(aMsg);
 }
-void Surface::Logger::WriteDetailInfo(std::stringstream &&aMsg) {
+void Surface::Logger::WriteDetailInfo(const std::stringstream &&aMsg) const {
   WriteDetailInfo(aMsg.str());
 }
 
-G4bool Surface::Logger::WriteDetailInfo() {
+G4bool Surface::Logger::WriteDetailInfo() const {
   return fVerboseLvl > fVerboseDetailInfo;
 }
 
-void Surface::Logger::WriteWarning(G4String &aMsg) {
+void Surface::Logger::WriteWarning(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseWarning) {
     G4cout << " ----Warning------> " << fId << ": " << aMsg << G4endl;
   }
 }
 
-void Surface::Logger::WriteWarning(G4String &&aMsg) { WriteWarning(aMsg); }
-void Surface::Logger::WriteWarning(std::stringstream &&aMsg) {
+void Surface::Logger::WriteWarning(const G4String &&aMsg) const {
+  WriteWarning(aMsg);
+}
+void Surface::Logger::WriteWarning(const std::stringstream &&aMsg) const {
   WriteWarning(aMsg.str());
 }
 
-G4bool Surface::Logger::WriteWarning() {
+G4bool Surface::Logger::WriteWarning() const {
   return fVerboseLvl > fVerboseDetailInfo;
 }
 
-void Surface::Logger::WriteError(G4String &aMsg) {
+void Surface::Logger::WriteError(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseError) {
     G4cout << " ----Error--------> " << fId << ": " << aMsg << G4endl;
   }
 }
 
-void Surface::Logger::WriteError(G4String &&aMsg) { WriteError(aMsg); }
+void Surface::Logger::WriteError(const G4String &&aMsg) const {
+  WriteError(aMsg);
+}
 
-void Surface::Logger::WriteError(std::stringstream &&aMsg) {
+void Surface::Logger::WriteError(const std::stringstream &&aMsg) const {
   WriteError(aMsg.str());
 }
 
-G4bool Surface::Logger::WriteError() {
+G4bool Surface::Logger::WriteError() const {
   return fVerboseLvl > fVerboseDetailInfo;
 }
 
-void Surface::Logger::WriteDebugInfo(G4String &aMsg) {
+void Surface::Logger::WriteDebugInfo(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseDebugInfo) {
     G4cout << " ----DebugInfo----> " << fId << ": " << aMsg << G4endl;
   }
 }
 
-void Surface::Logger::WriteDebugInfo(G4String &&aMsg) { WriteDebugInfo(aMsg); }
+void Surface::Logger::WriteDebugInfo(const G4String &&aMsg) const {
+  WriteDebugInfo(aMsg);
+}
 
-void Surface::Logger::WriteDebugInfo(G4String &&aMsg,
-                                     const G4ThreeVector &aVec) {
+void Surface::Logger::WriteDebugInfo(const G4String &&aMsg,
+                                     const G4ThreeVector &aVec) const {
   WriteDebugInfo(aMsg, aVec);
 }
-void Surface::Logger::WriteDebugInfo(G4String &aMsg,
-                                     const G4ThreeVector &aVec) {
+void Surface::Logger::WriteDebugInfo(const G4String &aMsg,
+                                     const G4ThreeVector &aVec) const {
   if (fVerboseLvl > fVerboseDebugInfo) {
     G4cout << " ----DebugInfo----> " << fId << ": " << aMsg
            << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
@@ -93,14 +101,14 @@ void Surface::Logger::WriteDebugInfo(G4String &aMsg,
   }
 }
 
-void Surface::Logger::WriteDebugInfo(std::stringstream &&stream) {
+void Surface::Logger::WriteDebugInfo(const std::stringstream &&stream) const {
   WriteDebugInfo(stream.str());
 }
 
-G4bool Surface::Logger::WriteDebugInfo() {
+G4bool Surface::Logger::WriteDebugInfo() const {
   return fVerboseLvl > fVerboseDetailInfo;
 }
 
-void Surface::Logger::SetVerboseLvl(G4int aVerboseLvl) {
+void Surface::Logger::SetVerboseLvl(const G4int aVerboseLvl) {
   fVerboseLvl = aVerboseLvl;
 }

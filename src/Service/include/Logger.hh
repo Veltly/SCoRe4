@@ -18,34 +18,34 @@ class Logger {
  public:
   Logger(G4String aId, G4int aVerboseLvl = 4);
 
-  void WriteInfo(G4String &);
-  void WriteInfo(G4String &&);
-  void WriteInfo(std::stringstream &&);
-  G4bool WriteInfo();
+  void WriteInfo(const G4String &) const;
+  void WriteInfo(const G4String &&) const;
+  void WriteInfo(const std::stringstream &&) const;
+  G4bool WriteInfo() const;
 
-  void WriteDetailInfo(G4String &);
-  void WriteDetailInfo(G4String &&);
-  void WriteDetailInfo(std::stringstream &&);
-  G4bool WriteDetailInfo();
+  void WriteDetailInfo(const G4String &) const;
+  void WriteDetailInfo(const G4String &&) const;
+  void WriteDetailInfo(const std::stringstream &&) const;
+  G4bool WriteDetailInfo() const;
 
-  void WriteWarning(G4String &);
-  void WriteWarning(G4String &&);
-  void WriteWarning(std::stringstream &&);
-  G4bool WriteWarning();
+  void WriteWarning(const G4String &) const;
+  void WriteWarning(const G4String &&) const;
+  void WriteWarning(const std::stringstream &&) const;
+  G4bool WriteWarning() const;
 
-  void WriteError(G4String &);
-  void WriteError(G4String &&);
-  void WriteError(std::stringstream &&);
-  G4bool WriteError();
+  void WriteError(const G4String &) const;
+  void WriteError(const G4String &&) const;
+  void WriteError(const std::stringstream &&) const;
+  G4bool WriteError() const;
 
-  void WriteDebugInfo(G4String &);
-  void WriteDebugInfo(G4String &&);
-  void WriteDebugInfo(G4String &, const G4ThreeVector &);
-  void WriteDebugInfo(G4String &&, const G4ThreeVector &);
-  void WriteDebugInfo(std::stringstream &&);
-  G4bool WriteDebugInfo();
+  void WriteDebugInfo(const G4String &) const;
+  void WriteDebugInfo(const G4String &&) const;
+  void WriteDebugInfo(const G4String &, const G4ThreeVector &) const;
+  void WriteDebugInfo(const G4String &&, const G4ThreeVector &) const;
+  void WriteDebugInfo(const std::stringstream &&) const;
+  G4bool WriteDebugInfo() const;
 
-  void SetVerboseLvl(G4int aVerboseLvl);
+  void SetVerboseLvl(const G4int aVerboseLvl);
 
  private:
   G4String fId;

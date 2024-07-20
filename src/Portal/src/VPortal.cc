@@ -36,7 +36,7 @@ Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
                          " z: " + std::to_string(fGlobalCoord.z()));
 }
 
-G4ThreeVector Surface::VPortal::GetLocalCoordSystem() {
+G4ThreeVector Surface::VPortal::GetLocalCoordSystem() const {
   if (fGlobalCoordSet) {
     return fGlobalCoord;
   }

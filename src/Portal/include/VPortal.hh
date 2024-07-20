@@ -34,7 +34,7 @@ class VPortal {
   void SetTrigger(G4VPhysicalVolume *volume);
 
  protected:
-  G4ThreeVector GetLocalCoordSystem();
+  G4ThreeVector GetLocalCoordSystem() const;
 
   void TransformToLocalCoordinate(G4ThreeVector &vec);
   void TransformToGlobalCoordinate(G4ThreeVector &vec);

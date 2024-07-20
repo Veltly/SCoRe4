@@ -108,7 +108,7 @@ void Surface::MultipleSubworld::DoPeriodicPortation(
   G4ThreeVector position = step->GetPostStepPoint()->GetPosition();
   DoPeriodicTransform(position, exitSurface);
   UpdatePosition(step, position);
-  LoggCurrentStatus();
+  LogCurrentStatus();
 }
 
 Surface::MultipleSubworld::PortationType
@@ -283,7 +283,7 @@ void Surface::MultipleSubworld::DoPeriodicTransform(
   fSubworldGrid->GetSubworld()->TransformToGlobalCoordinate(
       vec);  // transform to coord of new subworld
   const std::string subworldName = fSubworldGrid->GetSubworld()->GetName();
-  LoggCurrentStatus();
+  LogCurrentStatus();
 }
 
 void Surface::MultipleSubworld::TransformSubworldToPortal(G4ThreeVector &vec) {
@@ -326,7 +326,7 @@ void Surface::MultipleSubworld::TransformPortalToSubworld(G4ThreeVector &vec) {
   fSubworldGrid->SetCurrentX(NX);
   fSubworldGrid->SetCurrentY(NY);
   vec.setZ(TransformZBetweenPortals(vec.z()));
-  LoggCurrentStatus();
+  LogCurrentStatus();
 }
 
 G4double Surface::MultipleSubworld::TransformZBetweenPortals(
@@ -378,7 +378,7 @@ void Surface::MultipleSubworld::SetSubworldEdge(const G4double edgeX,
   fEdgeZ = edgeZ;
 }
 
-void Surface::MultipleSubworld::LoggCurrentStatus() {
+void Surface::MultipleSubworld::LogCurrentStatus() {
   const std::string name = fSubworldGrid->GetSubworld()->GetName();
   const std::string nX = std::to_string(fSubworldGrid->CurrentPosX());
   const std::string nY = std::to_string(fSubworldGrid->CurrentPosY());

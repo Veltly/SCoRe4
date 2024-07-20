@@ -1,4 +1,4 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-06-16
 // File: ShiftTable
 
@@ -9,13 +9,13 @@
 #include <limits>
 #include <string>
 
-#include "../include/ShiftTableMessenger.hh"
 #include "G4Material.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4ThreeVector.hh"
 #include "G4TransportationManager.hh"
 #include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
+#include "ParticleGenerator/include/ShiftTableMessenger.hh"
 #include "Randomize.hh"
 
 Surface::Shift::Shift(const G4int verbose)
@@ -52,7 +52,7 @@ G4double Surface::Shift::CalcShift() {
 void Surface::Shift::DoShift(G4ThreeVector &position,
                              const G4ThreeVector &direction) {
   if (!fShiftTableReady) {
-    fLogger.WriteInfo(
+    fLogger.WriteError(
         "Shift called, but ShiftTable not ready\n"
         "No shift done!");
     return;
@@ -94,7 +94,7 @@ void Surface::Shift::DoShiftByValue(const G4double shift,
   position -= normedDirection * shift;
 }
 
-void Surface::Shift::PrintShiftTable() {
+std::stringstream Surface::Shift::StreamShiftTable() const {
   std::stringstream ss;
   ss << "Shift table:\n";
   for (size_t i = 0; i < fProbability.size(); ++i) {
@@ -103,7 +103,11 @@ void Surface::Shift::PrintShiftTable() {
        << " Summed probability: " << std::setw(10) << fBarProbability[i]
        << "\n";
   }
-  fLogger.WriteInfo(ss.str());
+  return ss;
+}
+
+void Surface::Shift::PrintShiftTable() {
+  fLogger.WriteInfo(StreamShiftTable().str());
 }
 
 void Surface::Shift::LoadShiftTable(const std::string &filename) {
@@ -174,11 +178,11 @@ G4double Surface::Shift::Interpolate(const G4int idx) {
   return shift;
 }
 
-void Surface::Shift::SetMinShift(G4double min) {
+void Surface::Shift::SetMinShift(const G4double min) {
   fMinShift = min;
   fLogger.WriteInfo("Min shift set to " + std::to_string(min));
 }
-void Surface::Shift::SetMaxShift(G4double max) {
+void Surface::Shift::SetMaxShift(const G4double max) {
   fMaxShift = max;
   fLogger.WriteInfo("Max shift set to " + std::to_string(max));
 }
@@ -189,7 +193,7 @@ G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
   }
   G4ThreeVector null(0., 0., 0.);
 
-  G4VPhysicalVolume *physVol =
+  const G4VPhysicalVolume *physVol =
       G4TransportationManager::GetTransportationManager()
           ->GetNavigatorForTracking()
           ->LocateGlobalPointAndSetup(point, &null, true);

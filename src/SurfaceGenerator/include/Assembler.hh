@@ -1,22 +1,16 @@
-//
-//
-//
-//
-//	author: C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 
-#ifndef SURFACE_ASSEMBLER
-#define SURFACE_ASSEMBLER
+#ifndef SRC_SURFACEGENERATOR_INCLUDE_ASSEMBLER_HH_
+#define SRC_SURFACEGENERATOR_INCLUDE_ASSEMBLER_HH_
 
-#include "../../Service/include/Logger.hh"
-#include "FacetStore.hh"
-#include "Storage.hh"
-#include <G4Box.hh>
-#include <G4Transform3D.hh>
-#include <G4Trd.hh>
-#include <G4VSolid.hh>
 #include <vector>
+
+#include "G4VSolid.hh"
+#include "Service/include/Logger.hh"
+#include "SurfaceGenerator/include/FacetStore.hh"
+#include "SurfaceGenerator/include/Storage.hh"
 
 using Description = std::vector<Surface::SolidDescription>;
 
@@ -26,22 +20,22 @@ namespace Surface {
 /// All used basic solids have to be implemented in the Assembler class.
 ///
 class Assembler {
-public:
-  Assembler(FacetStore *store);
+ public:
+  explicit Assembler(FacetStore *store);
   ///
   /// calls the assembler to assemble and add all selected facets to the
   /// FacetStore.
   void Assemble();
   ///
   /// returns handle to assembled solid.
-  inline G4VSolid *GetSolid() const { return fSolid; };
+  inline G4VSolid *GetSolid() const { return fSolid; }
   ///
   /// sets description for assembly.
-  inline void SetDescription(Description &aDescription) {
+  inline void SetDescription(const Description &aDescription) {
     fDescription = aDescription;
-  };
+  }
 
-private:
+ private:
   ///
   /// Adds selected Facets of solid to FacetStore based on Description.
   void AddToFacetStore(const SolidDescription &);
@@ -56,11 +50,11 @@ private:
   /// Name should be unique based on generation algorithm, but this is not
   /// checked.
   G4String GenerateSolidName(const SolidDescription &);
-  G4VSolid *fSolid;         ///< Solid handle;
-  Description fDescription; ///< handle of Description
+  G4VSolid *fSolid;          ///< Solid handle;
+  Description fDescription;  ///< handle of Description
   Surface::Logger fLogger;
   FacetStore *fFacetStore;
 };
 
-} // namespace Surface
-#endif
+}  // namespace Surface
+#endif  // SRC_SURFACEGENERATOR_INCLUDE_ASSEMBLER_HH_

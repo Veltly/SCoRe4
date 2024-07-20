@@ -11,7 +11,9 @@
 #include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/SubworldGrid.hh"
 #include "Service/include/VSampler.hh"
-
+#if NDEBUG
+#include "Service/include/FileLogger.hh"
+#endif
 namespace Surface {
 
 struct Coord {
@@ -27,16 +29,19 @@ class MultiSubworldSampler : public G4VPrimaryGenerator {
 
   MultiSubworldSampler(const G4String &name, const G4String &portalName,
                        const G4int verboseLvl = 6);
-
+  ~MultiSubworldSampler();
   void GeneratePrimaryVertex(G4Event *argEvent);
 
   void SetSubworld(SubworldGrid<MultipleSubworld> *);
 
   inline G4bool IsSamplerReady() const { return fSamplerReady; }
 
+  void PrintInformation();
+
  private:
   void PrepareSampler();
   G4ThreeVector GetRandom();
+  std::stringstream StreamInformation() const;
 
  private:
   const G4String fName;
@@ -48,6 +53,9 @@ class MultiSubworldSampler : public G4VPrimaryGenerator {
   G4bool fSamplerReady;
   Logger fLogger;
   G4GeneralParticleSource *fParticleGenerator;
+#if NDEBUG
+  FileLogger *fFileLogger;
+#endif
 };
 }  // namespace Surface
 

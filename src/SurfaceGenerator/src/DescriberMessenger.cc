@@ -1,30 +1,33 @@
-//
-//
-//
-//
-//  author: C.Gruener
-//
-//
+// Copyright [2024] C.Gruener
+// Date: 23-06-01
+// File:
 
-#include "../include/DescriberMessenger.hh"
-#include "../include/Describer.hh"
+#include "SurfaceGenerator/include/DescriberMessenger.hh"
+
+#include "G4ApplicationState.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIdirectory.hh"
-#include <G4ApplicationState.hh>
+#include "SurfaceGenerator/include/Describer.hh"
 
 Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
-    : fDescriber(aDescriber), fDirectory(NULL), fDirectory1(NULL),
-      fCmdSetSpikeWidth_X(NULL), fCmdSetSpikeWidth_Y(NULL),
-      fCmdSetNrSpike_X(NULL), fCmdSetNrSpike_Y(NULL), fCmdSetMeanHeight(NULL),
-      fCmdSetHeightDeviation(NULL), fCmdSetSpikeform(NULL) {
+    : fDescriber(aDescriber),
+      fDirectory(NULL),
+      fDirectory1(NULL),
+      fCmdSetSpikeWidth_X(NULL),
+      fCmdSetSpikeWidth_Y(NULL),
+      fCmdSetNrSpike_X(NULL),
+      fCmdSetNrSpike_Y(NULL),
+      fCmdSetMeanHeight(NULL),
+      fCmdSetHeightDeviation(NULL),
+      fCmdSetSpikeform(NULL) {
   fDirectory = new G4UIdirectory("/geometry/");
   fDirectory->SetGuidance("Controls the implemented geometry.");
   fDirectory1 = new G4UIdirectory("/geometry/surface/");
   fDirectory1->SetGuidance("Controls the implemented surface geometry.");
 
-  G4String delimiter = " ";
+  const G4String delimiter = " ";
 
   fCmdSetSpikeWidth_X =
       new G4UIcmdWithADoubleAndUnit("/geometry/surface/setSpikeWidth_X", this);
@@ -113,7 +116,7 @@ Surface::DescriberMessenger::~DescriberMessenger() {
   fDirectory = NULL;
   delete fDirectory1;
   fDirectory1 = NULL;
-  fDescriber = NULL; // No ownership, so don't delete it!
+  fDescriber = NULL;  // No ownership, so don't delete it!
 }
 
 void Surface::DescriberMessenger::SetNewValue(G4UIcommand *command,

@@ -25,12 +25,25 @@ void Surface::Assembler::Assemble() {
   G4MultiUnion *AssembledSolid = new G4MultiUnion;
   for (const auto &description : fDescription) {
     G4VSolid *newSolid = GetSingleSolid(description);
+    if (fLogger.WriteDebugInfo()) {
+      std::stringstream ss;
+      ss << "\n";
+      newSolid->StreamInfo(ss);
+      ss << "Area:   " << newSolid->GetSurfaceArea() / (CLHEP::mm * CLHEP::mm)
+         << " mm^2\n";
+      ss << "Volume: "
+         << newSolid->GetCubicVolume() / (CLHEP::mm * CLHEP::mm * CLHEP::mm)
+         << " mm^3\n";
+      ss << "-----------------------------------------------------------\n";
+      ss << "-----------------------------------------------------------\n\n";
+      fLogger.WriteDebugInfo(ss.str());
+    }
     G4Transform3D transform{description.Transform};
     AssembledSolid->AddNode(*newSolid, transform);
     AddToFacetStore(description);
   }
   fSolid = AssembledSolid;
-  fLogger.WriteDebugInfo("finished assemble");
+  fLogger.WriteInfo("Finished assemble");
 }
 
 void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
@@ -39,7 +52,7 @@ void Surface::Assembler::AddToFacetStore(const SolidDescription &aDescription) {
   polyhedron.Transform(aDescription.Transform);
   G4int NVertices;
   G4Point3D Vertices[4];
-  for (auto FacetIndex : aDescription.OuterSurface) {
+  for (const auto FacetIndex : aDescription.OuterSurface) {
     polyhedron.GetFacet(FacetIndex, NVertices, Vertices);
     std::vector<G4ThreeVector> Tmp_Vertices;
     for (G4int i = 0; i < NVertices; ++i) {
@@ -67,21 +80,21 @@ G4VSolid *Surface::Assembler::GetSingleSolid(
 }
 
 G4VSolid *Surface::Assembler::GetBox(const SolidDescription &aDescription) {
-  G4String SolidName{GenerateSolidName(aDescription)};
-  G4double pX{aDescription.Volumeparameter.at(0)};
-  G4double pY{aDescription.Volumeparameter.at(1)};
-  G4double pZ{aDescription.Volumeparameter.at(2)};
+  const G4String SolidName{GenerateSolidName(aDescription)};
+  const G4double pX{aDescription.Volumeparameter.at(0)};
+  const G4double pY{aDescription.Volumeparameter.at(1)};
+  const G4double pZ{aDescription.Volumeparameter.at(2)};
   G4Box *newBox = new G4Box{SolidName, pX, pY, pZ};
   return newBox;
 }
 
 G4VSolid *Surface::Assembler::GetTrd(const SolidDescription &aDescription) {
-  G4String SolidName{GenerateSolidName(aDescription)};
-  G4double pXBottom{aDescription.Volumeparameter.at(0)};
-  G4double pXTop{aDescription.Volumeparameter.at(1)};
-  G4double pYBottom{aDescription.Volumeparameter.at(2)};
-  G4double pYTop{aDescription.Volumeparameter.at(3)};
-  G4double pHeight{aDescription.Volumeparameter.at(4)};
+  const G4String SolidName{GenerateSolidName(aDescription)};
+  const G4double pXBottom{aDescription.Volumeparameter.at(0)};
+  const G4double pXTop{aDescription.Volumeparameter.at(1)};
+  const G4double pYBottom{aDescription.Volumeparameter.at(2)};
+  const G4double pYTop{aDescription.Volumeparameter.at(3)};
+  const G4double pHeight{aDescription.Volumeparameter.at(4)};
   G4Trd *newTrd =
       new G4Trd{SolidName, pXBottom, pXTop, pYBottom, pYTop, pHeight};
   return newTrd;
@@ -90,11 +103,11 @@ G4VSolid *Surface::Assembler::GetTrd(const SolidDescription &aDescription) {
 G4String Surface::Assembler::GenerateSolidName(
     const SolidDescription &aDescription) {
   G4String name;
-  for (G4double string : aDescription.Volumeparameter) {
+  for (const G4double string : aDescription.Volumeparameter) {
     name += std::to_string(string);
     name += "_";
   }
-  G4ThreeVector translation{aDescription.Transform.getTranslation()};
+  const G4ThreeVector translation{aDescription.Transform.getTranslation()};
   name += std::to_string(translation.getX());
   name += "_";
   name += std::to_string(translation.getY());

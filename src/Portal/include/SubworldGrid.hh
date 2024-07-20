@@ -78,7 +78,7 @@ class SubworldGrid {
   inline void DecrY() { --fCurrentY; }
 
   std::stringstream StreamGrid(const G4int minX, const G4int maxX,
-                               const G4int minY, const G4int maxY) {
+                               const G4int minY, const G4int maxY) const {
     std::stringstream ss;
     auto symbols = GetLegend();
     for (G4int x = minX; x < maxX; ++x) {
@@ -92,11 +92,11 @@ class SubworldGrid {
   }
 
   void PrintGrid(const G4int minX, const G4int maxX, const G4int minY,
-                 const G4int maxY) {
+                 const G4int maxY) const {
     G4cout << StreamGrid(minX, maxX, minY, maxY).str() << G4endl;
   }
 
-  const std::set<T *> GetUniqueSubworlds() {
+  std::set<T *> GetUniqueSubworlds() const {
     std::set<T *> uniqueSubworlds;
     const size_t N = fMaxX * fMaxY;
     for (size_t i = 0; i < N; ++i) {
@@ -107,7 +107,7 @@ class SubworldGrid {
     return uniqueSubworlds;
   }
 
-  std::stringstream StreamUniqueSubworlds() {
+  std::stringstream StreamUniqueSubworlds() const {
     std::stringstream ss;
     ss << "Unique subworlds in grid\n";
     std::set<T *> unique = GetUniqueSubworlds();
@@ -121,32 +121,39 @@ class SubworldGrid {
     G4cout << StreamUniqueSubworlds().str() << G4endl;
   }
 
-  std::stringstream StreamStatistic() {
+  std::stringstream StreamStatistic() const {
     std::map<T *, G4int> counter;
     const size_t N = fMaxX * fMaxY;
     for (size_t i = 0; i < N; ++i) {
       counter[fGrid[i]] += 1;
     }
+    const G4int sum = std::accumulate(
+        std::begin(counter), std::end(counter), 0.,
+        [](const G4double value,
+           const typename std::map<T *, G4int>::value_type &ele) {
+          return value + ele.second;
+        });
 
-    const G4double invertedSum =
-        100. / std::accumulate(
-                   std::begin(counter), std::end(counter), 0.,
-                   [](const G4double value,
-                      const typename std::map<T *, G4int>::value_type &ele) {
-                     return value + ele.second;
-                   });
+    const G4double invertedSum = 100. / static_cast<G4double>(sum);
+
     std::stringstream ss;
-    ss << "Used subworlds in %\n";
+    ss << "Used subworlds in % / total\n";
+    ss << "\n";
+
     for (auto ele : counter) {
-      ss << "---> " << ele.first->GetName() << " : " << ele.second * invertedSum
-         << "% \n";
+      ss << std::setw(20) << ele.first->GetName() << " : " << std::setw(10)
+         << ele.second * invertedSum << " % " << std::setw(10) << ele.second
+         << "\n";
     }
+
+    ss << "\n";
+    ss << "Total subworlds: " << sum << "\n";
     return ss;
   }
 
-  void PrintStatistic() { G4cout << StreamStatistic().str() << G4endl; }
+  void PrintStatistic() const { G4cout << StreamStatistic().str() << G4endl; }
 
-  std::stringstream StreamLegend() {
+  std::stringstream StreamLegend() const {
     std::stringstream ss;
     ss << "Legend: \n";
     for (auto &ele : GetLegend()) {
@@ -158,7 +165,7 @@ class SubworldGrid {
   void PrintLegend() { G4cout << StreamLegend().str() << G4endl; }
 
  private:
-  std::map<T *, char> GetLegend() {
+  std::map<T *, char> GetLegend() const {
     std::set<T *> uniqueSubworlds = GetUniqueSubworlds();
 
     static char symbols[] = {'+', '#', '$', '%', '&', '*', 'O', 'H', '@', '='};
@@ -187,7 +194,7 @@ class HelperFillSubworldGrid {
  public:
   HelperFillSubworldGrid() : fLogger("HelperFillSubworldGrid") {}
 
-  HelperFillSubworldGrid(const G4int verboseLvl)
+  explicit HelperFillSubworldGrid(const G4int verboseLvl)
       : fLogger("HelperFillSubworldGrid", verboseLvl) {}
 
   void AddAvailableSubworld(T *subworld, const G4double density) {

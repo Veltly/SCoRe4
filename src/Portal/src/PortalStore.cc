@@ -1,20 +1,20 @@
-// Author: C.Gruener
+// Copyright [2024] C.Gruener
 // Date: 24-05-24
 // File: PortalStore
 
-#include "../include/PortalStore.hh"
-#include "../include/VPortal.hh"
-#include <G4LogicalVolume.hh>
-#include <G4VPhysicalVolume.hh>
-#include <algorithm>
+#include "Portal/include/PortalStore.hh"
+
+#include "G4LogicalVolume.hh"
+#include "G4VPhysicalVolume.hh"
+#include "Portal/include/VPortal.hh"
 
 G4bool Surface::PortalStore::IsPortal(const G4VPhysicalVolume *volume) const {
-  G4int portalIdx = FindPortal(volume);
+  const G4int portalIdx = FindPortal(volume);
   return portalIdx >= 0;
 }
 
-G4bool
-Surface::PortalStore::IsNotPortal(const G4VPhysicalVolume *volume) const {
+G4bool Surface::PortalStore::IsNotPortal(
+    const G4VPhysicalVolume *volume) const {
   return !IsPortal(volume);
 }
 
@@ -36,9 +36,9 @@ G4int Surface::PortalStore::FindPortalId(const G4String &name) const {
   return -1;
 }
 
-Surface::VPortal *
-Surface::PortalStore::GetPortal(const G4VPhysicalVolume *volume) const {
-  G4int portalIdx = FindPortal(volume);
+Surface::VPortal *Surface::PortalStore::GetPortal(
+    const G4VPhysicalVolume *volume) const {
+  const G4int portalIdx = FindPortal(volume);
   return this->at(portalIdx);
 }
 
@@ -51,9 +51,9 @@ G4int Surface::PortalStore::FindLogPortal(const G4LogicalVolume *volume) const {
   return -1;
 }
 
-G4bool
-Surface::PortalStore::IsLogPortal(const G4LogicalVolume *logVolume) const {
-  G4int portalIdx = FindLogPortal(logVolume);
+G4bool Surface::PortalStore::IsLogPortal(
+    const G4LogicalVolume *logVolume) const {
+  const G4int portalIdx = FindLogPortal(logVolume);
   return portalIdx >= 0;
 }
 
@@ -65,7 +65,8 @@ G4int Surface::PortalStore::FindTrigger(const G4VPhysicalVolume *volume) const {
   }
   return -1;
 }
+
 G4bool Surface::PortalStore::IsTrigger(const G4VPhysicalVolume *volume) const {
-  G4int portalIdx = FindTrigger(volume);
+  const G4int portalIdx = FindTrigger(volume);
   return portalIdx >= 0;
 }
