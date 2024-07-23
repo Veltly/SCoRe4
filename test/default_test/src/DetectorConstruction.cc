@@ -79,8 +79,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   Surface::MultiportalHelper helper(5);
 
-  const G4int subworlds_x{100};
-  const G4int subworlds_y{100};
+  const G4int subworlds_x{2};
+  const G4int subworlds_y{2};
 
   helper.SetDxPortal(10 * cm);
   helper.SetDyPortal(10 * cm);
@@ -153,8 +153,10 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   roughnessC.Material(roughnessMaterial);
   roughnessC.Generate();
 
-  G4Transform3D trafo{G4RotationMatrix(),
-                      G4ThreeVector(0., 0., -helper.GetSubworldDz() * 0.5)};
+  G4Transform3D trafo{
+      G4RotationMatrix(),
+      G4ThreeVector(0., 0., -helper.GetSubworldDz() + 2. * CLHEP::mm)};
+
   helper.AddRoughness(roughnessA.LogicRoughness(), trafo,
                       roughnessA.FacetStore());
   helper.AddRoughness(roughnessB.LogicRoughness(), trafo,
@@ -168,8 +170,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   Surface::MultipleSubworld *subC = helper.GetSubworld(2);
   //  set StepLimit
 
-  G4double maxStepsize = 100 * mm;
-  G4double maxStepsize_subworld = 100. * mm;
+  G4double maxStepsize = 1 * CLHEP::mm;
+  G4double maxStepsize_subworld = 100. * CLHEP::nm;
   G4UserLimits *limit = new G4UserLimits(maxStepsize);
   G4UserLimits *limit_subworld = new G4UserLimits(maxStepsize_subworld);
   logicWorld->SetUserLimits(limit);

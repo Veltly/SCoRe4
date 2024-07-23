@@ -108,9 +108,9 @@
 /vis/geometry/set/colour Subworld_0 0 0 0 1 .2
 /vis/geometry/set/colour Subworld_1 0 0 0 1 .2
 /vis/geometry/set/colour Subworld_2 0 0 0 1 .2
-/vis/geometry/set/colour Trigger_0 0 0 1 1 .1
-/vis/geometry/set/colour Trigger_1 0 0 1 1 .1
-/vis/geometry/set/colour Trigger_2 0 0 1 1 .1
+/vis/geometry/set/colour _Trigger_0 0 0 1 1 .1
+/vis/geometry/set/colour _Trigger_1 0 0 1 1 .1
+/vis/geometry/set/colour _Trigger_2 0 0 1 1 .1
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
 /vis/geometry/set/colour Portal 0 0 0 1 .2

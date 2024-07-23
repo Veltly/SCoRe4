@@ -119,9 +119,9 @@ void Surface::RoughnessHelper::BuildSurface() {
   Surface::Describer &describer = fGenerator.GetDescriber();
   describer.SetNrSpike_X(fNxSpike);
   describer.SetNrSpike_Y(fNySpike);
-  describer.SetSpikeWidth_X(fDxSpike * 0.5);
-  describer.SetSpikeWidth_Y(fDySpike * 0.5);
-  describer.SetMeanHeight(fDzSpikeMean * 0.5);
+  describer.SetSpikeWidth_X(fDxSpike);
+  describer.SetSpikeWidth_Y(fDySpike);
+  describer.SetMeanHeight(fDzSpikeMean);
   describer.SetNLayer(fNLayer);
   describer.SetHeightDeviation(fDzSpikeDev);
   describer.SetSpikeform(fSpikeform);
@@ -135,8 +135,7 @@ void Surface::RoughnessHelper::BuildSurface() {
 void Surface::RoughnessHelper::BuildBasis() {
   // Generate Basis
   const G4String nameBox = fName + "_Box";
-  G4Box *solidBasis =
-      new G4Box(nameBox, fDxBasis * 0.5, fDyBasis * 0.5, fDzBasis * 0.5);
+  G4Box *solidBasis = new G4Box(nameBox, fDxBasis, fDyBasis, fDzBasis);
   // Generate Trafo
   const G4ThreeVector placement{0., 0., -fDzBasis};
   G4Transform3D trafo{G4RotationMatrix(), placement};

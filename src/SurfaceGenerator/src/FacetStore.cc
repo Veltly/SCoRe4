@@ -144,6 +144,7 @@ void Surface::FacetStore::LogFacetStore(const G4String &aFilename) const {
 std::stringstream Surface::FacetStore::StreamInfo() const {
   std::stringstream ss;
   ss << "\n";
+  ss << "\n";
   ss << "**************************************************\n";
   ss << "*         Information FacetStoreSampler          *\n";
   ss << "**************************************************\n";

@@ -85,6 +85,8 @@ class VSampler {
 
   std::stringstream StreamInfo() const {
     std::stringstream ss;
+    ss << "\n";
+    ss << "\n";
     ss << "**************************************************\n";
     ss << "*                  Sampler Info                  *\n";
     ss << "**************************************************\n";

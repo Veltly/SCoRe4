@@ -9,6 +9,7 @@
 
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4TriangularFacet.hh"
 #include "Service/include/Logger.hh"
 
@@ -69,7 +70,11 @@ class FacetStore {
   void SetTransformation(const G4ThreeVector &transformation) {
     fTransform = transformation;
   }
+  void SetTransformation(const G4Transform3D &trafo) {
+    fTransform = trafo.getTranslation();
+  }
 
+  inline G4ThreeVector GetTransformation() const { return fTransform; }
   inline G4String GetStoreName() const { return fName; }
 
   inline G4int Size() const { return fFacetVector.size(); }

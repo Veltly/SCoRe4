@@ -166,11 +166,13 @@ void Surface::MultiSubworldSampler::PrintInformation() {
 
 std::stringstream Surface::MultiSubworldSampler::StreamInformation() const {
   std::stringstream ss;
+  ss << "\n";
+  ss << "\n";
   ss << "**************************************************\n";
   ss << "*        Information MultiSubworldSampler        *\n";
   ss << "**************************************************\n";
   ss << "\n";
-  ss << "Subworlds: (Name) , (FacetStoreName) , (SurfaceArea)\n";
+  ss << "Subworlds: (Name) , (FacetStoreName) , (SurfaceArea), (Placement)\n";
   ss << "\n";
 
   const std::set<MultipleSubworld *> unique = fSubworld->GetUniqueSubworlds();
@@ -178,9 +180,12 @@ std::stringstream Surface::MultiSubworldSampler::StreamInformation() const {
   for (auto *subworld : unique) {
     FacetStore *facetStore = subworld->GetFacetStore();
     Calculator calc(facetStore);
+    const G4ThreeVector facetStoreTrafo = facetStore->GetTransformation();
     ss << std::setw(20) << std::right << subworld->GetName()
        << " FacetStore: " << std::setw(20) << facetStore->GetStoreName()
-       << " Area: " << calc.GetArea() / (CLHEP::mm * CLHEP::mm) << " mm^2\n";
+       << " Area: " << calc.GetArea() / (CLHEP::mm * CLHEP::mm)
+       << " mm^2 Placement:" << facetStoreTrafo.x() << " "
+       << facetStoreTrafo.y() << " " << facetStoreTrafo.z() << "\n";
   }
   ss << "\n";
   ss << fSubworld->StreamStatistic().str();

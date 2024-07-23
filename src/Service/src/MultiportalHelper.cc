@@ -5,6 +5,8 @@
 
 #include "Service/include/MultiportalHelper.hh"
 
+#include <G4RotationMatrix.hh>
+
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -71,7 +73,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 void Surface::MultiportalHelper::GeneratePortal() {
   const G4String namePortal = fPortalName;
 
-  G4Box *solidPortal = new G4Box(namePortal, fDxSub, fDySub, fDzSub);
+  G4Box *solidPortal = new G4Box(namePortal, fDx, fDy, fDz);
   G4LogicalVolume *logicPortal =
       new G4LogicalVolume(solidPortal, fSubworldMaterial, namePortal);
   G4VPhysicalVolume *physPortal =
@@ -199,40 +201,42 @@ std::stringstream Surface::MultiportalHelper::StreamInfo() const {
   };
 
   std::stringstream ss;
-  ss << "\n"
-     << "************************************\n"
-     << "**** State of MultiportalHelper ****\n"
-     << "************************************\n"
-     << "\n"
-     << "Info Portal: " << fPortalName << "\n"
-     << "Dx: " << fDx << "\n"
-     << "Dy: " << fDy << "\n"
-     << "Dz: " << fDz << "\n"
-     << "Placement Portal: " << trafoString(fPlacementPortal) << "\n"
-     << "\n\n";
+  ss << "\n";
+  ss << "\n";
+  ss << "************************************\n";
+  ss << "**** State of MultiportalHelper ****\n";
+  ss << "************************************\n";
+  ss << "\n";
+  ss << "Info Portal: " << fPortalName << "\n";
+  ss << "Dx: " << fDx << "\n";
+  ss << "Dy: " << fDy << "\n";
+  ss << "Dz: " << fDz << "\n";
+  ss << "Placement Portal: " << trafoString(fPlacementPortal) << "\n";
+  ss << "\n\n";
 
-  ss << "Info Subworlds:\n"
-     << "Dx: " << fDxSub << "\n"
-     << "Dy: " << fDySub << "\n"
-     << "Dz: " << fDzSub << "\n"
-     << "\n"
-     << "Name          Placement          Density\n";
+  ss << "Info Subworlds:\n";
+  ss << "Dx: " << fDxSub << "\n";
+  ss << "Dy: " << fDySub << "\n";
+  ss << "Dz: " << fDzSub << "\n";
+  ss << "\n";
+  ss << "Name          Placement          Density\n";
   for (G4int i = 0; i < fNOfDifferentSubworlds; ++i) {
     ss << "Subworld_" << i << ": " << trafoString(fPlacementSub.at(i)) << " , "
        << fSubworldProb.at(i) << "\n";
   }
-  ss << "\n"
-     << fPortal->GetSubworldGrid()->StreamStatistic().str() << "\n"
-     << "Material: " << fSubworldMaterial->GetName() << "\n"
-     << "\n\n";
+  ss << "\n";
+  ss << fPortal->GetSubworldGrid()->StreamStatistic().str() << "\n";
+  ss << "Material: " << fSubworldMaterial->GetName() << "\n";
+  ss << "\n";
+  ss << "\n";
 
-  ss << "Grid:\n"
-     << "Nx: " << fNx << "\n"
-     << "Ny: " << fNy << "\n"
-     << "Sum: " << fNx * fNy << "\n"
-     << "\n";
-  ss << "************************************\n"
-     << "************************************\n";
+  ss << "Grid:\n";
+  ss << "Nx: " << fNx << "\n";
+  ss << "Ny: " << fNy << "\n";
+  ss << "Sum: " << fNx * fNy << "\n";
+  ss << "\n";
+  ss << "************************************\n";
+  ss << "************************************\n";
   return ss;
 }
 
@@ -269,9 +273,18 @@ void Surface::MultiportalHelper::AddRoughness() {
 
     new G4PVPlacement(trafo, roughness, name, motherVolume, false, 0,
                       fCheckOverlaps);
-
     // Set FacetStore
     fMultipleSubworld.at(id)->SetFacetStore(fFacetStore.at(id));
+
+    const G4ThreeVector translation =
+        fMultipleSubworld.at(id)->GetVolume()->GetTranslation() +
+        trafo.getTranslation();
+    const G4Transform3D trafoRoughness = fPlacementSub.at(id) * trafo;
+    fFacetStore.at(id)->SetTransformation(trafoRoughness);
+
+    G4cout << "TestTest Roughness "
+           << fMultipleSubworld.at(id)->GetVolume()->GetTranslation() << G4endl;
+    G4cout << "TestTest Roughness " << trafo.getTranslation() << G4endl;
   }
 }
 
