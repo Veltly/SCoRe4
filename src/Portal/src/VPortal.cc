@@ -7,7 +7,9 @@
 #include <cstdlib>
 
 #include "G4EventManager.hh"
+#include "G4PathFinder.hh"
 #include "G4ThreeVector.hh"
+#include "G4TransportationManager.hh"
 #include "G4VPhysicalVolume.hh"
 #include "Service/include/Logger.hh"
 
@@ -76,17 +78,34 @@ void Surface::VPortal::UpdatePosition(G4Step *step,
 void Surface::VPortal::UpdatePositionMomentum(
     G4Step *step, const G4ThreeVector &newPosition,
     const G4ThreeVector &newDirection) {
-  G4EventManager *eventManager = G4EventManager::GetEventManager();
-  G4TrackingManager *trackingManager = eventManager->GetTrackingManager();
-  G4SteppingManager *steppingManager = trackingManager->GetSteppingManager();
-  G4Navigator *navigator = steppingManager->GetfNavigator();
+  //  G4EventManager *eventManager = G4EventManager::GetEventManager();
+  //  G4TrackingManager *trackingManager = eventManager->GetTrackingManager();
+  //  G4SteppingManager *steppingManager =
+  //  trackingManager->GetSteppingManager();
+  G4Navigator *navigator = G4TransportationManager::GetTransportationManager()
+                               ->GetNavigatorForTracking();
+  // G4Navigator *navigator = steppingManager->GetfNavigator();
   G4StepPoint *stepPoint = step->GetPostStepPoint();
   G4VTouchable *touchableStepPoint = stepPoint->GetTouchableHandle()();
   navigator->LocateGlobalPointAndUpdateTouchable(newPosition, newDirection,
                                                  touchableStepPoint, false);
+  navigator->ComputeSafety(newPosition);
+
+  G4PathFinder::GetInstance()->ReLocate(newPosition);
+  G4PathFinder::GetInstance()->ComputeSafety(newPosition);
+
   G4Track *track = step->GetTrack();
   track->SetPosition(newPosition);
   track->SetMomentumDirection(newDirection);
   stepPoint->SetPosition(newPosition);
-  stepPoint->SetMomentumDirection(newDirection);
+  stepPoint->SetMomentumDirection(
+      newDirection);  // specified point in the global coordinate system.
+
+  G4EventManager *evtm = G4EventManager::GetEventManager();
+  G4TrackingManager *tckm = evtm->GetTrackingManager();
+  G4VTrajectory *fpTrajectory = NULL;
+  fpTrajectory = tckm->GimmeTrajectory();
+  if (fpTrajectory) {
+    fpTrajectory->AppendStep(step);
+  }
 }
