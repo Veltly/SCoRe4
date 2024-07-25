@@ -20,9 +20,10 @@ class VPortal {
  public:
   virtual void DoPortation(G4Step *) = 0;  //
 
-  VPortal(const G4String &name, G4VPhysicalVolume *, const PortalType);
   VPortal(const G4String &name, G4VPhysicalVolume *, const PortalType,
-          const G4ThreeVector &globalCoord);
+          const G4int verboseLvl);
+  VPortal(const G4String &name, G4VPhysicalVolume *, const PortalType,
+          const G4int verboseLvl, const G4ThreeVector &globalCoord);
   // Getter
   inline G4VPhysicalVolume *GetVolume() const { return fVolume; }
   inline G4String GetName() const { return fName; }
@@ -42,9 +43,10 @@ class VPortal {
   void UpdatePositionMomentum(G4Step *step, const G4ThreeVector &newPosition,
                               const G4ThreeVector &newDirection);
 
+  Logger fLogger;
+
  private:
   const G4String fName;
-  Logger fLogger;
   G4VPhysicalVolume *fVolume;
   const PortalType fPortalType;
   G4ThreeVector fGlobalCoord;

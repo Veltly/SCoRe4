@@ -27,6 +27,9 @@ Surface::PortalControl::PortalControl(const G4int verboseLvl)
     : fPortalStore(Surface::Locator::GetPortalStore()),
       fLogger("PortalControl", verboseLvl) {
   fLogger.WriteInfo("PortalControl initialized");
+  for (auto &portal : fPortalStore) {
+    portal->SetVerbose(verboseLvl);
+  }
 }
 
 // Usefull function because using SteppingAction.hh step is const

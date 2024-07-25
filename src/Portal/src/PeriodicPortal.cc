@@ -17,7 +17,7 @@ Surface::PeriodicPortal::PeriodicPortal(const G4String &name,
                                         G4VPhysicalVolume *volume,
                                         const G4ThreeVector &vec,
                                         const G4int verbose)
-    : VPortal(name, volume, PortalType::PeriodicPortal),
+    : VPortal(name, volume, PortalType::PeriodicPortal, verbose),
       fLogger("PeriodicPortal_" + name, verbose),
       fIsPortal(false) {
   SetGlobalCoord(vec);

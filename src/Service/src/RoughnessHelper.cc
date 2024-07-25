@@ -4,6 +4,8 @@
 
 #include "Service/include/RoughnessHelper.hh"
 
+#include <cstdlib>
+
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MultiUnion.hh"
@@ -53,7 +55,11 @@ G4MultiUnion *Surface::RoughnessHelper::SolidRoughness() const {
 }
 
 G4LogicalVolume *Surface::RoughnessHelper::LogicRoughness() const {
-  return new G4LogicalVolume(fRoughness, fMaterial, fName);
+  if (fLogicRoughness == nullptr) {
+    fLogger.WriteError("Logic object not build!");
+    exit(EXIT_FAILURE);
+  }
+  return fLogicRoughness;
 }
 
 void Surface::RoughnessHelper::SpikeWidth_X(const G4double val) {

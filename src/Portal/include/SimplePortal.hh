@@ -21,7 +21,7 @@ class SimplePortal : public VPortal {
  public:
   SimplePortal(const G4String &name, G4VPhysicalVolume *volume,
                const G4ThreeVector &vec, const G4int verbose)
-      : VPortal(name, volume, PortalType::SimplePortal, vec),
+      : VPortal(name, volume, PortalType::SimplePortal, verbose, vec),
         fLogger("SimplePortal_" + name, verbose) {}
 
   void DoPortation(G4Step *step) override;

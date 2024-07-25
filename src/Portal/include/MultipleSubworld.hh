@@ -10,7 +10,6 @@
 #include "G4Transform3D.hh"
 #include "G4VPhysicalVolume.hh"
 #include "Portal/include/SubworldGrid.hh"
-#include "Service/include/Logger.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
 #include "VPortal.hh"
 
@@ -97,7 +96,7 @@ class MultipleSubworld : public VPortal {
   void LogCurrentStatus();
 
  private:
-  Logger fLogger;
+  //  Logger fLogger;
   MultipleSubworld *fPortal;  // TO DO: replace this or delete it!! In transform
                               // function, example values must be set
   G4double fEdgeX, fEdgeY, fEdgeZ;

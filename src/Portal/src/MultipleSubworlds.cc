@@ -20,8 +20,8 @@ Surface::MultipleSubworld::MultipleSubworld(const G4String name,
                                             const G4ThreeVector &vec,
                                             const G4int verbose,
                                             FacetStore *facetStore)
-    : VPortal(name, volume, PortalType::MultipleSubworld),
-      fLogger("MultiplePortal_ " + name, verbose),
+    : VPortal("MultiplePortal_" + name, volume, PortalType::MultipleSubworld,
+              verbose),
       fIsPortal(false),
       fSubworldGrid(nullptr),
       fFacetStore(facetStore) {
@@ -33,8 +33,8 @@ Surface::MultipleSubworld::MultipleSubworld(const G4String name,
                                             const G4Transform3D transform,
                                             const G4int verbose,
                                             FacetStore *facetStore)
-    : VPortal(name, volume, PortalType::MultipleSubworld),
-      fLogger("MultiplePortal_" + name, verbose),
+    : VPortal("MultiplePortal_" + name, volume, PortalType::MultipleSubworld,
+              verbose),
       fIsPortal(false),
       fSubworldGrid(nullptr),
       fFacetStore(facetStore) {

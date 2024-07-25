@@ -34,6 +34,8 @@ class FacetStore {
   ///
   /// Closes Facet Store and prepares it for usage in simulation.
   ///
+  FacetStore(const FacetStore &right);
+
   void CloseFacetStore();
   ///
   /// Returns random point of facet.

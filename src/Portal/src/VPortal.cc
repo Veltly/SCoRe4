@@ -14,9 +14,9 @@
 #include "Service/include/Logger.hh"
 
 Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
-                          const PortalType type)
-    : fName(name),
-      fLogger("VPortal_" + name),
+                          const PortalType type, const G4int verboseLvl)
+    : fLogger("VPortal_" + name, verboseLvl),
+      fName(name),
       fVolume(volume),
       fPortalType(type),
       fGlobalCoordSet(false) {
@@ -24,10 +24,10 @@ Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
 }
 
 Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
-                          const PortalType type,
+                          const PortalType type, const G4int verboseLvl,
                           const G4ThreeVector &globalCoord)
-    : fName(name),
-      fLogger("VPortal_" + name),
+    : fLogger("VPortal_" + name, verboseLvl),
+      fName(name),
       fVolume(volume),
       fPortalType(type),
       fGlobalCoord(globalCoord),
@@ -108,4 +108,8 @@ void Surface::VPortal::UpdatePositionMomentum(
   if (fpTrajectory) {
     fpTrajectory->AppendStep(step);
   }
+}
+
+void Surface::VPortal::SetVerbose(const G4int verboseLvl) {
+  fLogger.SetVerboseLvl(verboseLvl);
 }
