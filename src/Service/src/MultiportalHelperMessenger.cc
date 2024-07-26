@@ -13,14 +13,13 @@
 #include "Service/include/MultiportalHelper.hh"
 
 Surface::MultiportalHelperMessenger::MultiportalHelperMessenger(
-    Surface::MultiportalHelper* source)
+    Surface::MultiportalHelper* source, const G4String& name)
     : fSource(source) {
   fDirectory = new G4UIdirectory("/Surface/");
   fDirectory->SetGuidance("Controls the MultiportalHelper.");
-  fSubDirectory = new G4UIdirectory("/Surface/MultiportalHelper");
+  fSubDirectory = new G4UIdirectory("/Surface/MultiportalHelper/");
   fSubDirectory->SetGuidance("Controls the MultiportalHelper.");
-  const G4String ctrlPath =
-      "/Surface/MultiportalHelper/" + fSource->GetName() + "/";
+  const G4String ctrlPath = "/Surface/MultiportalHelper/" + name + "/";
   fHelperName = new G4UIdirectory(ctrlPath);
 
   const G4String cmdSetVerbose = ctrlPath + "setVerbose";
@@ -124,17 +123,17 @@ void Surface::MultiportalHelperMessenger::SetNewValue(G4UIcommand* command,
   if (command == fCmdSetVerbose) {
     fSource->SetVerbose(fCmdSetVerbose->GetNewIntValue(newValues));
   } else if (command == fCmdSetDxPortal) {
-    fSource->SetDxPortal(fCmdSetDxPortal->GetNewUnitValue(newValues));
+    fSource->SetDxPortal(fCmdSetDxPortal->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDyPortal) {
-    fSource->SetDyPortal(fCmdSetDyPortal->GetNewUnitValue(newValues));
+    fSource->SetDyPortal(fCmdSetDyPortal->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzPortal) {
-    fSource->SetDzPortal(fCmdSetDzPortal->GetNewUnitValue(newValues));
+    fSource->SetDzPortal(fCmdSetDzPortal->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDxSubworld) {
-    fSource->SetDxSub(fCmdSetDxSubworld->GetNewUnitValue(newValues));
+    fSource->SetDxSub(fCmdSetDxSubworld->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDySubworld) {
-    fSource->SetDySub(fCmdSetDySubworld->GetNewUnitValue(newValues));
+    fSource->SetDySub(fCmdSetDySubworld->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzSubworld) {
-    fSource->SetDzSub(fCmdSetDzSubworld->GetNewUnitValue(newValues));
+    fSource->SetDzSub(fCmdSetDzSubworld->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetSubworldMaterial) {
     fSource->SetSubworldMaterial(newValues);
   } else if (command == fCmdSetNxSubworld) {

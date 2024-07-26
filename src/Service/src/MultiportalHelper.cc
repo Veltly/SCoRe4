@@ -20,13 +20,13 @@
 Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName)
     : fHelperName(helperName),
       fLogger("MPH_" + helperName),
-      fMessenger(new MultiportalHelperMessenger(this)) {}
+      fMessenger(new MultiportalHelperMessenger(this, helperName)) {}
 
 Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
                                               const G4int verboseLvl)
     : fHelperName(helperName),
       fLogger("MPH_" + helperName, verboseLvl),
-      fMessenger(new MultiportalHelperMessenger(this)) {}
+      fMessenger(new MultiportalHelperMessenger(this, helperName)) {}
 
 void Surface::MultiportalHelper::CheckValues() {
   fLogger.WriteInfo("All values correct");

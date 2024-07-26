@@ -23,7 +23,8 @@ class RoughnessHelper;
 
 class RoughnessHelperMessenger : public G4UImessenger {
  public:
-  explicit RoughnessHelperMessenger(Surface::RoughnessHelper *source);
+  explicit RoughnessHelperMessenger(Surface::RoughnessHelper *source,
+                                    const G4String &name);
   ~RoughnessHelperMessenger();
 
   void SetNewValue(G4UIcommand *command, G4String newValues);

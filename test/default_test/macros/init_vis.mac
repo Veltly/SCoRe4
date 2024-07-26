@@ -10,6 +10,8 @@
 #/run/numberOfThreads 4
 #
 # Initialize kernel
+/control/execute macros/multiportal.mac
+/control/execute macros/roughness.mac
 /run/initialize
 
 #

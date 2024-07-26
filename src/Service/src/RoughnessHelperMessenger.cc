@@ -13,15 +13,16 @@
 #include "Service/include/RoughnessHelper.hh"
 
 Surface::RoughnessHelperMessenger::RoughnessHelperMessenger(
-    Surface::RoughnessHelper* source)
+    Surface::RoughnessHelper* source, const G4String& name)
     : fSource(source) {
   fDirectory = new G4UIdirectory("/Surface/");
   fDirectory->SetGuidance("Controls the RoughnessHelper.");
   fSubDirectory = new G4UIdirectory("/Surface/RoughnessHelper/");
   fSubDirectory->SetGuidance("Controls the RoughnessHelper.");
-  const G4String ctrlPath =
-      "/Surface/RoughnessHelper/" + fSource->GetName() + "/";
+  const G4String ctrlPath = "/Surface/RoughnessHelper/" + name + "/";
   fHelperName = new G4UIdirectory(ctrlPath);
+
+  G4cout << "Controlpath is: " << ctrlPath << G4endl;
 
   const G4String cmdSetVerbose = ctrlPath + "setVerbose";
   fCmdSetVerbose = new G4UIcmdWithAnInteger(cmdSetVerbose, this);
@@ -175,20 +176,20 @@ void Surface::RoughnessHelperMessenger::SetNewValue(G4UIcommand* command,
   if (command == fCmdSetVerbose) {
     fSource->SetVerbose(fCmdSetVerbose->GetNewIntValue(newValues));
   } else if (command == fCmdSetDxBasis) {
-    fSource->SetBasisDx(fCmdSetDxBasis->GetNewUnitValue(newValues));
+    fSource->SetBasisDx(fCmdSetDxBasis->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDyBasis) {
-    fSource->SetBasisDy(fCmdSetDyBasis->GetNewUnitValue(newValues));
+    fSource->SetBasisDy(fCmdSetDyBasis->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzBasis) {
-    fSource->SetBasisHeight(fCmdSetDzBasis->GetNewUnitValue(newValues));
+    fSource->SetBasisHeight(fCmdSetDzBasis->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDxSpike) {
-    fSource->SetSpikeDx(fCmdSetDxSpike->GetNewUnitValue(newValues));
+    fSource->SetSpikeDx(fCmdSetDxSpike->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDySpike) {
-    fSource->SetSpikeDy(fCmdSetDySpike->GetNewUnitValue(newValues));
+    fSource->SetSpikeDy(fCmdSetDySpike->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzSpike) {
-    fSource->SetSpikeMeanHeight(fCmdSetDzSpike->GetNewUnitValue(newValues));
+    fSource->SetSpikeMeanHeight(fCmdSetDzSpike->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzDevSpike) {
     fSource->SetSpikeHeightDeviation(
-        fCmdSetDzDevSpike->GetNewUnitValue(newValues));
+        fCmdSetDzDevSpike->GetNewDoubleValue(newValues));
   } else if (command == fCmdSetSpikeform) {
     fSource->SetSpikeform(newValues);
   } else if (command == fCmdSetNLayer) {
@@ -206,6 +207,6 @@ void Surface::RoughnessHelperMessenger::SetNewValue(G4UIcommand* command,
   } else if (command == fCmdSetBoundaryNz) {
     fSource->SetBoundaryZ(fCmdSetBoundaryNz->GetNewIntValue(newValues));
   } else if (command == fCmdSetStepLimit) {
-    fSource->SetStepLimit(fCmdSetStepLimit->GetNewUnitValue(newValues));
+    fSource->SetStepLimit(fCmdSetStepLimit->GetNewDoubleValue(newValues));
   }
 }

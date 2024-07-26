@@ -10,8 +10,8 @@
 /Surface/RoughnessHelper/<HelperName>/setSpikeDevHeight 1 mm
 /Surface/RoughnessHelper/<HelperName>/setSpikeform StandardPyramide
 
-/Surface/RoughnessHelper/<HelperName>/setSpikeNx 2
-/Surface/RoughnessHelper/<HelperName>/setSpikeNy 2
+/Surface/RoughnessHelper/<HelperName>/setSpikesNx 2
+/Surface/RoughnessHelper/<HelperName>/setSpikesNy 2
 
 /Surface/RoughnessHelper/<HelperName>/setMaterial G4_Si
 

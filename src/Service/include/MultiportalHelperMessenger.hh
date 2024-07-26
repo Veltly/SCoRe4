@@ -23,7 +23,8 @@ class MultiportalHelper;
 
 class MultiportalHelperMessenger : public G4UImessenger {
  public:
-  explicit MultiportalHelperMessenger(Surface::MultiportalHelper *source);
+  explicit MultiportalHelperMessenger(Surface::MultiportalHelper *source,
+                                      const G4String &name);
   ~MultiportalHelperMessenger();
 
   void SetNewValue(G4UIcommand *command, G4String newValues);

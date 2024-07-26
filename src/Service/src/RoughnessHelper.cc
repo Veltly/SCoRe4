@@ -21,7 +21,7 @@ Surface::RoughnessHelper::RoughnessHelper(const G4String &name)
       fGenerator(name),
       fRoughness(nullptr),
       fLogicRoughness(nullptr),
-      fMessenger(new RoughnessHelperMessenger(this)),
+      fMessenger(new RoughnessHelperMessenger(this, name)),
       fName(name),
       fStepLimit(nullptr),
       fMaterial(nullptr) {}
@@ -32,7 +32,7 @@ Surface::RoughnessHelper::RoughnessHelper(const G4String &name,
       fGenerator(name, verboseLvl),
       fRoughness(nullptr),
       fLogicRoughness(nullptr),
-      fMessenger(new RoughnessHelperMessenger(this)),
+      fMessenger(new RoughnessHelperMessenger(this, name)),
       fName(name),
       fStepLimit(nullptr),
       fMaterial(nullptr) {}
@@ -94,14 +94,30 @@ void Surface::RoughnessHelper::SetSpikeform(
 void Surface::RoughnessHelper::SetSpikeform(const G4String &spikeform) {
   if (spikeform == "Bump") {
     SetSpikeform(Surface::Describer::Spikeform::Bump);
+    return;
   } else if (spikeform == "Peak") {
     SetSpikeform(Surface::Describer::Spikeform::Peak);
+    return;
   } else if (spikeform == "UniformPyramide") {
     SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+    return;
   } else if (spikeform == "StandardPyramide") {
     SetSpikeform(Surface::Describer::Spikeform::StandardPyramide);
+    return;
   }
-  fLogger.WriteError("Selected spikeform is not valid: " + spikeform);
+
+  std::stringstream ss;
+  ss << "\n";
+  ss << "ERROR\n";
+  ss << "Selected spikeform is not valid: " << spikeform << "\n";
+  ss << "Valid forms are:\n";
+  ss << "\n";
+  ss << "Bump\n";
+  ss << "Peak\n";
+  ss << "UniformPyramide\n";
+  ss << "StandardPyramide\n";
+  ss << "\n";
+  fLogger.WriteError(ss.str());
   exit(EXIT_FAILURE);
 }
 

@@ -1,0 +1,74 @@
+
+
+#Roughness A
+
+/Surface/RoughnessHelper/RoughnessHelperA/setVerbose 5
+
+/Surface/RoughnessHelper/RoughnessHelperA/setBasisDx 1 cm
+/Surface/RoughnessHelper/RoughnessHelperA/setBasisDy 1 cm
+/Surface/RoughnessHelper/RoughnessHelperA/setBasisDz 1 cm
+
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikeDx 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikeDy 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikeMeanHeight 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikeDevHeight 1 mm
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikeform StandardPyramide
+
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikesNx 2
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikesNy 2
+
+/Surface/RoughnessHelper/RoughnessHelperA/setMaterial G4_Si
+
+/Surface/RoughnessHelper/RoughnessHelperA/setBoundaryNx 1000
+/Surface/RoughnessHelper/RoughnessHelperA/setBoundaryNy 1000
+/Surface/RoughnessHelper/RoughnessHelperA/setBoundaryNz 1000
+
+
+
+#Roughness B
+
+/Surface/RoughnessHelper/RoughnessHelperB/setVerbose 5
+
+/Surface/RoughnessHelper/RoughnessHelperB/setBasisDx 1 cm
+/Surface/RoughnessHelper/RoughnessHelperB/setBasisDy 1 cm
+/Surface/RoughnessHelper/RoughnessHelperB/setBasisDz 1 cm
+
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikeDx 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikeDy 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikeMeanHeight 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikeDevHeight 1 mm
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikeform StandardPyramide
+
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikesNx 2
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikesNy 2
+
+/Surface/RoughnessHelper/RoughnessHelperB/setMaterial G4_Si
+
+/Surface/RoughnessHelper/RoughnessHelperB/setBoundaryNx 1000
+/Surface/RoughnessHelper/RoughnessHelperB/setBoundaryNy 1000
+/Surface/RoughnessHelper/RoughnessHelperB/setBoundaryNz 1000
+
+
+
+#Roughness C
+
+/Surface/RoughnessHelper/RoughnessHelperC/setVerbose 5
+
+/Surface/RoughnessHelper/RoughnessHelperC/setBasisDx 1 cm
+/Surface/RoughnessHelper/RoughnessHelperC/setBasisDy 1 cm
+/Surface/RoughnessHelper/RoughnessHelperC/setBasisDz 1 cm
+
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikeDx 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikeDy 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikeMeanHeight 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikeDevHeight 1 mm
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikeform StandardPyramide
+
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikesNx 2
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikesNy 2
+
+/Surface/RoughnessHelper/RoughnessHelperC/setMaterial G4_Si
+
+/Surface/RoughnessHelper/RoughnessHelperC/setBoundaryNx 1000
+/Surface/RoughnessHelper/RoughnessHelperC/setBoundaryNy 1000
+/Surface/RoughnessHelper/RoughnessHelperC/setBoundaryNz 1000
