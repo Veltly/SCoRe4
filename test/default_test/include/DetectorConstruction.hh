@@ -30,16 +30,17 @@
 #ifndef DetectorConstruction_h
 #define DetectorConstruction_h 1
 
-#include "../../../src/SurfaceGenerator/include/Generator.hh"
 #include "G4VUserDetectorConstruction.hh"
-#include "globals.hh"
+#include "Service/include/MultiportalHelper.hh"
+#include "Service/include/RoughnessHelper.hh"
+
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 
 /// Detector construction class to define materials and geometry.
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
-public:
+ public:
   DetectorConstruction();
   virtual ~DetectorConstruction();
 
@@ -47,10 +48,14 @@ public:
 
   G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
 
-protected:
-  Surface::SurfaceGenerator fGeneratorA{"GenA"};
-  Surface::SurfaceGenerator fGeneratorB{"GenB"};
-  Surface::SurfaceGenerator fGeneratorC{"GenC"};
+ protected:
+  // Surface::SurfaceGenerator fGeneratorA;
+  // Surface::SurfaceGenerator fGeneratorB;
+  // Surface::SurfaceGenerator fGeneratorC;
+  Surface::MultiportalHelper fPortalHelper;
+  Surface::RoughnessHelper fRoughnessHelperA;
+  Surface::RoughnessHelper fRoughnessHelperB;
+  Surface::RoughnessHelper fRoughnessHelperC;
   G4LogicalVolume *fScoringVolume;
 };
 

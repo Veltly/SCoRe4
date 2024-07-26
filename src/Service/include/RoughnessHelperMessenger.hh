@@ -44,6 +44,7 @@ class RoughnessHelperMessenger : public G4UImessenger {
   G4UIcmdWithADoubleAndUnit *fCmdSetDySpike;
   G4UIcmdWithADoubleAndUnit *fCmdSetDzSpike;
   G4UIcmdWithADoubleAndUnit *fCmdSetDzDevSpike;
+  G4UIcmdWithAString *fCmdSetSpikeform;
   G4UIcmdWithAnInteger *fCmdSetNLayer;
 
   G4UIcmdWithAnInteger *fCmdSetNxSpikes;

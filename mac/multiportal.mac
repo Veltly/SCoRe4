@@ -1,0 +1,14 @@
+/Surface/MultiportalHelper/<HelperName>/setVerbose 5
+
+/Surface/MultiportalHelper/<HelperName>/setDxPortal 1 cm
+/Surface/MultiportalHelper/<HelperName>/setDyPortal 2 cm
+/Surface/MultiportalHelper/<HelperName>/setDzPortal 1 cm
+
+/Surface/MultiportalHelper/<HelperName>/setDxSubworld 1 cm
+/Surface/MultiportalHelper/<HelperName>/setDySubworld 1 cm
+/Surface/MultiportalHelper/<HelperName>/setDzSubworld 1 cm
+
+/Surface/MultiportalHelper/<HelperName>/setNxSubworld 1
+/Surface/MultiportalHelper/<HelperName>/setNySubworld 2
+
+/Surface/MultiportalHelper/<HelperName>/setMaterial G4_Si

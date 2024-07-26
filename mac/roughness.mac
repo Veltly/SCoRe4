@@ -1,0 +1,20 @@
+/Surface/RoughnessHelper/<HelperName>/setVerbose 5
+
+/Surface/RoughnessHelper/<HelperName>/setBasisDx 1 cm
+/Surface/RoughnessHelper/<HelperName>/setBasisDy 1 cm
+/Surface/RoughnessHelper/<HelperName>/setBasisDz 1 cm
+
+/Surface/RoughnessHelper/<HelperName>/setSpikeDx 0.5 cm
+/Surface/RoughnessHelper/<HelperName>/setSpikeDy 0.5 cm
+/Surface/RoughnessHelper/<HelperName>/setSpikeMeanHeight 0.5 cm
+/Surface/RoughnessHelper/<HelperName>/setSpikeDevHeight 1 mm
+/Surface/RoughnessHelper/<HelperName>/setSpikeform StandardPyramide
+
+/Surface/RoughnessHelper/<HelperName>/setSpikeNx 2
+/Surface/RoughnessHelper/<HelperName>/setSpikeNy 2
+
+/Surface/RoughnessHelper/<HelperName>/setMaterial G4_Si
+
+/Surface/RoughnessHelper/<HelperName>/setBoundaryNx 1000
+/Surface/RoughnessHelper/<HelperName>/setBoundaryNy 1000
+/Surface/RoughnessHelper/<HelperName>/setBoundaryNz 1000

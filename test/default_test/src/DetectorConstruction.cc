@@ -25,7 +25,12 @@
 #include "G4SystemOfUnits.hh"
 
 DetectorConstruction::DetectorConstruction()
-    : G4VUserDetectorConstruction(), fScoringVolume(0) {}
+    : G4VUserDetectorConstruction(),
+      fPortalHelper("PortalHelper"),
+      fRoughnessHelperA("RoughnessHelperA"),
+      fRoughnessHelperB("RoughnessHelperB"),
+      fRoughnessHelperC("RoughnessHelperC"),
+      fScoringVolume(0) {}
 
 DetectorConstruction::~DetectorConstruction() {}
 
@@ -73,97 +78,91 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4Material *subworldMaterial = nist->FindOrBuildMaterial("G4_AIR");
   G4Material *roughnessMaterial = nist->FindOrBuildMaterial("G4_Si");
 
-  Surface::MultiportalHelper helper(5);
-
   const G4int subworlds_x{2};
   const G4int subworlds_y{2};
 
-  helper.SetDxPortal(10 * cm);
-  helper.SetDyPortal(10 * cm);
-  helper.SetDzPortal(5. * mm);
+  fPortalHelper.SetDxPortal(10 * cm);
+  fPortalHelper.SetDyPortal(10 * cm);
+  fPortalHelper.SetDzPortal(5. * mm);
 
-  helper.SetDxSub(helper.GetPortalDx() / subworlds_x);
-  helper.SetDySub(helper.GetPortalDy() / subworlds_y);
-  helper.SetDzSub(5. * mm);
+  fPortalHelper.SetDxSub(fPortalHelper.GetPortalDx() / subworlds_x);
+  fPortalHelper.SetDySub(fPortalHelper.GetPortalDy() / subworlds_y);
+  fPortalHelper.SetDzSub(5. * mm);
 
-  helper.SetNxSub(subworlds_x);
-  helper.SetNySub(subworlds_y);
+  fPortalHelper.SetNxSub(subworlds_x);
+  fPortalHelper.SetNySub(subworlds_y);
 
-  helper.AddSubworldPlacement(trafoA);
-  helper.AddSubworldPlacement(trafoB);
-  helper.AddSubworldPlacement(trafoC);
+  fPortalHelper.AddSubworldPlacement(trafoA);
+  fPortalHelper.AddSubworldPlacement(trafoB);
+  fPortalHelper.AddSubworldPlacement(trafoC);
 
-  helper.AddSubworldDensity(0.3);
-  helper.AddSubworldDensity(0.5);
-  helper.AddSubworldDensity(0.2);
+  fPortalHelper.AddSubworldDensity(0.3);
+  fPortalHelper.AddSubworldDensity(0.5);
+  fPortalHelper.AddSubworldDensity(0.2);
 
-  helper.SetMotherVolume(logicWorld);
+  fPortalHelper.SetMotherVolume(logicWorld);
 
-  helper.SetPortalPlacement(trafoPortal);
+  fPortalHelper.SetPortalPlacement(trafoPortal);
 
-  helper.SetSubworldMaterial(subworldMaterial);
+  fPortalHelper.SetSubworldMaterial(subworldMaterial);
 
-  helper.SetNDifferentSubworlds(3);
+  fPortalHelper.SetNDifferentSubworlds(3);
 
-  helper.SetPortalName("Portal");
-
-  Surface::RoughnessHelper roughnessA("RoughnessA");
-  Surface::RoughnessHelper roughnessB("RoughnessB");
-  Surface::RoughnessHelper roughnessC("RoughnessC");
+  fPortalHelper.SetPortalName("Portal");
 
   const G4int spikes{2};
 
-  roughnessA.SetSpikeNx(spikes);
-  roughnessA.SetSpikeNy(spikes);
-  roughnessA.SetSpikeDx(helper.GetSubworldDx() / spikes);
-  roughnessA.SetSpikeDy(helper.GetSubworldDy() / spikes);
-  roughnessA.SetSpikeMeanHeight(1. * mm);
-  roughnessA.SetBasisDx(helper.GetSubworldDx());
-  roughnessA.SetBasisDy(helper.GetSubworldDy());
-  roughnessA.SetBasisHeight(1 * mm);
-  roughnessA.SetSpikeform(Surface::Spikeform::StandardPyramide);
-  roughnessA.SetMaterial(roughnessMaterial);
-  roughnessA.Generate();
+  fRoughnessHelperA.SetSpikeNx(spikes);
+  fRoughnessHelperA.SetSpikeNy(spikes);
+  fRoughnessHelperA.SetSpikeDx(fPortalHelper.GetSubworldDx() / spikes);
+  fRoughnessHelperA.SetSpikeDy(fPortalHelper.GetSubworldDy() / spikes);
+  fRoughnessHelperA.SetSpikeMeanHeight(1. * mm);
+  fRoughnessHelperA.SetBasisDx(fPortalHelper.GetSubworldDx());
+  fRoughnessHelperA.SetBasisDy(fPortalHelper.GetSubworldDy());
+  fRoughnessHelperA.SetBasisHeight(1 * mm);
+  fRoughnessHelperA.SetSpikeform(Surface::Spikeform::StandardPyramide);
+  fRoughnessHelperA.SetMaterial(roughnessMaterial);
+  fRoughnessHelperA.Generate();
 
-  roughnessB.SetSpikeNx(spikes);
-  roughnessB.SetSpikeNy(spikes);
-  roughnessB.SetSpikeDx(helper.GetSubworldDx() / spikes);
-  roughnessB.SetSpikeDy(helper.GetSubworldDy() / spikes);
-  roughnessB.SetSpikeMeanHeight(2. * mm);
-  roughnessB.SetBasisDx(helper.GetSubworldDx());
-  roughnessB.SetBasisDy(helper.GetSubworldDy());
-  roughnessB.SetBasisHeight(1 * mm);
-  roughnessB.SetSpikeform(Surface::Spikeform::StandardPyramide);
-  roughnessB.SetMaterial(roughnessMaterial);
-  roughnessB.Generate();
+  fRoughnessHelperB.SetSpikeNx(spikes);
+  fRoughnessHelperB.SetSpikeNy(spikes);
+  fRoughnessHelperB.SetSpikeDx(fPortalHelper.GetSubworldDx() / spikes);
+  fRoughnessHelperB.SetSpikeDy(fPortalHelper.GetSubworldDy() / spikes);
+  fRoughnessHelperB.SetSpikeMeanHeight(2. * mm);
+  fRoughnessHelperB.SetBasisDx(fPortalHelper.GetSubworldDx());
+  fRoughnessHelperB.SetBasisDy(fPortalHelper.GetSubworldDy());
+  fRoughnessHelperB.SetBasisHeight(1 * mm);
+  fRoughnessHelperB.SetSpikeform(Surface::Spikeform::StandardPyramide);
+  fRoughnessHelperB.SetMaterial(roughnessMaterial);
+  fRoughnessHelperB.Generate();
 
-  roughnessC.SetSpikeNx(spikes);
-  roughnessC.SetSpikeNy(spikes);
-  roughnessC.SetSpikeDx(helper.GetSubworldDx() / spikes);
-  roughnessC.SetSpikeDy(helper.GetSubworldDy() / spikes);
-  roughnessC.SetSpikeMeanHeight(3. * mm);
-  roughnessC.SetBasisDx(helper.GetSubworldDx());
-  roughnessC.SetBasisDy(helper.GetSubworldDy());
-  roughnessC.SetBasisHeight(1 * mm);
-  roughnessC.SetSpikeform(Surface::Spikeform::StandardPyramide);
-  roughnessC.SetMaterial(roughnessMaterial);
-  roughnessC.Generate();
+  fRoughnessHelperC.SetSpikeNx(spikes);
+  fRoughnessHelperC.SetSpikeNy(spikes);
+  fRoughnessHelperC.SetSpikeDx(fPortalHelper.GetSubworldDx() / spikes);
+  fRoughnessHelperC.SetSpikeDy(fPortalHelper.GetSubworldDy() / spikes);
+  fRoughnessHelperC.SetSpikeMeanHeight(3. * mm);
+  fRoughnessHelperC.SetBasisDx(fPortalHelper.GetSubworldDx());
+  fRoughnessHelperC.SetBasisDy(fPortalHelper.GetSubworldDy());
+  fRoughnessHelperC.SetBasisHeight(1 * mm);
+  fRoughnessHelperC.SetSpikeform(Surface::Spikeform::StandardPyramide);
+  fRoughnessHelperC.SetMaterial(roughnessMaterial);
+  fRoughnessHelperC.Generate();
 
   G4Transform3D trafo{
       G4RotationMatrix(),
-      G4ThreeVector(0., 0., -helper.GetSubworldDz() + 2. * CLHEP::mm)};
+      G4ThreeVector(0., 0., -fPortalHelper.GetSubworldDz() + 2. * CLHEP::mm)};
 
-  helper.AddRoughness(roughnessA.LogicRoughness(), trafo,
-                      roughnessA.FacetStore());
-  helper.AddRoughness(roughnessB.LogicRoughness(), trafo,
-                      roughnessB.FacetStore());
-  helper.AddRoughness(roughnessC.LogicRoughness(), trafo,
-                      roughnessC.FacetStore());
+  fPortalHelper.AddRoughness(fRoughnessHelperA.LogicRoughness(), trafo,
+                             fRoughnessHelperA.FacetStore());
+  fPortalHelper.AddRoughness(fRoughnessHelperB.LogicRoughness(), trafo,
+                             fRoughnessHelperB.FacetStore());
+  fPortalHelper.AddRoughness(fRoughnessHelperC.LogicRoughness(), trafo,
+                             fRoughnessHelperC.FacetStore());
 
-  helper.Generate();
-  Surface::MultipleSubworld *subA = helper.GetSubworld(0);
-  Surface::MultipleSubworld *subB = helper.GetSubworld(1);
-  Surface::MultipleSubworld *subC = helper.GetSubworld(2);
+  fPortalHelper.Generate();
+  Surface::MultipleSubworld *subA = fPortalHelper.GetSubworld(0);
+  Surface::MultipleSubworld *subB = fPortalHelper.GetSubworld(1);
+  Surface::MultipleSubworld *subC = fPortalHelper.GetSubworld(2);
   //  set StepLimit
 
   G4double maxStepsize = 1 * CLHEP::mm;

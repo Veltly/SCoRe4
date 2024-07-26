@@ -38,6 +38,7 @@ class RoughnessHelper {
   void SetSpikeMeanHeight(const G4double);
   void SetSpikeHeightDeviation(const G4double);
   void SetSpikeform(const Describer::Spikeform);
+  void SetSpikeform(const G4String &);
 
   void SetSpikeNx(const G4int);
   void SetSpikeNy(const G4int);

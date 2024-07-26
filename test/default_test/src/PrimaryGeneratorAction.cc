@@ -6,7 +6,8 @@
 #include "G4RunManager.hh"
 PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(),
-      fSampler(Surface::MultiSubworldSampler{"Testsampler", "Portal"}) {}
+      fSampler(Surface::MultiSubworldSampler{"Testsampler",
+                                             "MultiplePortal_Portal"}) {}
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {}
 

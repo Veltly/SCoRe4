@@ -91,6 +91,20 @@ void Surface::RoughnessHelper::SetSpikeform(
   fSpikeform = form;
 }
 
+void Surface::RoughnessHelper::SetSpikeform(const G4String &spikeform) {
+  if (spikeform == "Bump") {
+    SetSpikeform(Surface::Describer::Spikeform::Bump);
+  } else if (spikeform == "Peak") {
+    SetSpikeform(Surface::Describer::Spikeform::Peak);
+  } else if (spikeform == "UniformPyramide") {
+    SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+  } else if (spikeform == "StandardPyramide") {
+    SetSpikeform(Surface::Describer::Spikeform::StandardPyramide);
+  }
+  fLogger.WriteError("Selected spikeform is not valid: " + spikeform);
+  exit(EXIT_FAILURE);
+}
+
 void Surface::RoughnessHelper::SetSpikeNx(const G4int val) { fNxSpike = val; }
 
 void Surface::RoughnessHelper::SetSpikeNy(const G4int val) { fNySpike = val; }

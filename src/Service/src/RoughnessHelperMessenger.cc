@@ -17,7 +17,7 @@ Surface::RoughnessHelperMessenger::RoughnessHelperMessenger(
     : fSource(source) {
   fDirectory = new G4UIdirectory("/Surface/");
   fDirectory->SetGuidance("Controls the RoughnessHelper.");
-  fSubDirectory = new G4UIdirectory("/Surface/RoughnessHelper");
+  fSubDirectory = new G4UIdirectory("/Surface/RoughnessHelper/");
   fSubDirectory->SetGuidance("Controls the RoughnessHelper.");
   const G4String ctrlPath =
       "/Surface/RoughnessHelper/" + fSource->GetName() + "/";
@@ -64,6 +64,18 @@ Surface::RoughnessHelperMessenger::RoughnessHelperMessenger(
   fCmdSetDzSpike->AvailableForStates(G4State_PreInit, G4State_Init,
                                      G4State_Idle);
   fCmdSetDzSpike->SetGuidance("Set spike height in z direction");
+
+  const G4String cmdSetSpikeHeightDev = ctrlPath + "setSpikeDevHeight";
+  fCmdSetDzDevSpike = new G4UIcmdWithADoubleAndUnit(cmdSetSpikeHeightDev, this);
+  fCmdSetDzDevSpike->AvailableForStates(G4State_PreInit, G4State_Init,
+                                        G4State_Idle);
+  fCmdSetDzDevSpike->SetGuidance(
+      "Set mean deviation of spikes from mean height value");
+
+  const G4String cmdSetSpikeform = ctrlPath + "setSpikeform";
+  fCmdSetSpikeform = new G4UIcmdWithAString(cmdSetSpikeform, this);
+  fCmdSetSpikeform->AvailableForStates(G4State_PreInit, G4State_Init,
+                                       G4State_Idle);
 
   const G4String cmdSetMaterial = ctrlPath + "setMaterial";
   fCmdSetMaterial = new G4UIcmdWithAString(cmdSetMaterial, this);
@@ -132,6 +144,12 @@ Surface::RoughnessHelperMessenger::~RoughnessHelperMessenger() {
   fCmdSetDySpike = nullptr;
   delete fCmdSetDzSpike;
   fCmdSetDzSpike = nullptr;
+  delete fCmdSetDzDevSpike;
+  fCmdSetDzDevSpike = nullptr;
+  delete fCmdSetSpikeform;
+  fCmdSetSpikeform = nullptr;
+  delete fCmdSetNLayer;
+  fCmdSetNLayer = nullptr;
 
   delete fCmdSetNxSpikes;
   fCmdSetNxSpikes = nullptr;
@@ -168,6 +186,11 @@ void Surface::RoughnessHelperMessenger::SetNewValue(G4UIcommand* command,
     fSource->SetSpikeDy(fCmdSetDySpike->GetNewUnitValue(newValues));
   } else if (command == fCmdSetDzSpike) {
     fSource->SetSpikeMeanHeight(fCmdSetDzSpike->GetNewUnitValue(newValues));
+  } else if (command == fCmdSetDzDevSpike) {
+    fSource->SetSpikeHeightDeviation(
+        fCmdSetDzDevSpike->GetNewUnitValue(newValues));
+  } else if (command == fCmdSetSpikeform) {
+    fSource->SetSpikeform(newValues);
   } else if (command == fCmdSetNLayer) {
     fSource->SetSpikeNLayer(fCmdSetNLayer->GetNewIntValue(newValues));
   } else if (command == fCmdSetNxSpikes) {
