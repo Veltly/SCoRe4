@@ -31,7 +31,7 @@ Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
 void Surface::MultiportalHelper::CheckValues() {
   auto isSame = [](const G4double valA, const G4double valB) {
     const G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
-    return (std::fabs(valA) - std::fabs(valB)) < numericLimit;
+    return std::fabs(valA - valB) < numericLimit;
   };
 
   G4bool error{false};
@@ -41,7 +41,8 @@ void Surface::MultiportalHelper::CheckValues() {
   if (!isSame(allSubworldX, fDx)) {
     ss << "Subworld does not fit in portal (X-Dimension)!\n";
     ss << "SubworldDx * NrSubworlds != PortalDx\n";
-    ss << fDxSub << " * " << fNx << " != " << fDx << "\n";
+    ss << fDxSub / CLHEP::mm << " mm * " << fNx << " != " << fDx / CLHEP::mm
+       << " mm\n";
     ss << "\n";
     error = true;
   }
@@ -50,7 +51,8 @@ void Surface::MultiportalHelper::CheckValues() {
   if (!isSame(allSubworldY, fDy)) {
     ss << "Subworld does not fit in portal (Y-Dimension)!\n";
     ss << "SubworldDy * NrSubworlds != PortalDy\n";
-    ss << fDySub << " * " << fNy << " != " << fDy << "\n";
+    ss << fDySub / CLHEP::mm << " mm * " << fNy << " != " << fDy / CLHEP::mm
+       << " mm\n";
     ss << "\n";
     error = true;
   }
@@ -58,7 +60,7 @@ void Surface::MultiportalHelper::CheckValues() {
   if (!isSame(fDzSub, fDz)) {
     ss << "Subworld does not fit in portal (Z-Dimension)!\n";
     ss << "SubworldDz != PortalDz\n";
-    ss << fDzSub << " != " << fDz << "\n";
+    ss << fDzSub / CLHEP::mm << " mm != " << fDz / CLHEP::mm << " mm\n";
     ss << "\n";
     error = true;
   }
@@ -67,8 +69,14 @@ void Surface::MultiportalHelper::CheckValues() {
     std::stringstream stream;
     stream << "\n";
     stream << "**************************************************\n";
-    stream << "Error while generation of " << fHelperName << "\n";
-    stream << "Portal: " << fPortalName << " , Subworld: " << fSubName << "\n";
+    stream << "*                                                *\n";
+    stream << "* Error while generation of " << std::setw(21) << std::left
+           << fHelperName << "*\n";
+    stream << "* Portal: " << std::setw(39) << std::left << fPortalName
+           << "*\n";
+    stream << "* Subworld: " << std::setw(37) << std::left << fSubName << "*\n";
+    stream << "*                                                *\n";
+    stream << "**************************************************\n";
     stream << "\n";
     ss << "**************************************************\n";
     ss << "**************************************************\n";

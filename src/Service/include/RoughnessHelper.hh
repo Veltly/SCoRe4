@@ -30,6 +30,22 @@ class RoughnessHelper {
   G4LogicalVolume *LogicRoughness() const;
   FacetStore *FacetStore();
   inline const G4String &GetName() const { return fName; }
+  inline G4double GetVerboseLvl() { return fLogger.GetVerboseLvl(); }
+  inline G4double GetSpikeDx() { return fDxSpike; }
+  inline G4double GetSpikeDy() { return fDySpike; }
+  inline G4double GetSpikeMeanHeight() { return fDzSpikeMean; }
+  inline G4double GetSpikeDevHeight() { return fDzSpikeDev; }
+  inline G4int GetSpikeNx() { return fNxSpike; }
+  inline G4int GetSpikeNy() { return fNySpike; }
+  inline auto GetSpikeform() { return fSpikeform; }
+  inline G4double GetBasisDx() { return fDxBasis; }
+  inline G4double GetBasisDy() { return fDyBasis; }
+  inline G4double GetBasisHeight() { return fDzBasis; }
+  inline const G4Material *GetMaterial() { return fMaterial; }
+  inline G4int GetBoundaryX() { return fNxBoundary; }
+  inline G4int GetBoundaryY() { return fNyBoundary; }
+  inline G4int GetBoundaryZ() { return fNzBoundary; }
+  inline auto GetStepLimit() { return fStepLimit; }
 
   // Setter
   void SetVerbose(const G4int verboseLvl);

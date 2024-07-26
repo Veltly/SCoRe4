@@ -2,11 +2,11 @@
 
 /Surface/MultiportalHelper/PortalHelper/setDxPortal 1 cm
 /Surface/MultiportalHelper/PortalHelper/setDyPortal 2 cm
-/Surface/MultiportalHelper/PortalHelper/setDzPortal 1 cm
+/Surface/MultiportalHelper/PortalHelper/setDzPortal 2 cm
 
 /Surface/MultiportalHelper/PortalHelper/setDxSubworld 1 cm
 /Surface/MultiportalHelper/PortalHelper/setDySubworld 1 cm
-/Surface/MultiportalHelper/PortalHelper/setDzSubworld 1 cm
+/Surface/MultiportalHelper/PortalHelper/setDzSubworld 2 cm
 
 /Surface/MultiportalHelper/PortalHelper/setNxSubworld 1
 /Surface/MultiportalHelper/PortalHelper/setNySubworld 2

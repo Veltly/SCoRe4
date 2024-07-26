@@ -173,7 +173,7 @@ void Surface::RoughnessHelper::CheckValues() {
 
   auto isSame = [](const G4double valA, const G4double valB) {
     const G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
-    return (std::fabs(valA) - std::fabs(valB)) < numericLimit;
+    return std::fabs(valA - valB) < numericLimit;
   };
 
   G4bool error{false};
@@ -183,7 +183,8 @@ void Surface::RoughnessHelper::CheckValues() {
   if (!isSame(allSpikesX, fDxBasis)) {
     ss << "Spikes does not fit on Basis (X-Dimension)!\n";
     ss << "SpikeDx * NrSpikesX != BasisDx\n";
-    ss << fDxSpike << " * " << fNxSpike << " != " << fDxBasis << "\n";
+    ss << fDxSpike / CLHEP::mm << " mm * " << fNxSpike
+       << " != " << fDxBasis / CLHEP::mm << " mm\n";
     ss << "\n";
     error = true;
   }
@@ -192,7 +193,8 @@ void Surface::RoughnessHelper::CheckValues() {
   if (!isSame(allSpikesY, fDyBasis)) {
     ss << "Spikes does not fit on Basis (Y-Dimension)!\n";
     ss << "SpikeDy * NrSpikesY != BasisDy\n";
-    ss << fDySpike << " * " << fNySpike << " != " << fDyBasis << "\n";
+    ss << fDySpike / CLHEP::mm << " mm * " << fNySpike
+       << " != " << fDyBasis / CLHEP::mm << " mm\n";
     ss << "\n";
     error = true;
   }
@@ -201,7 +203,11 @@ void Surface::RoughnessHelper::CheckValues() {
     std::stringstream stream;
     stream << "\n";
     stream << "**************************************************\n";
-    stream << "Error while generation of " << fName << "\n";
+    stream << "*                                                *\n";
+    stream << "* Error while generation of " << std::setw(21) << std::left
+           << fName << "*\n";
+    stream << "*                                                *\n";
+    stream << "**************************************************\n";
     stream << "\n";
     ss << "**************************************************\n";
     ss << "**************************************************\n";

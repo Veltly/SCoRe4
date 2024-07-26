@@ -13,6 +13,7 @@
 #include <G4Transform3D.hh>
 #include <G4UserLimits.hh>
 #include <cfloat>
+#include <limits>
 
 #include "../../../src/Portal/include/MultipleSubworld.hh"
 #include "../../../src/Service/include/MultiportalHelper.hh"
@@ -75,23 +76,6 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   const G4ThreeVector placementPortal{0 * cm, 0 * cm, 10 * cm};
   const G4Transform3D trafoPortal{G4RotationMatrix(), placementPortal};
 
-  // G4Material *subworldMaterial = nist->FindOrBuildMaterial("G4_AIR");
-  // G4Material *roughnessMaterial = nist->FindOrBuildMaterial("G4_Si");
-  //
-  // const G4int subworlds_x{2};
-  // const G4int subworlds_y{2};
-
-  // fPortalHelper.SetDxPortal(10 * cm);
-  // fPortalHelper.SetDyPortal(10 * cm);
-  // fPortalHelper.SetDzPortal(5. * mm);
-  //
-  // fPortalHelper.SetDxSub(fPortalHelper.GetPortalDx() / subworlds_x);
-  // fPortalHelper.SetDySub(fPortalHelper.GetPortalDy() / subworlds_y);
-  // fPortalHelper.SetDzSub(5. * mm);
-  //
-  // fPortalHelper.SetNxSub(subworlds_x);
-  // fPortalHelper.SetNySub(subworlds_y);
-
   fPortalHelper.AddSubworldPlacement(trafoA);
   fPortalHelper.AddSubworldPlacement(trafoB);
   fPortalHelper.AddSubworldPlacement(trafoC);
@@ -104,48 +88,12 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   fPortalHelper.SetPortalPlacement(trafoPortal);
 
-  // fPortalHelper.SetSubworldMaterial(subworldMaterial);
-
   fPortalHelper.SetNDifferentSubworlds(3);
 
   fPortalHelper.SetPortalName("Portal");
 
-  // const G4int spikes{2};
-
-  // fRoughnessHelperA.SetSpikeNx(spikes);
-  // fRoughnessHelperA.SetSpikeNy(spikes);
-  // fRoughnessHelperA.SetSpikeDx(fPortalHelper.GetSubworldDx() / spikes);
-  // fRoughnessHelperA.SetSpikeDy(fPortalHelper.GetSubworldDy() / spikes);
-  // fRoughnessHelperA.SetSpikeMeanHeight(1. * mm);
-  // fRoughnessHelperA.SetBasisDx(fPortalHelper.GetSubworldDx());
-  // fRoughnessHelperA.SetBasisDy(fPortalHelper.GetSubworldDy());
-  // fRoughnessHelperA.SetBasisHeight(1 * mm);
-  // fRoughnessHelperA.SetSpikeform(Surface::Spikeform::StandardPyramide);
-  // fRoughnessHelperA.SetMaterial(roughnessMaterial);
   fRoughnessHelperA.Generate();
-
-  // fRoughnessHelperB.SetSpikeNx(spikes);
-  // fRoughnessHelperB.SetSpikeNy(spikes);
-  // fRoughnessHelperB.SetSpikeDx(fPortalHelper.GetSubworldDx() / spikes);
-  // fRoughnessHelperB.SetSpikeDy(fPortalHelper.GetSubworldDy() / spikes);
-  // fRoughnessHelperB.SetSpikeMeanHeight(2. * mm);
-  // fRoughnessHelperB.SetBasisDx(fPortalHelper.GetSubworldDx());
-  // fRoughnessHelperB.SetBasisDy(fPortalHelper.GetSubworldDy());
-  // fRoughnessHelperB.SetBasisHeight(1 * mm);
-  // fRoughnessHelperB.SetSpikeform(Surface::Spikeform::StandardPyramide);
-  // fRoughnessHelperB.SetMaterial(roughnessMaterial);
   fRoughnessHelperB.Generate();
-
-  // fRoughnessHelperC.SetSpikeNx(spikes);
-  // fRoughnessHelperC.SetSpikeNy(spikes);
-  // fRoughnessHelperC.SetSpikeDx(fPortalHelper.GetSubworldDx() / spikes);
-  // fRoughnessHelperC.SetSpikeDy(fPortalHelper.GetSubworldDy() / spikes);
-  // fRoughnessHelperC.SetSpikeMeanHeight(3. * mm);
-  // fRoughnessHelperC.SetBasisDx(fPortalHelper.GetSubworldDx());
-  // fRoughnessHelperC.SetBasisDy(fPortalHelper.GetSubworldDy());
-  // fRoughnessHelperC.SetBasisHeight(1 * mm);
-  // fRoughnessHelperC.SetSpikeform(Surface::Spikeform::StandardPyramide);
-  // fRoughnessHelperC.SetMaterial(roughnessMaterial);
   fRoughnessHelperC.Generate();
 
   G4Transform3D trafo{
@@ -160,6 +108,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                              fRoughnessHelperC.FacetStore());
 
   fPortalHelper.Generate();
+
+  CheckValues();
+
   Surface::MultipleSubworld *subA = fPortalHelper.GetSubworld(0);
   Surface::MultipleSubworld *subB = fPortalHelper.GetSubworld(1);
   Surface::MultipleSubworld *subC = fPortalHelper.GetSubworld(2);
@@ -177,4 +128,158 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   //   always return the physical World
   //
   return physWorld;
+}
+
+void DetectorConstruction::CheckValues() {
+  auto isSame = [](const G4double valA, const G4double valB) {
+    const G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
+    return std::fabs(valA - valB) < numericLimit;
+  };
+
+  const G4double subDx{fPortalHelper.GetSubworldDx()};
+  const G4double subDy{fPortalHelper.GetSubworldDy()};
+  const G4double subDz{fPortalHelper.GetSubworldDz()};
+
+  const G4double spikeDxA{fRoughnessHelperA.GetSpikeDx()};
+  const G4double spikeDyA{fRoughnessHelperA.GetSpikeDy()};
+  const G4double spikeHeightA{fRoughnessHelperA.GetSpikeMeanHeight()};
+  const G4int spikeNxA{fRoughnessHelperA.GetSpikeNx()};
+  const G4int spikeNyA{fRoughnessHelperA.GetSpikeNy()};
+  const G4double basisDzA{fRoughnessHelperA.GetBasisHeight()};
+
+  const G4double spikeDxB{fRoughnessHelperB.GetSpikeDx()};
+  const G4double spikeDyB{fRoughnessHelperB.GetSpikeDy()};
+  const G4double spikeHeightB{fRoughnessHelperB.GetSpikeMeanHeight()};
+  const G4int spikeNxB{fRoughnessHelperB.GetSpikeNx()};
+  const G4int spikeNyB{fRoughnessHelperB.GetSpikeNy()};
+  const G4double basisDzB{fRoughnessHelperC.GetBasisHeight()};
+
+  const G4double spikeDxC{fRoughnessHelperC.GetSpikeDx()};
+  const G4double spikeDyC{fRoughnessHelperC.GetSpikeDy()};
+  const G4double spikeHeightC{fRoughnessHelperC.GetSpikeMeanHeight()};
+  const G4int spikeNxC{fRoughnessHelperC.GetSpikeNx()};
+  const G4int spikeNyC{fRoughnessHelperC.GetSpikeNy()};
+  const G4double basisDzC{fRoughnessHelperC.GetBasisHeight()};
+
+  G4bool error{false};
+  std::stringstream ss;
+  ss << "\n";
+
+  //
+  // Roughness A
+  //
+
+  if (!isSame(spikeDxA * spikeNxA, subDx)) {
+    ss << "RoughnessA:\n";
+    ss << "Spikes do not fit in Subworld (X-Dimension)!\n";
+    ss << "SpikeDx * SpikesNx != SubworldDx\n";
+    ss << spikeDxA / CLHEP::mm << " mm * " << spikeNxA
+       << " != " << subDx / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (!isSame(spikeDyA * spikeNyA, subDy)) {
+    ss << "RoughnessA:\n";
+    ss << "Spikes do not fit in Subworld (Y-Dimension)!\n";
+    ss << "SpikeDy * SpikesNy != SubworldDy\n";
+    ss << spikeDyA / CLHEP::mm << " mm * " << spikeNyA
+       << " != " << subDy / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (!isSame(spikeHeightA + basisDzA, subDz)) {
+    ss << "RoughnessA:\n";
+    ss << "Spikes do not fit in Subworld (Z-Dimension)!\n";
+    ss << "SpikeHeight + BasisHeight != SubworldDz\n";
+    ss << spikeHeightA / CLHEP::mm << " mm + " << basisDzA / CLHEP::mm
+       << " mm != " << subDz / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  //
+  // Roughness B
+  //
+
+  if (!isSame(spikeDxB * spikeNxB, subDx)) {
+    ss << "RoughnessB:\n";
+    ss << "Spikes do not fit in Subworld (X-Dimension)!\n";
+    ss << "SpikeDx * SpikesNx != SubworldDx\n";
+    ss << spikeDxB / CLHEP::mm << " mm * " << spikeNxB
+       << " != " << subDx / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (!isSame(spikeDyB * spikeNyB, subDy)) {
+    ss << "RoughnessB:\n";
+    ss << "Spikes do not fit in Subworld (Y-Dimension)!\n";
+    ss << "SpikeDy * SpikesNy != SubworldDy\n";
+    ss << spikeDyB / CLHEP::mm << " mm * " << spikeNyB
+       << " != " << subDy / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (!isSame(spikeHeightB + basisDzB, subDz)) {
+    ss << "RoughnessB:\n";
+    ss << "Spikes do not fit in Subworld (Z-Dimension)!\n";
+    ss << "SpikeHeight + BasisHeight != SubworldDz\n";
+    ss << spikeHeightB / CLHEP::mm << " mm + " << basisDzB / CLHEP::mm
+       << " mm != " << subDz / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  //
+  // Roughness C
+  //
+
+  if (!isSame(spikeDxC * spikeNxC, subDx)) {
+    ss << "RoughnessC:\n";
+    ss << "Spikes do not fit in Subworld (X-Dimension)!\n";
+    ss << "SpikeDx * SpikesNx != SubworldDx\n";
+    ss << spikeDxC / CLHEP::mm << " mm * " << spikeNxC
+       << " != " << subDx / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (!isSame(spikeDyC * spikeNyC, subDy)) {
+    ss << "RoughnessC:\n";
+    ss << "Spikes do not fit in Subworld (Y-Dimension)!\n";
+    ss << "SpikeDy * SpikesNy != SubworldDy\n";
+    ss << spikeDyC / CLHEP::mm << " mm * " << spikeNyC
+       << " != " << subDy / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (!isSame(spikeHeightC + basisDzC, subDz)) {
+    ss << "RoughnessC:\n";
+    ss << "Spikes do not fit in Subworld (Z-Dimension)!\n";
+    ss << "SpikeHeight + BasisHeight != SubworldDz\n";
+    ss << spikeHeightC / CLHEP::mm << " mm + " << basisDzC / CLHEP::mm
+       << " mm != " << subDz / CLHEP::mm << " mm\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (error) {
+    std::stringstream stream;
+    stream << "\n";
+    stream << "**************************************************\n";
+    stream << "*                                                *\n";
+    stream << "*        Error while generating Detector!        *\n";
+    stream << "*                                                *\n";
+    stream << "**************************************************\n";
+
+    ss << "\n";
+    ss << "**************************************************\n";
+    ss << "**************************************************\n";
+    G4cout << stream.str() << ss.str() << G4endl;
+    exit(EXIT_FAILURE);
+  }
 }

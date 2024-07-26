@@ -16,7 +16,7 @@ namespace Surface {
 ///
 class Logger {
  public:
-  Logger(G4String aId, G4int aVerboseLvl = 4);
+  Logger(const G4String aId, const G4int aVerboseLvl = 4);
 
   void WriteInfo(const G4String &) const;
   void WriteInfo(const G4String &&) const;
@@ -45,7 +45,12 @@ class Logger {
   void WriteDebugInfo(const std::stringstream &&) const;
   G4bool WriteDebugInfo() const;
 
+  // Setter
   void SetVerboseLvl(const G4int aVerboseLvl);
+
+  // Getter
+  inline G4int GetVerboseLvl() { return fVerboseLvl; }
+  inline const G4String &GetId() { return fId; }
 
  private:
   G4String fId;

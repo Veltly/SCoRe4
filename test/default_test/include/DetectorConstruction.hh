@@ -48,10 +48,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
 
   G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
 
+ private:
+  void CheckValues();
+
  protected:
-  // Surface::SurfaceGenerator fGeneratorA;
-  // Surface::SurfaceGenerator fGeneratorB;
-  // Surface::SurfaceGenerator fGeneratorC;
   Surface::MultiportalHelper fPortalHelper;
   Surface::RoughnessHelper fRoughnessHelperA;
   Surface::RoughnessHelper fRoughnessHelperB;
