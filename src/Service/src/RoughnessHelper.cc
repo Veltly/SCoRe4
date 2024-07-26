@@ -165,12 +165,52 @@ void Surface::RoughnessHelper::SetStepLimit(const G4double val) {
 }
 
 void Surface::RoughnessHelper::CheckValues() {
-  // TODO: Implement checks for values
   if (fStepLimit == nullptr) {
     const G4double min = std::min(fDxSpike, fDySpike);
     fStepLimit = new G4UserLimits(0.01 * min);
     fLogger.WriteDetailInfo("Minimum set to " + std::to_string(0.01 * min));
   }
+
+  auto isSame = [](const G4double valA, const G4double valB) {
+    const G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
+    return (std::fabs(valA) - std::fabs(valB)) < numericLimit;
+  };
+
+  G4bool error{false};
+  std::stringstream ss;
+  // X-dimension
+  const G4double allSpikesX = fNxSpike * fDxSpike;
+  if (!isSame(allSpikesX, fDxBasis)) {
+    ss << "Spikes does not fit on Basis (X-Dimension)!\n";
+    ss << "SpikeDx * NrSpikesX != BasisDx\n";
+    ss << fDxSpike << " * " << fNxSpike << " != " << fDxBasis << "\n";
+    ss << "\n";
+    error = true;
+  }
+
+  const G4double allSpikesY = fNySpike * fDySpike;
+  if (!isSame(allSpikesY, fDyBasis)) {
+    ss << "Spikes does not fit on Basis (Y-Dimension)!\n";
+    ss << "SpikeDy * NrSpikesY != BasisDy\n";
+    ss << fDySpike << " * " << fNySpike << " != " << fDyBasis << "\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (error) {
+    std::stringstream stream;
+    stream << "\n";
+    stream << "**************************************************\n";
+    stream << "Error while generation of " << fName << "\n";
+    stream << "\n";
+    ss << "**************************************************\n";
+    ss << "**************************************************\n";
+    ss << "\n";
+
+    fLogger.WriteError(stream.str() + ss.str());
+    exit(EXIT_FAILURE);
+  }
+  fLogger.WriteInfo("Values correct");
 }
 
 void Surface::RoughnessHelper::BuildSurface() {

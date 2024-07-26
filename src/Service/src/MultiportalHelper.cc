@@ -29,7 +29,55 @@ Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
       fMessenger(new MultiportalHelperMessenger(this, helperName)) {}
 
 void Surface::MultiportalHelper::CheckValues() {
-  fLogger.WriteInfo("All values correct");
+  auto isSame = [](const G4double valA, const G4double valB) {
+    const G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
+    return (std::fabs(valA) - std::fabs(valB)) < numericLimit;
+  };
+
+  G4bool error{false};
+  std::stringstream ss;
+  // X-dimension
+  const G4double allSubworldX = fNx * fDxSub;
+  if (!isSame(allSubworldX, fDx)) {
+    ss << "Subworld does not fit in portal (X-Dimension)!\n";
+    ss << "SubworldDx * NrSubworlds != PortalDx\n";
+    ss << fDxSub << " * " << fNx << " != " << fDx << "\n";
+    ss << "\n";
+    error = true;
+  }
+
+  const G4double allSubworldY = fNy * fDySub;
+  if (!isSame(allSubworldY, fDy)) {
+    ss << "Subworld does not fit in portal (Y-Dimension)!\n";
+    ss << "SubworldDy * NrSubworlds != PortalDy\n";
+    ss << fDySub << " * " << fNy << " != " << fDy << "\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (!isSame(fDzSub, fDz)) {
+    ss << "Subworld does not fit in portal (Z-Dimension)!\n";
+    ss << "SubworldDz != PortalDz\n";
+    ss << fDzSub << " != " << fDz << "\n";
+    ss << "\n";
+    error = true;
+  }
+
+  if (error) {
+    std::stringstream stream;
+    stream << "\n";
+    stream << "**************************************************\n";
+    stream << "Error while generation of " << fHelperName << "\n";
+    stream << "Portal: " << fPortalName << " , Subworld: " << fSubName << "\n";
+    stream << "\n";
+    ss << "**************************************************\n";
+    ss << "**************************************************\n";
+    ss << "\n";
+
+    fLogger.WriteError(stream.str() + ss.str());
+    exit(EXIT_FAILURE);
+  }
+  fLogger.WriteInfo("Values correct");
 }
 
 void Surface::MultiportalHelper::GenerateSubworlds() {

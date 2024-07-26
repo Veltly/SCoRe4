@@ -31,3 +31,5 @@ add_subdirectory(src)
 if(COMPILE_TEST)
   add_subdirectory(test)
 endif()
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/mac/ DESTINATION mac)
