@@ -9,8 +9,8 @@
 #ifndef SURFACE_SURFACESOURCEMESSENGER
 #define SURFACE_SURFACESOURCEMESSENGER
 
-#include "G4UImessenger.hh"
 #include "G4String.hh"
+#include "G4UImessenger.hh"
 
 class G4UIcommand;
 class G4UIdirectory;
@@ -28,21 +28,20 @@ class SurfaceSource;
 //@brief Messenger for the Surface Source.
 //
 
-class SurfaceSourceMessenger: public G4UImessenger {
+class SurfaceSourceMessenger : public G4UImessenger {
+ public:
+  SurfaceSourceMessenger(Surface::SurfaceSource *source);
+  ~SurfaceSourceMessenger();
 
-public:
-	SurfaceSourceMessenger(Surface::SurfaceSource *source);
-	~SurfaceSourceMessenger();
+  void SetNewValue(G4UIcommand *command, G4String newValues);
 
-	void SetNewValue(G4UIcommand *command, G4String newValues);
-
-private:
-	Surface::SurfaceSource *Source;
-	G4UIdirectory *Directory;
-	G4UIcmdWithAnInteger *CmdVerbose;
-	G4UIcmdWithoutParameter *CmdShowSurface;
-	G4UIcmdWithAString *CmdLogSurface;
+ private:
+  Surface::SurfaceSource *Source;
+  G4UIdirectory *Directory;
+  G4UIcmdWithAnInteger *CmdVerbose;
+  G4UIcmdWithoutParameter *CmdShowSurface;
+  G4UIcmdWithAString *CmdLogSurface;
 };
-}
+}  // namespace Surface
 
-#endif // SURFACE_SURFACESOURCEMESSENGER
+#endif  // SURFACE_SURFACESOURCEMESSENGER

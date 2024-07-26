@@ -15,8 +15,6 @@
 #include <cfloat>
 
 #include "../../../src/Portal/include/MultipleSubworld.hh"
-#include "../../../src/Portal/include/PortalStore.hh"
-#include "../../../src/Service/include/Locator.hh"
 #include "../../../src/Service/include/MultiportalHelper.hh"
 #include "../../../src/Service/include/RoughnessHelper.hh"
 #include "G4Box.hh"
@@ -25,8 +23,6 @@
 #include "G4PVPlacement.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
-#include "Portal/include/SubworldGrid.hh"
-#include "Portal/include/VPortal.hh"
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fScoringVolume(0) {}
@@ -117,40 +113,40 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   const G4int spikes{2};
 
-  roughnessA.NSpike_X(spikes);
-  roughnessA.NSpike_Y(spikes);
-  roughnessA.SpikeWidth_X(helper.GetSubworldDx() / spikes);
-  roughnessA.SpikeWidth_Y(helper.GetSubworldDy() / spikes);
-  roughnessA.SpikeMeanHeight(1. * mm);
-  roughnessA.BasisWidth_X(helper.GetSubworldDx());
-  roughnessA.BasisWidth_Y(helper.GetSubworldDy());
-  roughnessA.BasisHeight(1 * mm);
-  roughnessA.Spikeform(Surface::Spikeform::StandardPyramide);
-  roughnessA.Material(roughnessMaterial);
+  roughnessA.SetSpikeNx(spikes);
+  roughnessA.SetSpikeNy(spikes);
+  roughnessA.SetSpikeDx(helper.GetSubworldDx() / spikes);
+  roughnessA.SetSpikeDy(helper.GetSubworldDy() / spikes);
+  roughnessA.SetSpikeMeanHeight(1. * mm);
+  roughnessA.SetBasisDx(helper.GetSubworldDx());
+  roughnessA.SetBasisDy(helper.GetSubworldDy());
+  roughnessA.SetBasisHeight(1 * mm);
+  roughnessA.SetSpikeform(Surface::Spikeform::StandardPyramide);
+  roughnessA.SetMaterial(roughnessMaterial);
   roughnessA.Generate();
 
-  roughnessB.NSpike_X(spikes);
-  roughnessB.NSpike_Y(spikes);
-  roughnessB.SpikeWidth_X(helper.GetSubworldDx() / spikes);
-  roughnessB.SpikeWidth_Y(helper.GetSubworldDy() / spikes);
-  roughnessB.SpikeMeanHeight(2. * mm);
-  roughnessB.BasisWidth_X(helper.GetSubworldDx());
-  roughnessB.BasisWidth_Y(helper.GetSubworldDy());
-  roughnessB.BasisHeight(1 * mm);
-  roughnessB.Spikeform(Surface::Spikeform::StandardPyramide);
-  roughnessB.Material(roughnessMaterial);
+  roughnessB.SetSpikeNx(spikes);
+  roughnessB.SetSpikeNy(spikes);
+  roughnessB.SetSpikeDx(helper.GetSubworldDx() / spikes);
+  roughnessB.SetSpikeDy(helper.GetSubworldDy() / spikes);
+  roughnessB.SetSpikeMeanHeight(2. * mm);
+  roughnessB.SetBasisDx(helper.GetSubworldDx());
+  roughnessB.SetBasisDy(helper.GetSubworldDy());
+  roughnessB.SetBasisHeight(1 * mm);
+  roughnessB.SetSpikeform(Surface::Spikeform::StandardPyramide);
+  roughnessB.SetMaterial(roughnessMaterial);
   roughnessB.Generate();
 
-  roughnessC.NSpike_X(spikes);
-  roughnessC.NSpike_Y(spikes);
-  roughnessC.SpikeWidth_X(helper.GetSubworldDx() / spikes);
-  roughnessC.SpikeWidth_Y(helper.GetSubworldDy() / spikes);
-  roughnessC.SpikeMeanHeight(3. * mm);
-  roughnessC.BasisWidth_X(helper.GetSubworldDx());
-  roughnessC.BasisWidth_Y(helper.GetSubworldDy());
-  roughnessC.BasisHeight(1 * mm);
-  roughnessC.Spikeform(Surface::Spikeform::StandardPyramide);
-  roughnessC.Material(roughnessMaterial);
+  roughnessC.SetSpikeNx(spikes);
+  roughnessC.SetSpikeNy(spikes);
+  roughnessC.SetSpikeDx(helper.GetSubworldDx() / spikes);
+  roughnessC.SetSpikeDy(helper.GetSubworldDy() / spikes);
+  roughnessC.SetSpikeMeanHeight(3. * mm);
+  roughnessC.SetBasisDx(helper.GetSubworldDx());
+  roughnessC.SetBasisDy(helper.GetSubworldDy());
+  roughnessC.SetBasisHeight(1 * mm);
+  roughnessC.SetSpikeform(Surface::Spikeform::StandardPyramide);
+  roughnessC.SetMaterial(roughnessMaterial);
   roughnessC.Generate();
 
   G4Transform3D trafo{

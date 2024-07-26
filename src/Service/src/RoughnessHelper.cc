@@ -9,8 +9,10 @@
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MultiUnion.hh"
+#include "G4NistManager.hh"
 #include "G4UserLimits.hh"
 #include "Service/include/G4Voxelizer_Green.hh"
+#include "Service/include/RoughnessHelperMessenger.hh"
 #include "SurfaceGenerator/include/Describer.hh"
 #include "SurfaceGenerator/include/Generator.hh"
 
@@ -19,6 +21,7 @@ Surface::RoughnessHelper::RoughnessHelper(const G4String &name)
       fGenerator(name),
       fRoughness(nullptr),
       fLogicRoughness(nullptr),
+      fMessenger(new RoughnessHelperMessenger(this)),
       fName(name),
       fStepLimit(nullptr),
       fMaterial(nullptr) {}
@@ -29,6 +32,7 @@ Surface::RoughnessHelper::RoughnessHelper(const G4String &name,
       fGenerator(name, verboseLvl),
       fRoughness(nullptr),
       fLogicRoughness(nullptr),
+      fMessenger(new RoughnessHelperMessenger(this)),
       fName(name),
       fStepLimit(nullptr),
       fMaterial(nullptr) {}
@@ -62,52 +66,71 @@ G4LogicalVolume *Surface::RoughnessHelper::LogicRoughness() const {
   return fLogicRoughness;
 }
 
-void Surface::RoughnessHelper::SpikeWidth_X(const G4double val) {
+void Surface::RoughnessHelper::SetVerbose(const G4int verboseLvl) {
+  fLogger.SetVerboseLvl(verboseLvl);
+}
+
+void Surface::RoughnessHelper::SetSpikeDx(const G4double val) {
   fDxSpike = val;
 }
 
-void Surface::RoughnessHelper::SpikeWidth_Y(const G4double val) {
+void Surface::RoughnessHelper::SetSpikeDy(const G4double val) {
   fDySpike = val;
 }
 
-void Surface::RoughnessHelper::SpikeMeanHeight(const G4double val) {
+void Surface::RoughnessHelper::SetSpikeMeanHeight(const G4double val) {
   fDzSpikeMean = val;
 }
 
-void Surface::RoughnessHelper::SpikeHeightDeviation(const G4double val) {
+void Surface::RoughnessHelper::SetSpikeHeightDeviation(const G4double val) {
   fDzSpikeDev = val;
 }
 
-void Surface::RoughnessHelper::Spikeform(
+void Surface::RoughnessHelper::SetSpikeform(
     const Surface::Describer::Spikeform form) {
   fSpikeform = form;
 }
 
-void Surface::RoughnessHelper::NSpike_X(const G4int val) { fNxSpike = val; }
+void Surface::RoughnessHelper::SetSpikeNx(const G4int val) { fNxSpike = val; }
 
-void Surface::RoughnessHelper::NSpike_Y(const G4int val) { fNySpike = val; }
+void Surface::RoughnessHelper::SetSpikeNy(const G4int val) { fNySpike = val; }
 
-void Surface::RoughnessHelper::NLayer(const G4int val) { fNLayer = val; }
+void Surface::RoughnessHelper::SetSpikeNLayer(const G4int val) {
+  fNLayer = val;
+}
 
-void Surface::RoughnessHelper::BasisWidth_X(const G4double val) {
+void Surface::RoughnessHelper::SetBasisDx(const G4double val) {
   fDxBasis = val;
 }
 
-void Surface::RoughnessHelper::BasisWidth_Y(const G4double val) {
+void Surface::RoughnessHelper::SetBasisDy(const G4double val) {
   fDyBasis = val;
 }
 
-void Surface::RoughnessHelper::BasisHeight(const G4double val) {
+void Surface::RoughnessHelper::SetBasisHeight(const G4double val) {
   fDzBasis = val;
 }
 
-void Surface::RoughnessHelper::Material(G4Material *mat) { fMaterial = mat; }
+void Surface::RoughnessHelper::SetMaterial(G4Material *material) {
+  fMaterial = material;
+}
+void Surface::RoughnessHelper::SetMaterial(const G4String &materialName) {
+  G4NistManager *nist = G4NistManager::Instance();
+  G4Material *material = nist->FindOrBuildMaterial(materialName);
+  SetMaterial(material);
+}
 
-void Surface::RoughnessHelper::BoundaryX(const G4int val) { fNxBoundary = val; }
-void Surface::RoughnessHelper::BoundaryY(const G4int val) { fNyBoundary = val; }
-void Surface::RoughnessHelper::BoundaryZ(const G4int val) { fNzBoundary = val; }
+void Surface::RoughnessHelper::SetBoundaryX(const G4int val) {
+  fNxBoundary = val;
+}
+void Surface::RoughnessHelper::SetBoundaryY(const G4int val) {
+  fNyBoundary = val;
+}
+void Surface::RoughnessHelper::SetBoundaryZ(const G4int val) {
+  fNzBoundary = val;
+}
 
-void Surface::RoughnessHelper::StepLimit(const G4double val) {
+void Surface::RoughnessHelper::SetStepLimit(const G4double val) {
   fStepLimit = new G4UserLimits(val);
 }
 

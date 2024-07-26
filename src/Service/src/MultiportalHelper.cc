@@ -5,10 +5,9 @@
 
 #include "Service/include/MultiportalHelper.hh"
 
-#include <G4RotationMatrix.hh>
-
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
+#include "G4NistManager.hh"
 #include "G4PVPlacement.hh"
 #include "G4Transform3D.hh"
 #include "G4VPhysicalVolume.hh"
@@ -16,12 +15,18 @@
 #include "Portal/include/PortalStore.hh"
 #include "Portal/include/SubworldGrid.hh"
 #include "Service/include/Locator.hh"
+#include "Service/include/MultiportalHelperMessenger.hh"
 
-Surface::MultiportalHelper::MultiportalHelper()
-    : fLogger("MultiPortalHelper") {}
+Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName)
+    : fHelperName(helperName),
+      fLogger("MPH_" + helperName),
+      fMessenger(new MultiportalHelperMessenger(this)) {}
 
-Surface::MultiportalHelper::MultiportalHelper(const G4int verboseLvl)
-    : fLogger("MultiPortalHelper", verboseLvl) {}
+Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
+                                              const G4int verboseLvl)
+    : fHelperName(helperName),
+      fLogger("MPH_" + helperName, verboseLvl),
+      fMessenger(new MultiportalHelperMessenger(this)) {}
 
 void Surface::MultiportalHelper::CheckValues() {
   fLogger.WriteInfo("All values correct");
@@ -170,6 +175,13 @@ void Surface::MultiportalHelper::SetVerbose(const G4int verboseLvl) {
 
 void Surface::MultiportalHelper::SetSubworldMaterial(G4Material *mat) {
   fSubworldMaterial = mat;
+}
+
+void Surface::MultiportalHelper::SetSubworldMaterial(
+    const G4String &materialName) {
+  G4NistManager *nist = G4NistManager::Instance();
+  G4Material *material = nist->FindOrBuildMaterial(materialName);
+  SetSubworldMaterial(material);
 }
 
 void Surface::MultiportalHelper::SetNxSub(const G4int val) { fNx = val; }

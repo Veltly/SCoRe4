@@ -14,6 +14,8 @@
 
 namespace Surface {
 
+class RoughnessHelperMessenger;
+
 typedef Describer::Spikeform Spikeform;
 
 class RoughnessHelper {
@@ -27,28 +29,32 @@ class RoughnessHelper {
   G4MultiUnion *SolidRoughness() const;
   G4LogicalVolume *LogicRoughness() const;
   FacetStore *FacetStore();
+  inline const G4String &GetName() const { return fName; }
+
   // Setter
-  void SpikeWidth_X(const G4double);
-  void SpikeWidth_Y(const G4double);
-  void SpikeMeanHeight(const G4double);
-  void SpikeHeightDeviation(const G4double);
-  void Spikeform(const Describer::Spikeform);
+  void SetVerbose(const G4int verboseLvl);
+  void SetSpikeDx(const G4double);
+  void SetSpikeDy(const G4double);
+  void SetSpikeMeanHeight(const G4double);
+  void SetSpikeHeightDeviation(const G4double);
+  void SetSpikeform(const Describer::Spikeform);
 
-  void NSpike_X(const G4int);
-  void NSpike_Y(const G4int);
-  void NLayer(const G4int);
+  void SetSpikeNx(const G4int);
+  void SetSpikeNy(const G4int);
+  void SetSpikeNLayer(const G4int);
 
-  void BasisWidth_X(const G4double);
-  void BasisWidth_Y(const G4double);
-  void BasisHeight(const G4double);
+  void SetBasisDx(const G4double);
+  void SetBasisDy(const G4double);
+  void SetBasisHeight(const G4double);
 
-  void Material(G4Material *);
+  void SetMaterial(G4Material *);
+  void SetMaterial(const G4String &);
 
-  void BoundaryX(const G4int val);
-  void BoundaryY(const G4int val);
-  void BoundaryZ(const G4int val);
+  void SetBoundaryX(const G4int val);
+  void SetBoundaryY(const G4int val);
+  void SetBoundaryZ(const G4int val);
 
-  void StepLimit(const G4double val);
+  void SetStepLimit(const G4double val);
 
  private:
   void CheckValues();
@@ -62,6 +68,7 @@ class RoughnessHelper {
   SurfaceGenerator fGenerator;
   G4MultiUnion *fRoughness{nullptr};
   G4LogicalVolume *fLogicRoughness{nullptr};
+  RoughnessHelperMessenger *fMessenger;
 
   // General
   const G4String fName;

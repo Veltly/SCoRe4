@@ -13,10 +13,12 @@
 #include "Portal/include/MultipleSubworld.hh"
 
 namespace Surface {
+class MultiportalHelperMessenger;
+
 class MultiportalHelper {
  public:
-  MultiportalHelper();
-  MultiportalHelper(const G4int verboseLvl);
+  MultiportalHelper(const G4String &helperName);
+  MultiportalHelper(const G4String &helperName, const G4int verboseLvl);
 
   void Generate();
 
@@ -39,6 +41,7 @@ class MultiportalHelper {
   void SetVerbose(const G4int verboseLvl);
 
   void SetSubworldMaterial(G4Material *mat);
+  void SetSubworldMaterial(const G4String &materialName);
 
   void SetNxSub(const G4int val);
   void SetNySub(const G4int val);
@@ -51,6 +54,8 @@ class MultiportalHelper {
   void AddRoughness(G4LogicalVolume *, G4Transform3D &, FacetStore *);
 
   // Getter
+  const G4String GetName() { return fHelperName; }
+
   Surface::MultipleSubworld *GetSubworld(const G4int id);
 
   G4double GetPortalDx() const;
@@ -77,11 +82,14 @@ class MultiportalHelper {
 
  private:
   // General Infos
+  const G4String fHelperName;
   G4int fNOfDifferentSubworlds;
   G4bool fCheckOverlaps;
   G4LogicalVolume *fMotherVolume;
   G4Transform3D fPlacementPortal;
   G4int fVerbose;
+  Surface::Logger fLogger;
+  MultiportalHelperMessenger *fMessenger;
 
   // Subworld
   // Dimension
@@ -105,8 +113,6 @@ class MultiportalHelper {
   G4int fNy;
 
   Surface::MultipleSubworld *fPortal;
-
-  Surface::Logger fLogger;
 
   G4String fPortalName;
   G4String fSubName;
