@@ -10,6 +10,7 @@
 #include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/PortalStore.hh"
 #include "Portal/include/SubworldGrid.hh"
+#include "Service/include/FileLogger.hh"
 #include "Service/include/Locator.hh"
 #include "SurfaceGenerator/include/Calculator.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
@@ -30,7 +31,9 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(const G4String &name,
       fSamplerReady(false),
       fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
       fParticleGenerator(new G4GeneralParticleSource) {
+#if NDEBUG
   fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
+#endif
 }
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(
@@ -44,10 +47,17 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(
       fSamplerReady(false),
       fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
       fParticleGenerator(new G4GeneralParticleSource) {
+#if NDEBUG
   fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
+#endif
 }
 
-Surface::MultiSubworldSampler::~MultiSubworldSampler() { delete fFileLogger; }
+Surface::MultiSubworldSampler::~MultiSubworldSampler() {
+
+#if NDEBUG
+  delete fFileLogger;
+#endif
+}
 
 void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
   if (!fSamplerReady) {  // if Sampler not ready
