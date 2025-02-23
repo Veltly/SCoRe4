@@ -75,7 +75,7 @@ class VSampler {
     exit(EXIT_FAILURE);
   }
 
-  void PrintSampler() {
+  void PrintSampler() const {
     if (!fIsClosed) {
       fLogger.WriteError("Sampler not finished, can not be printed");
       return;

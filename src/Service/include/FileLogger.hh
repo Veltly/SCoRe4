@@ -16,7 +16,7 @@ namespace Surface {
 ///
 class FileLogger {
  public:
-  FileLogger(const G4String& filePath) noexcept;
+  explicit FileLogger(const G4String& filePath) noexcept;
   ~FileLogger() noexcept;
 
   void operator<<(const G4String& rhs) noexcept;

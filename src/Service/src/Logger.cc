@@ -6,9 +6,10 @@
 
 #include <G4ThreeVector.hh>
 #include <G4ios.hh>
+#include <utility>
 
-Surface::Logger::Logger(const G4String aId, const G4int aVerboseLvl)
-    : fId(aId), fVerboseLvl(aVerboseLvl) {}
+Surface::Logger::Logger(G4String aId, const G4int aVerboseLvl)
+    : fId(std::move(aId)), fVerboseLvl(aVerboseLvl) {}
 
 void Surface::Logger::WriteInfo(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseInfo) {

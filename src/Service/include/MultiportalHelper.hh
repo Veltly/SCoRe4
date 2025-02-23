@@ -17,46 +17,46 @@ class MultiportalHelperMessenger;
 
 class MultiportalHelper {
  public:
-  MultiportalHelper(const G4String &helperName);
-  MultiportalHelper(const G4String &helperName, const G4int verboseLvl);
+  explicit MultiportalHelper(const G4String &helperName);
+  MultiportalHelper(const G4String &helperName, G4int verboseLvl);
 
   void Generate();
 
   // Setter
-  void SetDxPortal(const G4double val);
-  void SetDyPortal(const G4double val);
-  void SetDzPortal(const G4double val);
+  void SetDxPortal(G4double val);
+  void SetDyPortal(G4double val);
+  void SetDzPortal(G4double val);
 
-  void SetDxSub(const G4double val);
-  void SetDySub(const G4double val);
-  void SetDzSub(const G4double val);
+  void SetDxSub(G4double val);
+  void SetDySub(G4double val);
+  void SetDzSub(G4double val);
 
   void AddSubworldPlacement(const G4Transform3D &trafo);
-  void AddSubworldDensity(const G4double density);
+  void AddSubworldDensity(G4double density);
 
   void SetPortalPlacement(const G4Transform3D &trafo);
 
   void SetMotherVolume(G4LogicalVolume *motherVolume);
 
-  void SetVerbose(const G4int verboseLvl);
+  void SetVerbose(G4int verboseLvl);
 
   void SetSubworldMaterial(G4Material *mat);
   void SetSubworldMaterial(const G4String &materialName);
 
-  void SetNxSub(const G4int val);
-  void SetNySub(const G4int val);
+  void SetNxSub(G4int val);
+  void SetNySub(G4int val);
 
-  void SetNDifferentSubworlds(const G4int val);
+  void SetNDifferentSubworlds(G4int val);
 
-  void SetPortalName(const G4String name);
-  void SetSubworldName(const G4String name);
+  void SetPortalName(const G4String &name);
+  void SetSubworldName(const G4String &name);
 
-  void AddRoughness(G4LogicalVolume *, G4Transform3D &, FacetStore *);
+  void AddRoughness(G4LogicalVolume *, const G4Transform3D &, FacetStore *);
 
   // Getter
-  const G4String GetName() { return fHelperName; }
+  G4String GetName() const { return fHelperName; }
 
-  Surface::MultipleSubworld *GetSubworld(const G4int id);
+  Surface::MultipleSubworld *GetSubworld(G4int id) const;
 
   G4double GetPortalDx() const;
   G4double GetPortalDy() const;
@@ -67,17 +67,17 @@ class MultiportalHelper {
   G4double GetSubworldDz() const;
 
   G4Material *GetSubworldMaterial() const;
-  G4Transform3D GetSubworldPlacement(const G4int id);
+  G4Transform3D GetSubworldPlacement(G4int id) const;
   // Verbose
   void PrintInfo() const;
   std::stringstream StreamInfo() const;
 
  private:
-  void CheckValues();
+  void CheckValues() const;
   void GenerateSubworlds();
   void GeneratePortal();
   void LinkPortalWithSubworlds();
-  void FillSubworldmap();
+  void FillSubworldMap() const;
   void AddRoughness();
 
  private:

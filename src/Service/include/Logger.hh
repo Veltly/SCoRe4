@@ -5,8 +5,6 @@
 #ifndef SRC_SERVICE_INCLUDE_LOGGER_HH_
 #define SRC_SERVICE_INCLUDE_LOGGER_HH_
 
-#include <sstream>
-
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 
@@ -16,7 +14,7 @@ namespace Surface {
 ///
 class Logger {
  public:
-  Logger(const G4String aId, const G4int aVerboseLvl = 4);
+  explicit Logger(G4String aId, G4int aVerboseLvl = 4);
 
   void WriteInfo(const G4String &) const;
   void WriteInfo(const G4String &&) const;
@@ -46,10 +44,10 @@ class Logger {
   G4bool WriteDebugInfo() const;
 
   // Setter
-  void SetVerboseLvl(const G4int aVerboseLvl);
+  void SetVerboseLvl(G4int aVerboseLvl);
 
   // Getter
-  inline G4int GetVerboseLvl() { return fVerboseLvl; }
+  inline G4int GetVerboseLvl() const { return fVerboseLvl; }
   inline const G4String &GetId() { return fId; }
 
  private:

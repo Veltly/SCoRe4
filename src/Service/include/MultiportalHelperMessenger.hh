@@ -21,13 +21,13 @@ namespace Surface {
 
 class MultiportalHelper;
 
-class MultiportalHelperMessenger : public G4UImessenger {
+class MultiportalHelperMessenger final : public G4UImessenger {
  public:
   explicit MultiportalHelperMessenger(Surface::MultiportalHelper *source,
                                       const G4String &name);
-  ~MultiportalHelperMessenger();
+  ~MultiportalHelperMessenger() override;
 
-  void SetNewValue(G4UIcommand *command, G4String newValues);
+  void SetNewValue(G4UIcommand *command, G4String newValues) override;
 
  private:
   Surface::MultiportalHelper *fSource;

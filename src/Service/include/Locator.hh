@@ -12,7 +12,7 @@
 namespace Surface {
 
 ///
-/// The Locator is used to have access to registered services from anywehre in
+/// The Locator is used to have access to registered services from anywhere in
 /// the code
 ///
 

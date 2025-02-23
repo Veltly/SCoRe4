@@ -98,10 +98,10 @@ void Surface::RoughnessHelper::SetSpikeform(const G4String &spikeform) {
   } else if (spikeform == "Peak") {
     SetSpikeform(Surface::Describer::Spikeform::Peak);
     return;
-  } else if (spikeform == "UniformPyramide") {
+  } else if (spikeform == "UniformPyramid") {
     SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
     return;
-  } else if (spikeform == "StandardPyramide") {
+  } else if (spikeform == "StandardPyramid") {
     SetSpikeform(Surface::Describer::Spikeform::StandardPyramide);
     return;
   }
@@ -114,8 +114,8 @@ void Surface::RoughnessHelper::SetSpikeform(const G4String &spikeform) {
   ss << "\n";
   ss << "Bump\n";
   ss << "Peak\n";
-  ss << "UniformPyramide\n";
-  ss << "StandardPyramide\n";
+  ss << "UniformPyramid\n";
+  ss << "StandardPyramid\n";
   ss << "\n";
   fLogger.WriteError(ss.str());
   exit(EXIT_FAILURE);
@@ -172,7 +172,7 @@ void Surface::RoughnessHelper::CheckValues() {
   }
 
   auto isSame = [](const G4double valA, const G4double valB) {
-    const G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
+    constexpr G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
     return std::fabs(valA - valB) < numericLimit;
   };
 
@@ -233,7 +233,7 @@ void Surface::RoughnessHelper::BuildSurface() {
 
   fGenerator.GenerateSurface();
 
-  fRoughness = static_cast<G4MultiUnion *>(fGenerator.GetSolid());
+  fRoughness = dynamic_cast<G4MultiUnion *>(fGenerator.GetSolid());
   fLogger.WriteDetailInfo("Generated roughness");
 }
 

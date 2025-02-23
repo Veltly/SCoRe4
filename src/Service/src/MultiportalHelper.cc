@@ -19,18 +19,46 @@
 
 Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName)
     : fHelperName(helperName),
+      fNOfDifferentSubworlds(0),
+      fCheckOverlaps(false),
+      fMotherVolume(nullptr),
+      fVerbose(0),
       fLogger("MPH_" + helperName),
-      fMessenger(new MultiportalHelperMessenger(this, helperName)) {}
+      fMessenger(new MultiportalHelperMessenger(this, helperName)),
+      fDxSub(0),
+      fDySub(0),
+      fDzSub(0),
+      fSubworldMaterial(nullptr),
+      fDx(0),
+      fDy(0),
+      fDz(0),
+      fNx(0),
+      fNy(0),
+      fPortal(nullptr) {}
 
 Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
                                               const G4int verboseLvl)
     : fHelperName(helperName),
+      fNOfDifferentSubworlds(0),
+      fCheckOverlaps(false),
+      fMotherVolume(nullptr),
+      fVerbose(0),
       fLogger("MPH_" + helperName, verboseLvl),
-      fMessenger(new MultiportalHelperMessenger(this, helperName)) {}
+      fMessenger(new MultiportalHelperMessenger(this, helperName)),
+      fDxSub(0),
+      fDySub(0),
+      fDzSub(0),
+      fSubworldMaterial(nullptr),
+      fDx(0),
+      fDy(0),
+      fDz(0),
+      fNx(0),
+      fNy(0),
+      fPortal(nullptr) {}
 
-void Surface::MultiportalHelper::CheckValues() {
+void Surface::MultiportalHelper::CheckValues() const {
   auto isSame = [](const G4double valA, const G4double valB) {
-    const G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
+    constexpr G4double numericLimit = std::numeric_limits<G4double>::epsilon() * 10;
     return std::fabs(valA - valB) < numericLimit;
   };
 
@@ -96,9 +124,9 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 
     // Create Trigger
     const G4String nameTrig = fSubName + "_Trigger_" + std::to_string(i);
-    G4Box *solidTrig =
+    const auto solidTrig =
         new G4Box(nameTrig, 1.1 * fDxSub, 1.1 * fDySub, 1.1 * fDzSub);
-    G4LogicalVolume *logicTrig =
+    const auto logicTrig =
         new G4LogicalVolume(solidTrig, fSubworldMaterial, nameTrig);
     G4VPhysicalVolume *physTrig =
         new G4PVPlacement(transformation, logicTrig, nameTrig, fMotherVolume,
@@ -106,16 +134,16 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 
     // Create Subworld
     const G4String nameSub = fSubName + "Subworld_" + std::to_string(i);
-    G4Box *solidSub = new G4Box(nameSub, fDxSub, fDySub, fDzSub);
-    G4LogicalVolume *logicSub =
+    const auto solidSub = new G4Box(nameSub, fDxSub, fDySub, fDzSub);
+    const auto logicSub =
         new G4LogicalVolume(solidSub, fSubworldMaterial, nameSub);
     const G4ThreeVector placementSub{0., 0., 0.};
     G4VPhysicalVolume *physSub =
-        new G4PVPlacement(0, placementSub, logicSub, nameSub, logicTrig, false,
+        new G4PVPlacement(nullptr, placementSub, logicSub, nameSub, logicTrig, false,
                           0, fCheckOverlaps);
 
     // Create Subworld
-    Surface::MultipleSubworld *portalSubworld = new Surface::MultipleSubworld(
+    auto *portalSubworld = new Surface::MultipleSubworld(
         nameSub, physSub, transformation, fVerbose);
 
     // set trigger
@@ -134,8 +162,8 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 void Surface::MultiportalHelper::GeneratePortal() {
   const G4String namePortal = fPortalName;
 
-  G4Box *solidPortal = new G4Box(namePortal, fDx, fDy, fDz);
-  G4LogicalVolume *logicPortal =
+  const auto solidPortal = new G4Box(namePortal, fDx, fDy, fDz);
+  auto *logicPortal =
       new G4LogicalVolume(solidPortal, fSubworldMaterial, namePortal);
   G4VPhysicalVolume *physPortal =
       new G4PVPlacement(fPlacementPortal, logicPortal, namePortal,
@@ -163,7 +191,7 @@ void Surface::MultiportalHelper::LinkPortalWithSubworlds() {
   fLogger.WriteInfo("Linked Portal with Subworlds");
 }
 
-void Surface::MultiportalHelper::FillSubworldmap() {
+void Surface::MultiportalHelper::FillSubworldMap() const {
   Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> mapHelper(
       fVerbose);
   for (G4int i = 0; i < fNOfDifferentSubworlds; ++i) {
@@ -187,7 +215,7 @@ void Surface::MultiportalHelper::Generate() {
   // link all
   LinkPortalWithSubworlds();
   // Create Helper, fill and use it
-  FillSubworldmap();
+  FillSubworldMap();
 
   AddRoughness();
   fLogger.WriteInfo("Generated Portal with Subworlds");
@@ -248,15 +276,15 @@ void Surface::MultiportalHelper::SetNDifferentSubworlds(const G4int val) {
 }
 
 Surface::MultipleSubworld *Surface::MultiportalHelper::GetSubworld(
-    const G4int id) {
+    const G4int id) const {
   return fMultipleSubworld.at(id);
 }
 
-void Surface::MultiportalHelper::SetPortalName(const G4String name) {
+void Surface::MultiportalHelper::SetPortalName(const G4String &name) {
   fPortalName = name;
 }
 
-void Surface::MultiportalHelper::SetSubworldName(const G4String name) {
+void Surface::MultiportalHelper::SetSubworldName(const G4String &name) {
   fSubName = name;
 }
 
@@ -324,12 +352,12 @@ G4Material *Surface::MultiportalHelper::GetSubworldMaterial() const {
   return fSubworldMaterial;
 }
 
-G4Transform3D Surface::MultiportalHelper::GetSubworldPlacement(const G4int id) {
+G4Transform3D Surface::MultiportalHelper::GetSubworldPlacement(const G4int id) const {
   return fPlacementSub.at(id);
 }
 
 void Surface::MultiportalHelper::AddRoughness() {
-  if (fRoughness.size() == 0) {
+  if (fRoughness.empty()) {
     return;
   }
   for (size_t id = 0; id < fRoughness.size(); ++id) {
@@ -357,7 +385,7 @@ void Surface::MultiportalHelper::AddRoughness() {
 }
 
 void Surface::MultiportalHelper::AddRoughness(G4LogicalVolume *vol,
-                                              G4Transform3D &trafo,
+                                              const G4Transform3D &trafo,
                                               FacetStore *facetStore) {
   fRoughness.push_back(vol);
   fTransformRoughness.push_back(trafo);

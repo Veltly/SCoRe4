@@ -19,7 +19,7 @@ class SurfaceStore {
   void operator=(const SurfaceStore &) = delete;
 
   ~SurfaceStore() {
-    for (auto *surface : fSurfaceStore) {
+    for (const auto *surface : fSurfaceStore) {
       delete surface;
       surface = nullptr;
     }
