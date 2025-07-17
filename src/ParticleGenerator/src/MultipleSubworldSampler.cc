@@ -29,7 +29,7 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(const G4String &name,
       fShiftActive(false),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
       fSamplerReady(false),
-      fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
+      fLogger("MultiSubworldSampler_" + fName, verboseLvl),
       fParticleGenerator(new G4GeneralParticleSource) {
 #if NDEBUG
   fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
@@ -45,7 +45,7 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(
       fShiftActive(true),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
       fSamplerReady(false),
-      fLogger({"MultiSubworldSampler_" + fName, verboseLvl}),
+      fLogger("MultiSubworldSampler_" + fName, verboseLvl),
       fParticleGenerator(new G4GeneralParticleSource) {
 #if NDEBUG
   fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
