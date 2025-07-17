@@ -15,9 +15,7 @@ namespace Surface {
 
 class PortalStore : public std::vector<VPortal *> {
  public:
-  G4bool IsPortal(const G4VPhysicalVolume *volume) const;
   G4bool IsLogPortal(const G4LogicalVolume *volume) const;
-  G4bool IsNotPortal(const G4VPhysicalVolume *volume) const;
   G4bool IsTrigger(const G4VPhysicalVolume *volume) const;
 
   G4int FindPortal(const G4VPhysicalVolume *volume) const;
