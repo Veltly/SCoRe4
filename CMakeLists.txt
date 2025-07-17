@@ -24,9 +24,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_COMPILER clang++)
 
-option(COMPILE_TEST "Compile tests which also function as examples" ON)
+option(DOC "Create doxygen documentation" ON)
+option(COMPILE_TEST "Compile tests which also function as examples" OFF)
 
 add_subdirectory(src)
+
+if(DOC)
+  include(cmake/FindDoxygen.cmake)
+endif()
 
 if(COMPILE_TEST)
   add_subdirectory(test)
