@@ -1,6 +1,8 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
+/**
+ * @file Logger.cc
+ * @author C.Gruener
+ * @date 23-06-01
+ */
 
 #include "Service/include/Logger.hh"
 
@@ -8,12 +10,12 @@
 #include <G4ios.hh>
 #include <utility>
 
-Surface::Logger::Logger(G4String aId, const G4int aVerboseLvl)
-    : fId(std::move(aId)), fVerboseLvl(aVerboseLvl) {}
+Surface::Logger::Logger(G4String aLoggerName, const G4int aVerboseLvl)
+    : fLoggerName(std::move(aLoggerName)), fVerboseLvl(aVerboseLvl) {}
 
 void Surface::Logger::WriteInfo(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseInfo) {
-    G4cout << " ----Info---------> " << fId << ": " << aMsg << G4endl;
+    G4cout << " ----Info---------> " << fLoggerName << ": " << aMsg << G4endl;
   }
 }
 
@@ -27,7 +29,7 @@ void Surface::Logger::WriteInfo(const std::stringstream &&aMsg) const {
 
 void Surface::Logger::WriteDetailInfo(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseDetailInfo) {
-    G4cout << " ----Info---------> " << fId << ": " << aMsg << G4endl;
+    G4cout << " ----Info---------> " << fLoggerName << ": " << aMsg << G4endl;
   }
 }
 
@@ -46,7 +48,7 @@ G4bool Surface::Logger::WriteDetailInfo() const {
 
 void Surface::Logger::WriteWarning(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseWarning) {
-    G4cout << " ----Warning------> " << fId << ": " << aMsg << G4endl;
+    G4cout << " ----Warning------> " << fLoggerName << ": " << aMsg << G4endl;
   }
 }
 
@@ -63,7 +65,7 @@ G4bool Surface::Logger::WriteWarning() const {
 
 void Surface::Logger::WriteError(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseError) {
-    G4cout << " ----Error--------> " << fId << ": " << aMsg << G4endl;
+    G4cout << " ----Error--------> " << fLoggerName << ": " << aMsg << G4endl;
   }
 }
 
@@ -81,7 +83,7 @@ G4bool Surface::Logger::WriteError() const {
 
 void Surface::Logger::WriteDebugInfo(const G4String &aMsg) const {
   if (fVerboseLvl > fVerboseDebugInfo) {
-    G4cout << " ----DebugInfo----> " << fId << ": " << aMsg << G4endl;
+    G4cout << " ----DebugInfo----> " << fLoggerName << ": " << aMsg << G4endl;
   }
 }
 
@@ -96,7 +98,7 @@ void Surface::Logger::WriteDebugInfo(const G4String &&aMsg,
 void Surface::Logger::WriteDebugInfo(const G4String &aMsg,
                                      const G4ThreeVector &aVec) const {
   if (fVerboseLvl > fVerboseDebugInfo) {
-    G4cout << " ----DebugInfo----> " << fId << ": " << aMsg
+    G4cout << " ----DebugInfo----> " << fLoggerName << ": " << aMsg
            << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
            << G4endl;
   }

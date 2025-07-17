@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date 23-06-01
-// File:
+/**
+ * @file Logger.hh
+ * @author C.Gruener
+ * @brief The class "Logger" handles generalized logging
+ * @date 23-06-01
+ */
 
 #ifndef SRC_SERVICE_INCLUDE_LOGGER_HH_
 #define SRC_SERVICE_INCLUDE_LOGGER_HH_
@@ -9,12 +12,13 @@
 #include "G4ThreeVector.hh"
 
 namespace Surface {
-///
-/// Logger Class to standardize logging
-///
+/// @brief The class handles generalized logging and the logging level
 class Logger {
  public:
-  explicit Logger(G4String aId, G4int aVerboseLvl = 4);
+/// @brief constructor of Logger
+/// @param aLoggerName Name of logger
+/// @param aVerboseLvl logging level of logger
+  explicit Logger(G4String aLoggerName, G4int aVerboseLvl = 4);
 
   void WriteInfo(const G4String &) const;
   void WriteInfo(const G4String &&) const;
@@ -48,16 +52,16 @@ class Logger {
 
   // Getter
   inline G4int GetVerboseLvl() const { return fVerboseLvl; }
-  inline const G4String &GetId() { return fId; }
+  inline const G4String &GetLoggerName() { return fLoggerName; }
 
  private:
-  G4String fId;
-  G4int fVerboseLvl;
-  G4int fVerboseError{0};
-  G4int fVerboseWarning{0};
-  G4int fVerboseInfo{1};
-  G4int fVerboseDetailInfo{2};
-  G4int fVerboseDebugInfo{3};
+  G4String fLoggerName; /// logger name of instance
+  G4int fVerboseLvl; /// set verbose level of instance
+  G4int fVerboseError{0}; /// verbose level of error
+  G4int fVerboseWarning{0}; /// verbose level of warning
+  G4int fVerboseInfo{1}; /// verbose level of info
+  G4int fVerboseDetailInfo{2}; /// verbose level of detailed info
+  G4int fVerboseDebugInfo{3}; /// verbose level of debug info
 };
 }  // namespace Surface
 #endif  // SRC_SERVICE_INCLUDE_LOGGER_HH_
