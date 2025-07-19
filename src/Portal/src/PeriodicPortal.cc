@@ -1,7 +1,9 @@
-// Copyright[2024] C.Gruener
-// Date: 24-06-04
-// File: PeriodicPortal
-
+/**
+ * @brief Periodic portal reused a small simulation domain repeatedly to represent a larger volume
+ * @file PeriodicPortal.cc
+ * @auhtor C.Gruener
+ * @date 24-06-04
+ */
 #include "Portal/include/PeriodicPortal.hh"
 
 #include <cstdlib>
@@ -17,9 +19,8 @@ Surface::PeriodicPortal::PeriodicPortal(const G4String &name,
                                         G4VPhysicalVolume *volume,
                                         const G4ThreeVector &vec,
                                         const G4int verbose)
-    : VPortal(name, volume, PortalType::PeriodicPortal, verbose),
-      fLogger("PeriodicPortal_" + name, verbose),
-      fIsPortal(false) {
+    : VPortal("PeriodicPortal_" + name, volume, PortalType::PeriodicPortal, verbose),
+      fIsPortal(false), fMaxNX(-1), fMaxNY(-1), fCurrentNX(-1), fCurrentNY(-1) {
   SetGlobalCoord(vec);
 }
 
@@ -206,7 +207,7 @@ void Surface::PeriodicPortal::DoPeriodicTransform(G4ThreeVector &vec,
       exit(EXIT_FAILURE);  // should never happen
   }
   fLogger.WriteDebugInfo(
-      "Periodic Transormation: NX: " + std::to_string(fCurrentNX) +
+      "Periodic transformation: NX: " + std::to_string(fCurrentNX) +
       " NY: " + std::to_string(fCurrentNY));
 }
 
