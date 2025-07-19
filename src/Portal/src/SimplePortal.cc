@@ -1,16 +1,23 @@
-// Copyright [2024] C.Gruener
-// Date: 24-05-025
-// File: SimplePortal
+/**
+* @brief Simple portal is a portal between two boxlike volumes
+* @file SimplePortal.hh
+* @author C.Gruener
+* @date 24-05-25
+*/
 
 #include "Portal/include/SimplePortal.hh"
 
 #include "G4Navigator.hh"
 #include "G4SteppingManager.hh"
-#include "G4SystemOfUnits.hh"
 #include "G4ThreeVector.hh"
 #include "G4VPhysicalVolume.hh"
 #include "ParticleGenerator/include/SurfaceSource.hh"
 
+/**
+ * @brief Transforms vector coordinates between the portals
+ * @param vec coordinates to transform
+ * @return transformed coordinates
+ */
 G4ThreeVector Surface::SimplePortal::TransformBetweenPortals(
     const G4ThreeVector &vec) {
   const G4VPhysicalVolume *volume = GetVolume();
@@ -35,16 +42,16 @@ void Surface::SimplePortal::SetOtherPortal(Surface::SimplePortal *otherPortal) {
   fOtherPortal = otherPortal;
 }
 
-void Surface::SimplePortal::SetVerbose(const G4int verboseLvl) {
-  fLogger.SetVerboseLvl(verboseLvl);
-}
-
+/**
+ * @brief Performs the portation between the entrance and exit portal
+ * @param step
+ */
 void Surface::SimplePortal::DoPortation(G4Step *step) {
-  G4StepPoint *preStepPoint = step->GetPreStepPoint();
-  G4ThreeVector prePosition = preStepPoint->GetPosition();
+  G4ThreeVector prePosition = step->GetPreStepPoint()->GetPosition();
 
   fLogger.WriteDebugInfo("PrePosition: ", prePosition);
   TransformToLocalCoordinate(prePosition);
+
   // Transformation of position
   TransformBetweenPortals(prePosition);
   fOtherPortal->TransformToGlobalCoordinate(prePosition);

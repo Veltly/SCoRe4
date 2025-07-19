@@ -1,8 +1,10 @@
-// Copyright [2024] C.Gruener
-// Date: 24-05-24
-// File: SimplePortal
+/**
+ * @brief Simple portal is a portal between two boxlike volumes
+ * @file SimplePortal.hh
+ * @author C.Gruener
+ * @date 24-05-24
+ */
 
-// Simple Portal combines two Boxes
 #ifndef SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_
 #define SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_
 
@@ -21,16 +23,13 @@ class SimplePortal : public VPortal {
  public:
   SimplePortal(const G4String &name, G4VPhysicalVolume *volume,
                const G4ThreeVector &vec, const G4int verbose)
-      : VPortal(name, volume, PortalType::SimplePortal, verbose, vec),
-        fLogger("SimplePortal_" + name, verbose) {}
+      : VPortal("SimplePortal_" + name, volume, PortalType::SimplePortal, verbose, vec){}
 
   void DoPortation(G4Step *step) override;
   void SetOtherPortal(SimplePortal *otherPortal);
-  void SetVerbose(G4int verbose);
 
  private:
-  SimplePortal *fOtherPortal;
-  Logger fLogger;
+  SimplePortal *fOtherPortal{nullptr};
 };
 
 }  // namespace Surface
