@@ -1,7 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-05-24
-// File: PortalStore
-
+/**
+ * @brief Stores a handle to all portals
+ * @file PortalStore.hh
+ * @author C.Gruener
+ * @date 24-05-24
+ */
 #ifndef SRC_PORTAL_INCLUDE_PORTALSTORE_HH_
 #define SRC_PORTAL_INCLUDE_PORTALSTORE_HH_
 
@@ -12,7 +14,11 @@
 #include "Portal/include/VPortal.hh"
 
 namespace Surface {
-
+/**
+ * @brief Stores a handle to all used portals
+ * @details Stores a handle to all used portals/triggers. Portals/Triggers can be found based
+ * on it G4PhysicalVolume oder G4LogicalVolume or name
+ */
 class PortalStore : public std::vector<VPortal *> {
  public:
   G4bool IsLogPortal(const G4LogicalVolume *volume) const;

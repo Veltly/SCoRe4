@@ -1,7 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-05-24
-// File: PortalStore
-
+/**
+ * @brief Stores a handle to all portals
+ * @file PortalStore.cc
+ * @author C.Gruener
+ * @date 24-05-24
+ */
 #include "Portal/include/PortalStore.hh"
 
 #include "G4LogicalVolume.hh"
