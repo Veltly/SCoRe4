@@ -1,6 +1,5 @@
 #! /bin/python3
-
-
+## plot generated 1D histogram from surfaceShift simulation
 def main():
     import pandas as pd
     from matplotlib import pyplot as plt
@@ -9,7 +8,6 @@ def main():
     x = [i for i in range(0, len(df))]
     plt.plot(x, data, marker='.')
     plt.show()
-
 
 if __name__ == "__main__":
     main()

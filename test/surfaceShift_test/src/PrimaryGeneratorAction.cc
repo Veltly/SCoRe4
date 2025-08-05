@@ -1,8 +1,13 @@
+/**
+* @brief definition of the PrimaryGeneratorAction class using the shift class
+* @file PrimaryGeneratorAction.cc
+* @date 2025-08-05
+*/
+
+#include "ParticleGenerator/include/ShiftTable.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "G4GeneralParticleSource.hh"
 #include "G4RunManager.hh"
-#include "ParticleGenerator/include/ShiftTable.hh"
-#include <CLHEP/Units/SystemOfUnits.h>
 #include <G4ThreeVector.hh>
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
@@ -15,10 +20,15 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction() {
 }
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent) {
+  // generates primary vertex
   fGps->GeneratePrimaryVertex(anEvent);
+  // get the current position of generated vertex
   G4ThreeVector position = anEvent->GetPrimaryVertex()->GetPosition();
-  G4ThreeVector direction{0., 0., -1.};
-  fShiftTable->DoShift(position, direction);
+  // set shift-direction
+  G4ThreeVector shiftDirection{0., 0., -1.};
+  // shift the current position
+  fShiftTable->DoShift(position, shiftDirection);
+  //set the new position of the generated primary vertex
   anEvent->GetPrimaryVertex()->SetPosition(position.x(), position.y(),
                                            position.z());
 }

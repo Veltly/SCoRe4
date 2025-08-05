@@ -16,7 +16,7 @@
 #include "Randomize.hh"
 
 int main(int argc, char **argv) {
-  G4cout << "Surface Testapplication starting ..." << G4endl;
+  G4cout << "Surface Test application starting ..." << G4endl;
 
   G4UIExecutive *ui = 0;
   if (argc == 1) {
