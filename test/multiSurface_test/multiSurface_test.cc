@@ -1,30 +1,29 @@
-// Author C.Gruener
-// Date 24-06-11
-// File: PeriodicPortalBig for G4Surface development
-// Testsetup is based on example
+/**
+ * @brief Testsetup for MultiSurface simulation
+ * @file multiSurface_test.cc
+ * @author C.Gruener
+ * @date 2024-06-11
+ */
 
-#include "ActionInitialization.hh"
-#include "G4RunManager.hh"
 #include "include/DetectorConstruction.hh"
 #include "include/PhysicsList.hh"
-
+#include "ActionInitialization.hh"
+#include "G4RunManager.hh"
 #include "G4UImanager.hh"
-
 #include "G4UIExecutive.hh"
 #include "G4VisExecutive.hh"
 
-#include "Randomize.hh"
 
 int main(int argc, char **argv) {
-  G4cout << "MultiSurface testapplication starting ..." << G4endl;
+  G4cout << "MultiSurface test application starting ..." << G4endl;
 
-  G4UIExecutive *ui = 0;
+  G4UIExecutive *ui = nullptr;
   if (argc == 1) {
     ui = new G4UIExecutive(argc, argv, "tcsh");
   }
 
   // Construct the default run manager
-  G4RunManager *runManager = new G4RunManager;
+  auto *runManager = new G4RunManager;
 
   // Initialize visualization
   G4VisManager *visManager = new G4VisExecutive();

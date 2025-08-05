@@ -1,3 +1,9 @@
+/**
+ * @brief define physics for test-simulation
+ * @file PhysicsList.cc
+ * @date 2025-08-05
+ */
+
 #include "../include/PhysicsList.hh"
 #include <G4Alpha.hh>
 #include <G4DecayPhysics.hh>
@@ -23,7 +29,7 @@ void PhysicsList::SetCuts() {
 void PhysicsList::ConstructProcess() {
   G4VModularPhysicsList::ConstructProcess();
   G4PhysicsListHelper *ph = G4PhysicsListHelper::GetPhysicsListHelper();
-  G4StepLimiter *stepLimit = new G4StepLimiter();
+  auto *stepLimit = new G4StepLimiter();
   ph->RegisterProcess(stepLimit, G4GenericIon::GenericIon());
   ph->RegisterProcess(stepLimit, G4He3::He3());
   ph->RegisterProcess(stepLimit, G4Alpha::Alpha());

@@ -1,6 +1,4 @@
 /gps/particle gamma
 /gps/ene/mono 5 MeV
-#/gps/ang/type iso
-#/gps/direction -1 0.2 0.2
 /gps/direction 0 0 1.
 /run/beamOn 10
