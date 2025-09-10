@@ -1,10 +1,11 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
-//
-#include "SurfaceGenerator/include/Generator.hh"
+/**
+ * @brief
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file Generator.cc
+ */
 
-#include "G4MultiUnion.hh"
+#include "SurfaceGenerator/include/Generator.hh"
 #include "Service/include/Logger.hh"
 #include "SurfaceGenerator/include/Assembler.hh"
 #include "SurfaceGenerator/include/Calculator.hh"
@@ -12,7 +13,7 @@
 #include "SurfaceGenerator/include/FacetStore.hh"
 
 Surface::SurfaceGenerator::SurfaceGenerator(const G4String &name) noexcept
-    : fSolidhandle(nullptr),
+    : fSolidHandle(nullptr),
       fDescriber(Surface::Describer()),
       fLogger("SurfaceGenerator_" + name),
       fFacetStore(new FacetStore{name}),
@@ -22,7 +23,7 @@ Surface::SurfaceGenerator::SurfaceGenerator(const G4String &name) noexcept
 
 Surface::SurfaceGenerator::SurfaceGenerator(const G4String &name,
                                             const G4int verboseLvl) noexcept
-    : fSolidhandle(nullptr),
+    : fSolidHandle(nullptr),
       fDescriber(Surface::Describer()),
       fLogger("SurfaceGenerator_" + name, verboseLvl),
       fFacetStore(new FacetStore{name}),
@@ -43,11 +44,9 @@ void Surface::SurfaceGenerator::Assemble() {
   Surface::Assembler Assembler(fFacetStore);
   Assembler.SetDescription(description);
   Assembler.Assemble();
-
-  fSolidhandle = Assembler.GetSolid();
-  const G4MultiUnion *test = static_cast<G4MultiUnion *>(fSolidhandle);
+  fSolidHandle = Assembler.GetSolid();
   fLogger.WriteDetailInfo("Number of solids used for Assemble: " +
-                          std::to_string(test->GetNumberOfSolids()));
+                          std::to_string(fSolidHandle->GetNumberOfSolids()));
 }
 
 void Surface::SurfaceGenerator::Calculate() {
@@ -57,11 +56,14 @@ void Surface::SurfaceGenerator::Calculate() {
 }
 
 void Surface::SurfaceGenerator::GenerateDescription() {
-  fLogger.WriteDetailInfo("Calling descrition");
+  fLogger.WriteDetailInfo("Calling description");
   fDescriber.Generate();
   fLogger.WriteDebugInfo(fDescriber.GetInfoDescription());
 }
-
+/**
+ * @brief Set global position of FacetStore (translation, no rotation)
+ * @param transform
+ */
 void Surface::SurfaceGenerator::SetSurfaceTransformation(
     const G4ThreeVector &transform) {
   fFacetStore->SetTransformation(transform);

@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
+/**
+ * @brief functions to control the facet store
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file FacetStore.cc
+ */
 
 #include "SurfaceGenerator/include/FacetStore.hh"
 
@@ -49,7 +52,6 @@ G4ThreeVector Surface::FacetStore::GetRandomPoint() const {
     }
   }
   exit(EXIT_FAILURE);
-  return G4ThreeVector{0, 0, 0};
 }
 
 G4ThreeVector Surface::FacetStore::GetRandomPoint(
@@ -65,11 +67,10 @@ G4ThreeVector Surface::FacetStore::GetRandomPoint(
     }
   }
   exit(EXIT_FAILURE);
-  return G4ThreeVector{0, 0, 0};
 }
 
 Surface::FacetStore::FacetEdges Surface::FacetStore::GetFacetLines(
-    const G4TriangularFacet &aFacet) const {
+    const G4TriangularFacet &aFacet) {
   G4String (*toStr)(G4double) = G4UIcommand::ConvertToString;
   G4String edgeAB, edgeBC, edgeCA, edgeAMid;
   auto vertexA = aFacet.GetVertex(0);
@@ -121,7 +122,7 @@ void Surface::FacetStore::AppendToFacetVector(G4TriangularFacet *aFacet) {
 }
 
 void Surface::FacetStore::LogFacetStore(const G4String &aFilename) const {
-  if (aFilename == "") {
+  if (aFilename.empty()) {
     return;
   }
   std::fstream out;

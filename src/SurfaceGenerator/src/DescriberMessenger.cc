@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
+/**
+ * @brief Functions to change Surface Generator settings via macro file
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file DescriberMessenger.cc
+ */
 
 #include "SurfaceGenerator/include/DescriberMessenger.hh"
 
@@ -13,15 +16,15 @@
 
 Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
     : fDescriber(aDescriber),
-      fDirectory(NULL),
-      fDirectory1(NULL),
-      fCmdSetSpikeWidth_X(NULL),
-      fCmdSetSpikeWidth_Y(NULL),
-      fCmdSetNrSpike_X(NULL),
-      fCmdSetNrSpike_Y(NULL),
-      fCmdSetMeanHeight(NULL),
-      fCmdSetHeightDeviation(NULL),
-      fCmdSetSpikeform(NULL) {
+      fDirectory(nullptr),
+      fDirectory1(nullptr),
+      fCmdSetSpikeWidth_X(nullptr),
+      fCmdSetSpikeWidth_Y(nullptr),
+      fCmdSetNrSpike_X(nullptr),
+      fCmdSetNrSpike_Y(nullptr),
+      fCmdSetMeanHeight(nullptr),
+      fCmdSetHeightDeviation(nullptr),
+      fCmdSetSpikeform(nullptr) {
   fDirectory = new G4UIdirectory("/geometry/");
   fDirectory->SetGuidance("Controls the implemented geometry.");
   fDirectory1 = new G4UIdirectory("/geometry/surface/");
@@ -77,7 +80,7 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
                                              G4State_Idle);
   fCmdSetHeightDeviation->SetGuidance(
       "Control the deviation from mean Height of spikes. Only used for "
-      "specific spikeforms");
+      "specific spike forms");
   fCmdSetHeightDeviation->SetDefaultValue(1);
 
   fCmdSetSpikeform =
@@ -97,56 +100,56 @@ Surface::DescriberMessenger::DescriberMessenger(Surface::Describer *aDescriber)
 
 Surface::DescriberMessenger::~DescriberMessenger() {
   delete fCmdSetSpikeWidth_X;
-  fCmdSetSpikeWidth_X = NULL;
+  fCmdSetSpikeWidth_X = nullptr;
   delete fCmdSetSpikeWidth_Y;
-  fCmdSetSpikeform = NULL;
+  fCmdSetSpikeform = nullptr;
   delete fCmdSetNrSpike_X;
-  fCmdSetNrSpike_X = NULL;
+  fCmdSetNrSpike_X = nullptr;
   delete fCmdSetNrSpike_Y;
-  fCmdSetNrSpike_Y = NULL;
+  fCmdSetNrSpike_Y = nullptr;
   delete fCmdSetMeanHeight;
-  fCmdSetMeanHeight = NULL;
+  fCmdSetMeanHeight = nullptr;
   delete fCmdSetHeightDeviation;
-  fCmdSetHeightDeviation = NULL;
+  fCmdSetHeightDeviation = nullptr;
   delete fCmdSetSpikeform;
-  fCmdSetSpikeform = NULL;
+  fCmdSetSpikeform = nullptr;
   delete fCmdSetNLayer;
-  fCmdSetNLayer = NULL;
+  fCmdSetNLayer = nullptr;
   delete fDirectory;
-  fDirectory = NULL;
+  fDirectory = nullptr;
   delete fDirectory1;
-  fDirectory1 = NULL;
-  fDescriber = NULL;  // No ownership, so don't delete it!
+  fDirectory1 = nullptr;
+  fDescriber = nullptr;  // No ownership, so don't delete it!
 }
 
 void Surface::DescriberMessenger::SetNewValue(G4UIcommand *command,
                                               G4String newValues) {
   if (command == fCmdSetSpikeWidth_X) {
     fDescriber->SetSpikeWidth_X(
-        fCmdSetSpikeWidth_X->GetNewDoubleValue(newValues));
+        G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetSpikeWidth_Y) {
     fDescriber->SetSpikeWidth_Y(
-        fCmdSetSpikeWidth_Y->GetNewDoubleValue(newValues));
+        G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetNrSpike_X) {
-    fDescriber->SetNrSpike_X(fCmdSetNrSpike_X->GetNewIntValue(newValues));
+    fDescriber->SetNrSpike_X(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetNrSpike_Y) {
-    fDescriber->SetNrSpike_Y(fCmdSetNrSpike_Y->GetNewIntValue(newValues));
+    fDescriber->SetNrSpike_Y(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetMeanHeight) {
-    fDescriber->SetMeanHeight(fCmdSetMeanHeight->GetNewDoubleValue(newValues));
+    fDescriber->SetMeanHeight(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetHeightDeviation) {
     fDescriber->SetHeightDeviation(
-        fCmdSetHeightDeviation->GetNewDoubleValue(newValues));
+        G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetNLayer) {
-    fDescriber->SetNLayer(fCmdSetNLayer->GetNewIntValue(newValues));
+    fDescriber->SetNLayer(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetSpikeform) {
-    if (newValues == "StandardPyramide") {
-      fDescriber->SetSpikeform(Surface::Describer::Spikeform::StandardPyramide);
-    } else if (newValues == "UniformPyramide") {
-      fDescriber->SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+    if (newValues == "StandardPyramid") {
+      fDescriber->SetSpikeform(Surface::Describer::SpikeShape::StandardPyramid);
+    } else if (newValues == "UniformPyramid") {
+      fDescriber->SetSpikeform(Surface::Describer::SpikeShape::UniformPyramid);
     } else if (newValues == "Bump") {
-      fDescriber->SetSpikeform(Surface::Describer::Spikeform::Bump);
+      fDescriber->SetSpikeform(Surface::Describer::SpikeShape::Bump);
     } else if (newValues == "Peak") {
-      fDescriber->SetSpikeform(Surface::Describer::Spikeform::Peak);
+      fDescriber->SetSpikeform(Surface::Describer::SpikeShape::Peak);
     }
   }
 }

@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
+/**
+ * @brief Functions to calculate surface parameters
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file Calculator.cc
+ */
 
 #include "SurfaceGenerator/include/Calculator.hh"
 
@@ -133,7 +136,7 @@ void Surface::Calculator::ShiftToZero(Vertices &aVertices) {
   aVertices.p3 += Shift;
 }
 
-void Surface::Calculator::ShiftToMean(Vertices &aVertices) {
+void Surface::Calculator::ShiftToMean(Vertices &aVertices) const {
   G4ThreeVector Shift{0, 0, MeanHeight};
   aVertices.p1 -= Shift;
   aVertices.p2 -= Shift;
@@ -169,7 +172,7 @@ G4double Surface::Calculator::CalcProjectedSurface() {
   G4double Surface{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     auto vertices = GetVertices(facet);
     OrderVertices(vertices);
@@ -199,7 +202,7 @@ G4double Surface::Calculator::CalcSa() {
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     auto vertices = GetVertices(facet);
     if (IsIntersected(vertices)) {
@@ -223,7 +226,7 @@ G4double Surface::Calculator::CalcSv() {
   G4double min{MeanHeight};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     auto vertices = GetVertices(facet);
     G4ThreeVector LowestVertex = GetLowestVertex(vertices);
@@ -241,7 +244,7 @@ G4double Surface::Calculator::CalcSp() {
   G4double max{MeanHeight};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     auto vertices = GetVertices(facet);
     G4ThreeVector HighestVertex = GetHighestVertex(vertices);
@@ -259,7 +262,7 @@ G4double Surface::Calculator::CalcSq() {
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     auto vertices = GetVertices(facet);
     Value += IntegrationRoutine(vertices, Integrate_f_2);
@@ -274,7 +277,7 @@ G4double Surface::Calculator::CalcSsk() {
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     auto vertices = GetVertices(facet);
     Value += IntegrationRoutine(vertices, Integrate_f_3);
@@ -291,7 +294,7 @@ G4double Surface::Calculator::CalcSku() {
   G4double Value{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     auto vertices = GetVertices(facet);
     Value += IntegrationRoutine(vertices, Integrate_f_4);
@@ -308,7 +311,7 @@ G4double Surface::Calculator::CalcArea() {
   G4double surface{0};
   while (FacetIter != FacetIterEnd) {
     const G4TriangularFacet &facet =
-        *(*FacetIter);  // Double dereferenceing because ITER to FACETPOINTER
+        *(*FacetIter);  // Double dereferencing because ITER to FACET-POINTER
                         // to FACET;
     surface += facet.GetArea();
     ++FacetIter;
@@ -322,7 +325,7 @@ G4double Surface::Calculator::IntegrationRoutine(
   ShiftToZero(aVertices);
   ShiftToMean(aVertices);
   FunctionParameter parameter = GetFunctionParameter(aVertices);
-  TransformFunctionparameter(parameter, aVertices);
+  TransformFunctionParameter(parameter, aVertices);
   return GetTrafoDeterminant(aVertices) * aIntegration(parameter);
 }
 
@@ -351,14 +354,14 @@ std::array<Surface::Calculator::Vertices, 3> Surface::Calculator::Split(
 }
 
 G4ThreeVector Surface::Calculator::SplitEdge(const G4ThreeVector &aPointA,
-                                             const G4ThreeVector &aPointB) {
+                                             const G4ThreeVector &aPointB) const {
   G4double factor = MeanHeight - aPointA.z();
   factor /= aPointB.z() - aPointA.z();
   const G4ThreeVector delta = aPointB - aPointA;
   return aPointA + factor * delta;
 }
 
-void Surface::Calculator::MoveSinglePointToP1(Vertices &aVertices) {
+void Surface::Calculator::MoveSinglePointToP1(Vertices &aVertices) const {
   if (aVertices.p1.z() > MeanHeight && aVertices.p2.z() > MeanHeight &&
       aVertices.p3.z() <= MeanHeight) {
     std::swap(aVertices.p1, aVertices.p3);  // P3 single and lowest point
@@ -424,7 +427,7 @@ std::stringstream Surface::Calculator::StreamSurfaceInformation() const {
   return ss;
 }
 
-void Surface::Calculator::TransformFunctionparameter(
+void Surface::Calculator::TransformFunctionParameter(
     FunctionParameter &aFuncParameter, const Vertices &aVertices) {
   const G4double b = aFuncParameter.b;
   const G4double c = aFuncParameter.c;

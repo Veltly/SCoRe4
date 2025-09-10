@@ -1,35 +1,29 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File: VolumeDescription is used to pass information in Surface Generator
-// between classes
+/**
+ * @brief Definition of structs to describe a single Solid or Surface
+ * @file Storage.hh
+ * @date 2023-06-01
+ * @file C.Gruener
+ */
 
-#ifndef SRC_SURFACEGENERATOR_INCLUDE_STORAGE_HH_
-#define SRC_SURFACEGENERATOR_INCLUDE_STORAGE_HH_
+#ifndef SRC_SURFACE_GENERATOR_INCLUDE_STORAGE_HH_
+#define SRC_SURFACE_GENERATOR_INCLUDE_STORAGE_HH_
 
 #include <vector>
-
 #include "G4Transform3D.hh"
 #include "G4TriangularFacet.hh"
 #include "G4Types.hh"
 
 namespace Surface {
 
+/**
+ * @brief Struct to describe a single G4Solid
+ */
 struct SolidDescription {
   enum class Solid { Box, Trd };
-  Solid Volumetype;
-  std::vector<G4double> Volumeparameter;
+  Solid VolumeType;
+  std::vector<G4double> VolumeParameter; // volume parameters like width, height
   G4Transform3D Transform;
-  std::vector<G4int> OuterSurface;
+  std::vector<G4int> OuterSurface; // holds information which Facets are part of the outer surface
 };
-}  // namespace Surface
+}
 #endif
-
-#ifndef G4SURFACE_SURFACEDESCRIPTION
-#define G4SURFACE_SURFACEDESCRIPTION
-namespace Surface {
-struct SurfaceDescription {
-  G4int SpikeNr;
-  G4TriangularFacet facet;
-};
-}  // namespace Surface
-#endif  // SRC_SURFACEGENERATOR_INCLUDE_STORAGE_HH_

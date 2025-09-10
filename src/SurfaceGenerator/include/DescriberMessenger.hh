@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
+/**
+ * @brief Controls function to set surface generator options in macro files
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file DescriberMessenger.hh
+ */
 
 #ifndef SRC_SURFACEGENERATOR_INCLUDE_DESCRIBERMESSENGER_HH_
 #define SRC_SURFACEGENERATOR_INCLUDE_DESCRIBERMESSENGER_HH_
@@ -20,9 +23,9 @@ class DetectorConstruction;
 class DescriberMessenger : public G4UImessenger {
  public:
   explicit DescriberMessenger(Surface::Describer *aDescriber);
-  virtual ~DescriberMessenger();
+  ~DescriberMessenger() override;
 
-  void SetNewValue(G4UIcommand *command, G4String newValues);
+  void SetNewValue(G4UIcommand *command, G4String newValues) override;
 
  private:
   Surface::Describer *fDescriber;
@@ -39,5 +42,4 @@ class DescriberMessenger : public G4UImessenger {
   G4UIcmdWithAnInteger *fCmdSetNLayer;
 };
 }  // namespace Surface
-
-#endif  // SRC_SURFACEGENERATOR_INCLUDE_DESCRIBERMESSENGER_HH_
+#endif

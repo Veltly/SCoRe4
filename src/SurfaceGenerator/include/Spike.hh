@@ -1,15 +1,25 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
+/**
+ * @brief
+ * @file Spike.hh
+ * @date 2023-06-01
+ * @author C.Gruener
+ */
 
-#ifndef SRC_SURFACEGENERATOR_INCLUDE_SPIKE_HH_
-#define SRC_SURFACEGENERATOR_INCLUDE_SPIKE_HH_
+#ifndef SRC_SURFACE_GENERATOR_INCLUDE_SPIKE_HH_
+#define SRC_SURFACE_GENERATOR_INCLUDE_SPIKE_HH_
 
 #include <vector>
-
 #include "SurfaceGenerator/include/Storage.hh"
 
 namespace Surface {
 
+/**
+ * @brief Generates the description of a whole spike.
+ * @details A spike can have multiple layers which are stored in the fSpikeDescription vector
+ * Contains information like, which G4Solid to use, the parameters of this solid, the
+ * location in the spike, and the ids of the outer surface.
+ * The description can be understood by the Assembler class.
+ */
 class Spike {
  public:
   enum class Spikeform { Pyramid, Bump, Peak };
@@ -21,20 +31,20 @@ class Spike {
 
  private:
   void GenerateSpike();
-  void GeneratePyramide();
+  void GeneratePyramid();
   void GenerateBump();
   void GeneratePeak();
-  G4double FunctionBump(const G4double aNextHeight, const G4double aBaseside);
-  G4double FunctionPeak(const G4double aNextHeight, const G4double aBaseside);
+  G4double FunctionBump(G4double aNextHeight, G4double aBaseSide) const;
+  G4double FunctionPeak(G4double aNextHeight, G4double aBaseSide) const;
 
   Spikeform fSpikeform;
   G4double fWidth_X;
   G4double fWidth_Y;
   G4double fHeight;
   G4int fNLayer;
-  const G4double fWidthTop_X{1e-6};
-  const G4double fWidthTop_Y{1e-6};
+  const G4double fWidthTop_X{1e-3 * CLHEP::nm};
+  const G4double fWidthTop_Y{1e-3 * CLHEP::nm};
   std::vector<Surface::SolidDescription> fSpikeDescription{};
 };
-}  // namespace Surface
-#endif  // SRC_SURFACEGENERATOR_INCLUDE_SPIKE_HH_
+}
+#endif

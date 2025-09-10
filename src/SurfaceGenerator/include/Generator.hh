@@ -1,12 +1,15 @@
-// Copyright [2024] C.Gruener
-// 23-06-01
-// File:
+/**
+ * @brief Controls surface generation
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file Generator.hh
+ */
+#ifndef SRC_SURFACE_GENERATOR_INCLUDE_GENERATOR_HH_
+#define SRC_SURFACE_GENERATOR_INCLUDE_GENERATOR_HH_
 
-#ifndef SRC_SURFACEGENERATOR_INCLUDE_GENERATOR_HH_
-#define SRC_SURFACEGENERATOR_INCLUDE_GENERATOR_HH_
 #include <vector>
-
 #include "G4VSolid.hh"
+#include "G4MultiUnion.hh"
 #include "Service/include/Logger.hh"
 #include "SurfaceGenerator/include/Assembler.hh"
 #include "SurfaceGenerator/include/Describer.hh"
@@ -14,46 +17,67 @@
 #include "SurfaceGenerator/include/Storage.hh"
 
 namespace Surface {
-///
-/// Controls generation a solid volume which represents a patch of rough
-/// surface. A handle to this volume can be received to place it as a physical
-/// volume in simulation. Furthermore a FacetStore which references to the outer
-/// surface of the volume will be generated.
+/**
+ * @brief Controls surface generation
+ * @details Controls generation of a solid volume which represents a patch of rough
+ * surface. A handle to this volume can be received to place it as a physical
+ * volume in the simulation. Furthermore, a FacetStore with handles to the outer
+ * surface of the volume will be generated.
+ */
 class SurfaceGenerator {
  public:
-  SurfaceGenerator(const G4String &name) noexcept;
-  SurfaceGenerator(const G4String &name, const G4int verboseLvl) noexcept;
-  ///
-  /// Returns handle to solid
-  inline G4VSolid *GetSolid() const { return fSolidhandle; }
+  explicit SurfaceGenerator(const G4String &name) noexcept;
+  SurfaceGenerator(const G4String &name, G4int verboseLvl) noexcept;
+  /**
+   * @brief Returns handle to generated solid
+   * @return pointer to generated solid
+   */
+  inline G4MultiUnion *GetSolid() const { return fSolidHandle; }
 
-  ///
-  /// Generates solid
+  /**
+   * @brief Generate solid representing the surface
+   */
   void GenerateSurface();
 
+  /**
+   * @brief Reference to describer instance. Is used to define the patch of rough surface using parameters
+   * @return Reference to describer instance.
+   */
   inline Describer &GetDescriber() { return fDescriber; }
+
+  /**
+   * @brief Get a handle to the FacetStore which stores the outer surface of the generated volume.
+   * @return Handle to FacetStore
+   */
   inline FacetStore *GetFacetStore() { return fFacetStore; }
+  /**
+   * @brief Add transformation to FacetStore to "place" it in the simulation domain
+   * @param transform
+   */
   void SetSurfaceTransformation(const G4ThreeVector &transform);
 
  private:
-  inline std::vector<SurfaceDescription> GetSurface() const { return fSurface; }
-  ///
-  /// Calls and executes Assembler to generate a Solid based on description
+
+  /**
+   * @brief Calls and executes Assembler to generate a Solid based on description
+   */
   void Assemble();
-  ///
-  /// Calls calculator to get SurfaceParameters
+
+  /**
+   * @brief Calls calculator to get SurfaceParameters
+   */
   void Calculate();
-  ///
-  /// Calls Describer to generate description of surface
+
+  /**
+   * @brief Calls Describer instance to generate description of surface
+   */
   void GenerateDescription();
 
-  G4VSolid *fSolidhandle;                    ///< Pointer to final solid
-  std::vector<SurfaceDescription> fSurface;  ///< stores description of surface
-  Describer fDescriber;                      ///< describes surface
+  G4MultiUnion *fSolidHandle;                /// Pointer to final solid
+  Describer fDescriber;                      /// describes surface
   Logger fLogger;
-  FacetStore *fFacetStore;
+  FacetStore *fFacetStore;                   /// Handle to FacetStore
   G4String fName;
 };
-
-}  // namespace Surface
-#endif  // SRC_SURFACEGENERATOR_INCLUDE_GENERATOR_HH_
+}
+#endif
