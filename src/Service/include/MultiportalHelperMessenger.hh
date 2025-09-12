@@ -1,9 +1,12 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-26
-// File:
+/**
+ * @brief Messenger for MultiportalHelper class
+ * @author C.Gruener
+ * @date 2024-07-26
+ * @file MultiportalHelperMessenger.hh
+ */
 
-#ifndef SRC_SERVICE_INCLUDE_MULTIPORTALHELPERMESSENGER_HH_
-#define SRC_SERVICE_INCLUDE_MULTIPORTALHELPERMESSENGER_HH_
+#ifndef SRC_SERVICE_INCLUDE_MULTIPORTALHELPERMESSENGER_HH
+#define SRC_SERVICE_INCLUDE_MULTIPORTALHELPERMESSENGER_HH
 
 #include "G4String.hh"
 #include "G4UImessenger.hh"
@@ -15,7 +18,6 @@ class G4UIcmdWithAString;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWithABool;
 
 namespace Surface {
 
@@ -52,4 +54,4 @@ class MultiportalHelperMessenger final : public G4UImessenger {
 };
 }  // namespace Surface
 
-#endif  // SRC_SERVICE_INCLUDE_MULTIPORTALHELPERMESSENGER_HH_
+#endif  // SRC_SERVICE_INCLUDE_MULTIPORTALHELPERMESSENGER_HH

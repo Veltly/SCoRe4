@@ -1,4 +1,5 @@
 /**
+ * @details Implementation of Logger class
  * @file Logger.cc
  * @author C.Gruener
  * @date 23-06-01

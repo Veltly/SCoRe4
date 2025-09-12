@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-26
-// File:
+/**
+ * @brief Implementation of MultiportalHelperMessenger class
+ * @author C.Gruener
+ * @date 2024-07-26
+ * @file MultiportalHelperMessenger.cc
+ */
 
 #include "Service/include/MultiportalHelperMessenger.hh"
 
@@ -121,24 +124,24 @@ Surface::MultiportalHelperMessenger::~MultiportalHelperMessenger() {
 void Surface::MultiportalHelperMessenger::SetNewValue(G4UIcommand* command,
                                                       G4String newValues) {
   if (command == fCmdSetVerbose) {
-    fSource->SetVerbose(fCmdSetVerbose->GetNewIntValue(newValues));
+    fSource->SetVerbose(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetDxPortal) {
-    fSource->SetDxPortal(fCmdSetDxPortal->GetNewDoubleValue(newValues));
+    fSource->SetDxPortal(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDyPortal) {
-    fSource->SetDyPortal(fCmdSetDyPortal->GetNewDoubleValue(newValues));
+    fSource->SetDyPortal(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzPortal) {
-    fSource->SetDzPortal(fCmdSetDzPortal->GetNewDoubleValue(newValues));
+    fSource->SetDzPortal(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDxSubworld) {
-    fSource->SetDxSub(fCmdSetDxSubworld->GetNewDoubleValue(newValues));
+    fSource->SetDxSub(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDySubworld) {
-    fSource->SetDySub(fCmdSetDySubworld->GetNewDoubleValue(newValues));
+    fSource->SetDySub(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzSubworld) {
-    fSource->SetDzSub(fCmdSetDzSubworld->GetNewDoubleValue(newValues));
+    fSource->SetDzSub(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetSubworldMaterial) {
     fSource->SetSubworldMaterial(newValues);
   } else if (command == fCmdSetNxSubworld) {
-    fSource->SetNxSub(fCmdSetNxSubworld->GetNewIntValue(newValues));
+    fSource->SetNxSub(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetNySubworld) {
-    fSource->SetNySub(fCmdSetNySubworld->GetNewIntValue(newValues));
+    fSource->SetNySub(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   }
 }

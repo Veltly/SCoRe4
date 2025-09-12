@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-15
-// File: SurfaceStore saves all FacetStores at one point
+/**
+ * @brief Implementation of SurfaceStore
+ * @author C.Gruener
+ * @date 2024-05-15
+ * @file SurfaceStore.cc
+ */
 
 #include "Service/include/SurfaceStore.hh"
 

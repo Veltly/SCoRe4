@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-26
-// File:
+/**
+ * @brief Implementation of RoughnessHelperMessenger class
+ * @author C.Gruener
+ * @date 2024-07-26
+ * @file RoughnessHelperMessenger.cc
+ */
 
 #include "Service/include/RoughnessHelperMessenger.hh"
 
@@ -22,7 +25,7 @@ Surface::RoughnessHelperMessenger::RoughnessHelperMessenger(
   const G4String ctrlPath = "/Surface/RoughnessHelper/" + name + "/";
   fHelperName = new G4UIdirectory(ctrlPath);
 
-  G4cout << "Controlpath is: " << ctrlPath << G4endl;
+  G4cout << "Control path is: " << ctrlPath << G4endl;
 
   const G4String cmdSetVerbose = ctrlPath + "setVerbose";
   fCmdSetVerbose = new G4UIcmdWithAnInteger(cmdSetVerbose, this);
@@ -78,6 +81,10 @@ Surface::RoughnessHelperMessenger::RoughnessHelperMessenger(
   fCmdSetSpikeform->AvailableForStates(G4State_PreInit, G4State_Init,
                                        G4State_Idle);
 
+  const G4String cmdSetNLayer = ctrlPath + "setNLayer";
+  fCmdSetNLayer = new G4UIcmdWithAnInteger(cmdSetNLayer, this);
+  fCmdSetNLayer->AvailableForStates(G4State_PreInit,G4State_Init,G4State_Idle);
+
   const G4String cmdSetMaterial = ctrlPath + "setMaterial";
   fCmdSetMaterial = new G4UIcmdWithAString(cmdSetMaterial, this);
   fCmdSetMaterial->AvailableForStates(G4State_PreInit, G4State_Init,
@@ -118,7 +125,7 @@ Surface::RoughnessHelperMessenger::RoughnessHelperMessenger(
   fCmdSetStepLimit = new G4UIcmdWithADoubleAndUnit(cmdSetStepLimit, this);
   fCmdSetStepLimit->AvailableForStates(G4State_PreInit, G4State_Init,
                                        G4State_Idle);
-  fCmdSetStepLimit->SetGuidance("Set steplimit for roughness");
+  fCmdSetStepLimit->SetGuidance("Set StepLimit for roughness");
 }
 
 Surface::RoughnessHelperMessenger::~RoughnessHelperMessenger() {
@@ -174,39 +181,39 @@ Surface::RoughnessHelperMessenger::~RoughnessHelperMessenger() {
 void Surface::RoughnessHelperMessenger::SetNewValue(G4UIcommand* command,
                                                     G4String newValues) {
   if (command == fCmdSetVerbose) {
-    fSource->SetVerbose(fCmdSetVerbose->GetNewIntValue(newValues));
+    fSource->SetVerbose(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetDxBasis) {
-    fSource->SetBasisDx(fCmdSetDxBasis->GetNewDoubleValue(newValues));
+    fSource->SetBasisDx(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDyBasis) {
-    fSource->SetBasisDy(fCmdSetDyBasis->GetNewDoubleValue(newValues));
+    fSource->SetBasisDy(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzBasis) {
-    fSource->SetBasisHeight(fCmdSetDzBasis->GetNewDoubleValue(newValues));
+    fSource->SetBasisHeight(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDxSpike) {
-    fSource->SetSpikeDx(fCmdSetDxSpike->GetNewDoubleValue(newValues));
+    fSource->SetSpikeDx(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDySpike) {
-    fSource->SetSpikeDy(fCmdSetDySpike->GetNewDoubleValue(newValues));
+    fSource->SetSpikeDy(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzSpike) {
-    fSource->SetSpikeMeanHeight(fCmdSetDzSpike->GetNewDoubleValue(newValues));
+    fSource->SetSpikeMeanHeight(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetDzDevSpike) {
     fSource->SetSpikeHeightDeviation(
-        fCmdSetDzDevSpike->GetNewDoubleValue(newValues));
+        G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetSpikeform) {
     fSource->SetSpikeform(newValues);
   } else if (command == fCmdSetNLayer) {
-    fSource->SetSpikeNLayer(fCmdSetNLayer->GetNewIntValue(newValues));
+    fSource->SetSpikeNLayer(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetNxSpikes) {
-    fSource->SetSpikeNx(fCmdSetNxSpikes->GetNewIntValue(newValues));
+    fSource->SetSpikeNx(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetNySpikes) {
-    fSource->SetSpikeNy(fCmdSetNySpikes->GetNewIntValue(newValues));
+    fSource->SetSpikeNy(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetMaterial) {
     fSource->SetMaterial(newValues);
   } else if (command == fCmdSetBoundaryNx) {
-    fSource->SetBoundaryX(fCmdSetBoundaryNx->GetNewIntValue(newValues));
+    fSource->SetBoundaryX(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetBoundaryNy) {
-    fSource->SetBoundaryY(fCmdSetBoundaryNy->GetNewIntValue(newValues));
+    fSource->SetBoundaryY(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetBoundaryNz) {
-    fSource->SetBoundaryZ(fCmdSetBoundaryNz->GetNewIntValue(newValues));
+    fSource->SetBoundaryZ(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdSetStepLimit) {
-    fSource->SetStepLimit(fCmdSetStepLimit->GetNewDoubleValue(newValues));
+    fSource->SetStepLimit(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   }
 }

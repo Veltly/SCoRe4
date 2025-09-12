@@ -1,9 +1,12 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-15
-// File: Helper class to build a roughness G4LogicVolume object
+/**
+ * @brief Helper class to build a roughness object
+ * @author C.Gruener
+ * @date 2024-07-15
+ * @file RoughnessHelper.hh
+ */
 
-#ifndef SRC_SERVICE_INCLUDE_ROUGHNESSHELPER_HH_
-#define SRC_SERVICE_INCLUDE_ROUGHNESSHELPER_HH_
+#ifndef SRC_SERVICE_INCLUDE_ROUGHNESSHELPER_HH
+#define SRC_SERVICE_INCLUDE_ROUGHNESSHELPER_HH
 
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -16,12 +19,17 @@ namespace Surface {
 
 class RoughnessHelperMessenger;
 
-typedef Describer::Spikeform Spikeform;
-
+typedef Describer::SpikeShape Spikeform;
+/**
+ * @brief RoughnessHelper class helps the user to build a roughness object
+ * @details The class controls the instantiation of all needed classes, passes
+ * the set description, starts the generation of the roughness object and handles
+ * the voxelization with the adapted voxelizer class
+ */
 class RoughnessHelper {
  public:
-  RoughnessHelper(const G4String &name);
-  RoughnessHelper(const G4String &name, const G4int verboseLvl);
+  explicit RoughnessHelper(const G4String &name);
+  RoughnessHelper(const G4String &name, G4int verboseLvl);
 
   void Generate();
   // Getter
@@ -30,48 +38,48 @@ class RoughnessHelper {
   G4LogicalVolume *LogicRoughness() const;
   FacetStore *FacetStore();
   inline const G4String &GetName() const { return fName; }
-  inline G4double GetVerboseLvl() { return fLogger.GetVerboseLvl(); }
-  inline G4double GetSpikeDx() { return fDxSpike; }
-  inline G4double GetSpikeDy() { return fDySpike; }
-  inline G4double GetSpikeMeanHeight() { return fDzSpikeMean; }
-  inline G4double GetSpikeDevHeight() { return fDzSpikeDev; }
-  inline G4int GetSpikeNx() { return fNxSpike; }
-  inline G4int GetSpikeNy() { return fNySpike; }
-  inline auto GetSpikeform() { return fSpikeform; }
-  inline G4double GetBasisDx() { return fDxBasis; }
-  inline G4double GetBasisDy() { return fDyBasis; }
-  inline G4double GetBasisHeight() { return fDzBasis; }
-  inline const G4Material *GetMaterial() { return fMaterial; }
-  inline G4int GetBoundaryX() { return fNxBoundary; }
-  inline G4int GetBoundaryY() { return fNyBoundary; }
-  inline G4int GetBoundaryZ() { return fNzBoundary; }
-  inline auto GetStepLimit() { return fStepLimit; }
+  inline G4double GetVerboseLvl() const { return fLogger.GetVerboseLvl(); }
+  inline G4double GetSpikeDx() const { return fDxSpike; }
+  inline G4double GetSpikeDy() const { return fDySpike; }
+  inline G4double GetSpikeMeanHeight() const { return fDzSpikeMean; }
+  inline G4double GetSpikeDevHeight() const { return fDzSpikeDev; }
+  inline G4int GetSpikeNx() const { return fNxSpike; }
+  inline G4int GetSpikeNy() const { return fNySpike; }
+  inline auto GetSpikeform() const { return fSpikeform; }
+  inline G4double GetBasisDx() const { return fDxBasis; }
+  inline G4double GetBasisDy() const { return fDyBasis; }
+  inline G4double GetBasisHeight() const { return fDzBasis; }
+  inline const G4Material *GetMaterial() const { return fMaterial; }
+  inline G4int GetBoundaryX() const { return fNxBoundary; }
+  inline G4int GetBoundaryY() const { return fNyBoundary; }
+  inline G4int GetBoundaryZ() const { return fNzBoundary; }
+  inline auto GetStepLimit() const { return fStepLimit; }
 
   // Setter
-  void SetVerbose(const G4int verboseLvl);
-  void SetSpikeDx(const G4double);
-  void SetSpikeDy(const G4double);
-  void SetSpikeMeanHeight(const G4double);
-  void SetSpikeHeightDeviation(const G4double);
-  void SetSpikeform(const Describer::Spikeform);
+  void SetVerbose(G4int verboseLvl);
+  void SetSpikeDx(G4double);
+  void SetSpikeDy(G4double);
+  void SetSpikeMeanHeight(G4double);
+  void SetSpikeHeightDeviation(G4double);
+  void SetSpikeform(Describer::SpikeShape);
   void SetSpikeform(const G4String &);
 
-  void SetSpikeNx(const G4int);
-  void SetSpikeNy(const G4int);
-  void SetSpikeNLayer(const G4int);
+  void SetSpikeNx(G4int);
+  void SetSpikeNy(G4int);
+  void SetSpikeNLayer(G4int);
 
-  void SetBasisDx(const G4double);
-  void SetBasisDy(const G4double);
-  void SetBasisHeight(const G4double);
+  void SetBasisDx(G4double);
+  void SetBasisDy(G4double);
+  void SetBasisHeight(G4double);
 
   void SetMaterial(G4Material *);
   void SetMaterial(const G4String &);
 
-  void SetBoundaryX(const G4int val);
-  void SetBoundaryY(const G4int val);
-  void SetBoundaryZ(const G4int val);
+  void SetBoundaryX(G4int val);
+  void SetBoundaryY(G4int val);
+  void SetBoundaryZ(G4int val);
 
-  void SetStepLimit(const G4double val);
+  void SetStepLimit(G4double val);
 
  private:
   void CheckValues();
@@ -80,7 +88,7 @@ class RoughnessHelper {
   void Finalize();
 
  private:
-  // Ctrl
+  // Control
   Logger fLogger;
   SurfaceGenerator fGenerator;
   G4MultiUnion *fRoughness{nullptr};
@@ -99,7 +107,7 @@ class RoughnessHelper {
   G4int fNxSpike{0};
   G4int fNySpike{0};
   G4int fNLayer{1};
-  Describer::Spikeform fSpikeform;
+  Describer::SpikeShape fSpikeform{Spikeform::StandardPyramid};
 
   // Bulk
   G4double fDxBasis{0};
@@ -115,4 +123,4 @@ class RoughnessHelper {
 };
 
 }  // namespace Surface
-#endif  // SRC_SERVICE_INCLUDE_ROUGHNESSHELPER_HH_
+#endif  // SRC_SERVICE_INCLUDE_ROUGHNESSHELPER_HH

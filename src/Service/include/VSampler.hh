@@ -1,9 +1,12 @@
-// Copyright [2024] C.Gruener
-// Date: 24-06-18
-// File: VSampler
+/**
+ * @brief Sampler template class
+ * @author C.Gruener
+ * @date 2024-06-18
+ * @file VSampler.hh
+ */
 
-#ifndef SRC_SERVICE_INCLUDE_VSAMPLER_HH_
-#define SRC_SERVICE_INCLUDE_VSAMPLER_HH_
+#ifndef SRC_SERVICE_INCLUDE_VSAMPLER_HH
+#define SRC_SERVICE_INCLUDE_VSAMPLER_HH
 
 #include <cstdlib>
 #include <sstream>
@@ -14,6 +17,11 @@
 #include "Service/include/Logger.hh"
 
 namespace Surface {
+/**
+ * @brief VSampler is a Template class for sampling elements T.
+ * @details Elements T are stored in a vector and are sampled based on a second probability vector.
+ * @tparam T is the element to sample
+ */
 template <class T>
 class VSampler {
  private:
@@ -36,10 +44,10 @@ class VSampler {
 
  public:
   explicit VSampler(const G4String &name)
-      : fIsClosed(false), fLogger("VSampler_" + name), fName(name) {}
+      : fIsClosed(false), fLogger("Sampler_" + name), fName(name) {}
 
   VSampler(const G4String &name, const G4int verbose)
-      : fIsClosed(false), fLogger("VSampler_" + name, verbose), fName(name) {}
+      : fIsClosed(false), fLogger("Sampler_" + name, verbose), fName(name) {}
 
   void AppendValue(const T value) {
     if (!fIsClosed) {
@@ -113,4 +121,4 @@ class VSampler {
   const G4String fName;
 };
 }  // namespace Surface
-#endif  // SRC_SERVICE_INCLUDE_VSAMPLER_HH_
+#endif  // SRC_SERVICE_INCLUDE_VSAMPLER_HH

@@ -1,7 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-10
-// File: MultiportalHelper
-//
+/**
+ * @brief Implementation of helper class MultiportalHelper
+ * @author C.Gruener
+ * @date 2024-07-10
+ * @file MultiportalHelper.cc
+ */
 
 #include "Service/include/MultiportalHelper.hh"
 
@@ -18,23 +20,7 @@
 #include "Service/include/MultiportalHelperMessenger.hh"
 
 Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName)
-    : fHelperName(helperName),
-      fNOfDifferentSubworlds(0),
-      fCheckOverlaps(false),
-      fMotherVolume(nullptr),
-      fVerbose(0),
-      fLogger("MPH_" + helperName),
-      fMessenger(new MultiportalHelperMessenger(this, helperName)),
-      fDxSub(0),
-      fDySub(0),
-      fDzSub(0),
-      fSubworldMaterial(nullptr),
-      fDx(0),
-      fDy(0),
-      fDz(0),
-      fNx(0),
-      fNy(0),
-      fPortal(nullptr) {}
+    : MultiportalHelper(helperName, Logger::GetDefaultVerboseLvl()){}
 
 Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
                                               const G4int verboseLvl)
@@ -124,9 +110,9 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 
     // Create Trigger
     const G4String nameTrig = fSubName + "_Trigger_" + std::to_string(i);
-    const auto solidTrig =
+    auto solidTrig =
         new G4Box(nameTrig, 1.1 * fDxSub, 1.1 * fDySub, 1.1 * fDzSub);
-    const auto logicTrig =
+    auto logicTrig =
         new G4LogicalVolume(solidTrig, fSubworldMaterial, nameTrig);
     G4VPhysicalVolume *physTrig =
         new G4PVPlacement(transformation, logicTrig, nameTrig, fMotherVolume,
@@ -134,8 +120,8 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 
     // Create Subworld
     const G4String nameSub = fSubName + "Subworld_" + std::to_string(i);
-    const auto solidSub = new G4Box(nameSub, fDxSub, fDySub, fDzSub);
-    const auto logicSub =
+    auto solidSub = new G4Box(nameSub, fDxSub, fDySub, fDzSub);
+    auto logicSub =
         new G4LogicalVolume(solidSub, fSubworldMaterial, nameSub);
     const G4ThreeVector placementSub{0., 0., 0.};
     G4VPhysicalVolume *physSub =
@@ -162,7 +148,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 void Surface::MultiportalHelper::GeneratePortal() {
   const G4String namePortal = fPortalName;
 
-  const auto solidPortal = new G4Box(namePortal, fDx, fDy, fDz);
+  auto solidPortal = new G4Box(namePortal, fDx, fDy, fDz);
   auto *logicPortal =
       new G4LogicalVolume(solidPortal, fSubworldMaterial, namePortal);
   G4VPhysicalVolume *physPortal =
@@ -226,7 +212,6 @@ void Surface::MultiportalHelper::Generate() {
 }
 
 // Setter
-
 void Surface::MultiportalHelper::SetDxPortal(const G4double val) { fDx = val; }
 void Surface::MultiportalHelper::SetDyPortal(const G4double val) { fDy = val; }
 void Surface::MultiportalHelper::SetDzPortal(const G4double val) { fDz = val; }

@@ -1,9 +1,12 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-26
-// File:
+/**
+ * @brief Messenger for RoughnessHelper class
+ * @author C.Gruener
+ * @date 2024-07-26
+ * @file RoughnessHelperMessenger.hh
+ */
 
-#ifndef SRC_SERVICE_INCLUDE_ROUGHNESSHELPERMESSENGER_HH_
-#define SRC_SERVICE_INCLUDE_ROUGHNESSHELPERMESSENGER_HH_
+#ifndef SRC_SERVICE_INCLUDE_ROUGHNESSHELPERMESSENGER_HH
+#define SRC_SERVICE_INCLUDE_ROUGHNESSHELPERMESSENGER_HH
 
 #include "G4String.hh"
 #include "G4UImessenger.hh"
@@ -15,19 +18,20 @@ class G4UIcmdWithAString;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWithABool;
 
 namespace Surface {
 
 class RoughnessHelper;
-
+/**
+ * @brief Messenger class for control of RoughnessHelper class via macro files
+ */
 class RoughnessHelperMessenger : public G4UImessenger {
  public:
   explicit RoughnessHelperMessenger(Surface::RoughnessHelper *source,
                                     const G4String &name);
-  ~RoughnessHelperMessenger();
+  ~RoughnessHelperMessenger() override;
 
-  void SetNewValue(G4UIcommand *command, G4String newValues);
+  void SetNewValue(G4UIcommand *command, G4String newValues) override;
 
  private:
   Surface::RoughnessHelper *fSource;
@@ -61,4 +65,4 @@ class RoughnessHelperMessenger : public G4UImessenger {
 };
 }  // namespace Surface
 
-#endif  // SRC_SERVICE_INCLUDE_ROUGHNESSHELPERMESSENGER_HH_
+#endif  // SRC_SERVICE_INCLUDE_ROUGHNESSHELPERMESSENGER_HH

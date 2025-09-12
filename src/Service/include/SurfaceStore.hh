@@ -1,16 +1,22 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-15
-// File: SurfaceStore saves all FacetStores at one point
+/**
+ * @brief Class SurfaceStore holds handles to FacetStore
+ * @author C.Gruener
+ * @date 2024-07-15
+ * @file SurfaceStore.hh
+ */
 
-#ifndef SRC_SERVICE_INCLUDE_SURFACESTORE_HH_
-#define SRC_SERVICE_INCLUDE_SURFACESTORE_HH_
+#ifndef SRC_SERVICE_INCLUDE_SURFACESTORE_HH
+#define SRC_SERVICE_INCLUDE_SURFACESTORE_HH
 
 #include <vector>
 
 #include "Service/include/Logger.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
 namespace Surface {
-
+/**
+ * @brief The class SurfaceStore is a singleton class and holds handles to all FacetStores
+ * @details This is useful if multiple FacetStores are used
+ */
 class SurfaceStore {
  public:
   static SurfaceStore &GetInstance();
@@ -37,4 +43,4 @@ class SurfaceStore {
   std::vector<Surface::FacetStore *> fSurfaceStore;
 };
 }  // namespace Surface
-#endif  //  SRC_SERVICE_INCLUDE_SURFACESTORE_HH_
+#endif  //  SRC_SERVICE_INCLUDE_SURFACESTORE_HH

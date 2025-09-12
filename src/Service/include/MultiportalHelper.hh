@@ -1,11 +1,13 @@
-// Copyright [2024] C.Gruener
-// Author: C.Gruener
-// Date: 24-07-10
-// File: MultiportalHelper
-//
+/**
+ * @brief
+ * @author C.Gruener
+ * @date 24.07.10
+ * @file MultiportalHelper.hh
+ */
 
-#ifndef SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH_
-#define SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH_
+
+#ifndef SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH
+#define SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH
 
 #include <vector>
 
@@ -18,7 +20,7 @@ class MultiportalHelperMessenger;
 class MultiportalHelper {
  public:
   explicit MultiportalHelper(const G4String &helperName);
-  MultiportalHelper(const G4String &helperName, G4int verboseLvl);
+  explicit MultiportalHelper(const G4String &helperName, G4int verboseLvl);
 
   void Generate();
 
@@ -123,4 +125,4 @@ class MultiportalHelper {
   std::vector<G4Transform3D> fTransformRoughness;
 };
 }  // namespace Surface
-#endif  // SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH_
+#endif  // SRC_SERVICE_INCLUDE_MULTIPORTALHELPER_HH

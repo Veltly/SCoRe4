@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-07-15
-// File: Helper class to build a roughness G4LogicVolume object
+/**
+ * @brief Implementation of functions for RoughnessHelper class
+ * @author C.Gruener
+ * @date 2024-07-15
+ * @file RoughnessHelper.cc
+ */
 
 #include "Service/include/RoughnessHelper.hh"
 
@@ -39,13 +42,9 @@ Surface::RoughnessHelper::RoughnessHelper(const G4String &name,
 
 void Surface::RoughnessHelper::Generate() {
   CheckValues();
-
   BuildSurface();
-
   BuildBasis();
-
   Finalize();
-
   fLogger.WriteInfo("Build Roughness " + fName);
 }
 
@@ -87,22 +86,22 @@ void Surface::RoughnessHelper::SetSpikeHeightDeviation(const G4double val) {
 }
 
 void Surface::RoughnessHelper::SetSpikeform(
-    const Surface::Describer::Spikeform form) {
+    const Surface::Describer::SpikeShape form) {
   fSpikeform = form;
 }
 
 void Surface::RoughnessHelper::SetSpikeform(const G4String &spikeform) {
   if (spikeform == "Bump") {
-    SetSpikeform(Surface::Describer::Spikeform::Bump);
+    SetSpikeform(Surface::Describer::SpikeShape::Bump);
     return;
   } else if (spikeform == "Peak") {
-    SetSpikeform(Surface::Describer::Spikeform::Peak);
+    SetSpikeform(Surface::Describer::SpikeShape::Peak);
     return;
   } else if (spikeform == "UniformPyramid") {
-    SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+    SetSpikeform(Surface::Describer::SpikeShape::UniformPyramid);
     return;
   } else if (spikeform == "StandardPyramid") {
-    SetSpikeform(Surface::Describer::Spikeform::StandardPyramide);
+    SetSpikeform(Surface::Describer::SpikeShape::StandardPyramid);
     return;
   }
 
@@ -240,18 +239,17 @@ void Surface::RoughnessHelper::BuildSurface() {
 void Surface::RoughnessHelper::BuildBasis() {
   // Generate Basis
   const G4String nameBox = fName + "_Box";
-  G4Box *solidBasis = new G4Box(nameBox, fDxBasis, fDyBasis, fDzBasis);
+  auto *solidBasis = new G4Box(nameBox, fDxBasis, fDyBasis, fDzBasis);
   // Generate Trafo
   const G4ThreeVector placement{0., 0., -fDzBasis};
   G4Transform3D trafo{G4RotationMatrix(), placement};
   // Add to Roughness
   fRoughness->AddNode(*solidBasis, trafo);
-
   fLogger.WriteDetailInfo("Added basis to roughness");
 }
 
 void Surface::RoughnessHelper::Finalize() {
-  Surface::G4Voxelizer_Green &voxelizer =
+  auto &voxelizer =
       (Surface::G4Voxelizer_Green &)fRoughness->GetVoxels();
   voxelizer.SetMaxBoundary(fNxBoundary, fNyBoundary, fNzBoundary);
   voxelizer.Voxelize(fRoughness);
