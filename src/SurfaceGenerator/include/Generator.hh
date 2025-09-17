@@ -26,8 +26,8 @@ namespace Surface {
  */
 class SurfaceGenerator {
  public:
-  explicit SurfaceGenerator(const G4String &name) noexcept;
-  SurfaceGenerator(const G4String &name, G4int verboseLvl) noexcept;
+  //explicit SurfaceGenerator(const G4String &name) noexcept;
+  explicit SurfaceGenerator(const G4String &name, VerboseLevel verboseLvl = VerboseLevel::Default) noexcept;
   /**
    * @brief Returns handle to generated solid
    * @return pointer to generated solid

@@ -19,8 +19,7 @@ class MultiportalHelperMessenger;
 
 class MultiportalHelper {
  public:
-  explicit MultiportalHelper(const G4String &helperName);
-  explicit MultiportalHelper(const G4String &helperName, G4int verboseLvl);
+  explicit MultiportalHelper(const G4String &helperName, VerboseLevel verboseLvl = VerboseLevel::Default);
 
   void Generate();
 
@@ -40,8 +39,6 @@ class MultiportalHelper {
 
   void SetMotherVolume(G4LogicalVolume *motherVolume);
 
-  void SetVerbose(G4int verboseLvl);
-
   void SetSubworldMaterial(G4Material *mat);
   void SetSubworldMaterial(const G4String &materialName);
 
@@ -52,6 +49,9 @@ class MultiportalHelper {
 
   void SetPortalName(const G4String &name);
   void SetSubworldName(const G4String &name);
+
+  void SetVerbose(VerboseLevel verboseLvl);
+  void SetVerbose(G4int verboseLvl);
 
   void AddRoughness(G4LogicalVolume *, const G4Transform3D &, FacetStore *);
 
@@ -71,7 +71,7 @@ class MultiportalHelper {
   G4Material *GetSubworldMaterial() const;
   G4Transform3D GetSubworldPlacement(G4int id) const;
   // Verbose
-  void PrintInfo() const;
+  std::string InfoString() const;
   std::stringstream StreamInfo() const;
 
  private:
@@ -89,7 +89,6 @@ class MultiportalHelper {
   G4bool fCheckOverlaps;
   G4LogicalVolume *fMotherVolume;
   G4Transform3D fPlacementPortal;
-  G4int fVerbose;
   Surface::Logger fLogger;
   MultiportalHelperMessenger *fMessenger;
 

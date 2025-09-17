@@ -31,7 +31,10 @@ G4int Surface::PortalStore::FindPortalId(const G4String &name) const {
 Surface::VPortal *Surface::PortalStore::GetPortal(
     const G4VPhysicalVolume *volume) const {
   const G4int portalIdx = FindPortal(volume);
-  return this->at(portalIdx);
+  if(portalIdx >= 0) {
+    return this->at(portalIdx);
+  }
+  return nullptr;
 }
 
 G4int Surface::PortalStore::FindLogPortal(const G4LogicalVolume *volume) const {

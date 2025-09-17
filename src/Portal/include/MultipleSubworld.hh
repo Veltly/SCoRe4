@@ -1,9 +1,11 @@
-// Copyright [2024] C.Gruener
-// Date: 24-06-11
-// File: MultipleSubworlds
-
-#ifndef SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH_
-#define SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH_
+/**
+ * @brief Definition of standard portal
+ * @author C.Gruener
+ * @date 2024-06-11
+ * @file MultipleSubworld.hh
+ */
+#ifndef SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH
+#define SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH
 
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -14,9 +16,15 @@
 #include "VPortal.hh"
 
 namespace Surface {
-
+/**
+ * @brief Class defines the standard portal with a multiple subworlds
+ * in a grid-like structure
+ */
 class MultipleSubworld : public VPortal {
-  enum class SingleSurface {
+  /**
+   * @brief enum for all directions a particle can take to exit a volume
+   */
+  enum class Direction {
     X_UP,
     X_SAME,
     X_DOWN,
@@ -32,27 +40,33 @@ class MultipleSubworld : public VPortal {
     Z_DOWN
   };
 
+  /**
+   * @brief definition of portation type
+   * @details Enter: enters portal volume
+   * Exit: exits portal volume
+   * Periodic: enters another subworld (only possible if already in portal)
+   */
   enum class PortationType { ENTER, EXIT, PERIODIC };
 
  public:
-  MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
-                   const G4ThreeVector &vec, const G4int verbose,
+  MultipleSubworld(const G4String &name, G4VPhysicalVolume *volume,
+                   const G4ThreeVector &vec, VerboseLevel verbose = VerboseLevel::Default,
                    FacetStore *facetStore = nullptr);
 
-  MultipleSubworld(const G4String name, G4VPhysicalVolume *volume,
-                   const G4Transform3D transform, const G4int verbose,
+  MultipleSubworld(const G4String &name, G4VPhysicalVolume *volume,
+                   G4Transform3D transform, VerboseLevel verbose = VerboseLevel::Default,
                    FacetStore *facetStore = nullptr);
 
   ~MultipleSubworld();
 
-  virtual void DoPortation(G4Step *step);
+  void DoPortation(G4Step *step) override;
 
   // Setter
-  void SetGrid(const G4int nX, const G4int nY, const G4int verbose = 3);
+  void SetGrid(G4int nX, G4int nY, VerboseLevel verbose = VerboseLevel::Default);
 
   void SetGrid(SubworldGrid<MultipleSubworld> *grid);
 
-  void AddSubworldToGrid(const G4int x, const G4int y,
+  void AddSubworldToGrid(G4int x, G4int y,
                          MultipleSubworld *subworld);
 
   void SetAsPortal() { fIsPortal = true; }
@@ -69,31 +83,31 @@ class MultipleSubworld : public VPortal {
   // Check
   inline G4bool IsPortal() const { return fIsPortal; }
 
-  void SetSubworldEdge(const G4double edgeX, const G4double edgeY,
-                       const G4double edgeZ);
+  void SetSubworldEdge(G4double edgeX, G4double edgeY,
+                       G4double edgeZ);
 
   inline FacetStore *GetFacetStore() const { return fFacetStore; }
 
  private:
-  void DoPeriodicPortation(G4Step *step, const SingleSurface);
+  void DoPeriodicPortation(G4Step *step, Direction);
 
   void EnterPortal(G4Step *step);
 
   void ExitPortal(G4Step *step);
 
-  SingleSurface GetNearestSurface(const G4Step *step);
+  Direction GetNearestSurface(const G4Step *step);
 
-  PortationType GetPortationType(const SingleSurface);
+  PortationType GetPortationType(Direction);
 
-  void DoPeriodicTransform(G4ThreeVector &vec, const SingleSurface);
+  void DoPeriodicTransform(G4ThreeVector &vec, Direction);
 
   void TransformSubworldToPortal(G4ThreeVector &vec);
 
   void TransformPortalToSubworld(G4ThreeVector &vec);
 
-  G4double TransformZBetweenPortals(const G4double val);
+  G4double TransformZBetweenPortals(G4double val);
 
-  void LogCurrentStatus();
+  std::string CurrentStatusString() const;
 
  private:
   //  Logger fLogger;
@@ -109,4 +123,4 @@ class MultipleSubworld : public VPortal {
   FacetStore *fFacetStore;
 };
 }  // namespace Surface
-#endif  // SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH_
+#endif  // SRC_PORTAL_INCLUDE_MULTIPLESUBWORLD_HH

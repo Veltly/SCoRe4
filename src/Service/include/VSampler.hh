@@ -46,7 +46,7 @@ class VSampler {
   explicit VSampler(const G4String &name)
       : fIsClosed(false), fLogger("Sampler_" + name), fName(name) {}
 
-  VSampler(const G4String &name, const G4int verbose)
+  VSampler(const G4String &name, const VerboseLevel verbose)
       : fIsClosed(false), fLogger("Sampler_" + name, verbose), fName(name) {}
 
   void AppendValue(const T value) {

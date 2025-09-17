@@ -30,7 +30,7 @@ Surface::RoughnessHelper::RoughnessHelper(const G4String &name)
       fMaterial(nullptr) {}
 
 Surface::RoughnessHelper::RoughnessHelper(const G4String &name,
-                                          const G4int verboseLvl)
+                                          const VerboseLevel verboseLvl)
     : fLogger("RoughnessHelper_" + name, verboseLvl),
       fGenerator(name, verboseLvl),
       fRoughness(nullptr),
@@ -63,6 +63,10 @@ G4LogicalVolume *Surface::RoughnessHelper::LogicRoughness() const {
     exit(EXIT_FAILURE);
   }
   return fLogicRoughness;
+}
+
+void Surface::RoughnessHelper::SetVerbose(const VerboseLevel verboseLvl) {
+  fLogger.SetVerboseLvl(verboseLvl);
 }
 
 void Surface::RoughnessHelper::SetVerbose(const G4int verboseLvl) {

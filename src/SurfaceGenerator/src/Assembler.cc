@@ -25,7 +25,7 @@ void Surface::Assembler::Assemble() {
   auto *AssembledSolid = new G4MultiUnion;
   for (const auto &description : fDescription) {
     G4VSolid *newSolid = GetSingleSolid(description);
-    if (fLogger.WriteDebugInfo()) {
+    if (fLogger.IsDebugInfoLvl()) {
       std::stringstream ss;
       ss << "\n";
       newSolid->StreamInfo(ss);

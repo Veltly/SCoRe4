@@ -16,7 +16,7 @@
 #include "Randomize.hh"
 
 int main(int argc, char **argv) {
-  G4cout << "SimplePortal testapplication starting ..." << G4endl;
+  G4cout << "SimplePortal test application starting ..." << G4endl;
 
   G4UIExecutive *ui = 0;
   if (argc == 1) {

@@ -1,10 +1,12 @@
-// Copyright [2024] C.Gruener
-// Date: 24-06-11
-// File: SubworldGrid
-// Info: Header only
+/**
+ * @brief Implements SubworldGrid and HelperFillSubworldGrid template classes
+ * @author C.Gruener
+ * @date 2024-06-11
+ * @file SubworldGrid.hh
+ */
 
-#ifndef SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH_
-#define SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH_
+#ifndef SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH
+#define SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH
 
 #include <map>
 #include <numeric>
@@ -16,24 +18,17 @@
 #include "Service/include/Logger.hh"
 
 namespace Surface {
-
+/**
+ * @brief Implementation of SubworldGrid template
+ * @details Provides a grid structure with pointers to objects T.
+ * Stores position in grid.
+ * @tparam T template object
+ */
 template <class T>
 class SubworldGrid {
  public:
-  SubworldGrid(const G4int sizeX, const G4int sizeY)
-      : fColumnSize(sizeY),
-        fMaxX(sizeX),
-        fMaxY(sizeY),
-        fCurrentX(-1),
-        fCurrentY(-1),
-        fLogger("SubworldGrid") {
-    // col major order
-    fGrid = new T *[sizeX * sizeY];
-    fLogger.WriteDebugInfo("SubworldGrid of size " +
-                           std::to_string(sizeX * sizeY) + " initialized");
-  }
 
-  SubworldGrid(const G4int sizeX, const G4int sizeY, const G4int verboseLvl)
+  SubworldGrid(const G4int sizeX, const G4int sizeY, const VerboseLevel verboseLvl = VerboseLevel::Default)
       : fColumnSize(sizeY),
         fMaxX(sizeX),
         fMaxY(sizeY),
@@ -189,12 +184,18 @@ class SubworldGrid {
   T **fGrid;
 };
 
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
+/**
+ * @brief Helper class to fill SubworldGrid randomly with instances of T based on
+ * a density
+ * @tparam T template value
+ */
 template <class T>
 class HelperFillSubworldGrid {
  public:
-  HelperFillSubworldGrid() : fLogger("HelperFillSubworldGrid") {}
-
-  explicit HelperFillSubworldGrid(const G4int verboseLvl)
+  explicit HelperFillSubworldGrid(const VerboseLevel verboseLvl = VerboseLevel::Default)
       : fLogger("HelperFillSubworldGrid", verboseLvl) {}
 
   void AddAvailableSubworld(T *subworld, const G4double density) {
@@ -245,9 +246,8 @@ class HelperFillSubworldGrid {
 
  private:
   std::vector<T *> fAvailableSubworlds;  // available subworlds for filling grid
-  std::vector<G4double>
-      fDensity;  // Expected density of subworld in grid. Value between 0 and 1
+  std::vector<G4double> fDensity;  // Expected density of subworld in grid. Value between 0 and 1
   Logger fLogger;
 };
 }  // namespace Surface
-#endif  // SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH_
+#endif  // SRC_PORTAL_INCLUDE_SUBWORLDGRID_HH

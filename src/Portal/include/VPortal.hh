@@ -1,12 +1,12 @@
 /**
- * @brief Handles the portal interface
+ * @brief Handles the portals interface
  * @file VPortal.hh
  * @author C.Gruener
  * @date 24-05-24
  */
 
-#ifndef SRC_PORTAL_INCLUDE_VPORTAL_HH_
-#define SRC_PORTAL_INCLUDE_VPORTAL_HH_
+#ifndef SRC_PORTAL_INCLUDE_VPORTAL_HH
+#define SRC_PORTAL_INCLUDE_VPORTAL_HH
 
 #include <cstdlib>
 
@@ -24,15 +24,18 @@ enum class PortalType { SimplePortal, PeriodicPortal, MultipleSubworld };
 
 /**
  * @brief The class is the interface for a portal
+ * @details The class handles the portals physical volume, its placement coordinates,
+ * the trigger volume, the coordinate transformation between local and global coordinates and
+ * the update of momentum and position
  */
 class VPortal {
  public:
-  virtual void DoPortation(G4Step *) = 0;  /// Does the portation of a tracked particle
+  virtual void DoPortation(G4Step *) = 0;  /// Initiates the portation of a tracked particle
 
   VPortal(const G4String &name, G4VPhysicalVolume *, PortalType,
-          G4int verboseLvl);
+          VerboseLevel verboseLvl = VerboseLevel::Default);
   VPortal(const G4String &name, G4VPhysicalVolume *, PortalType,
-          G4int verboseLvl, const G4ThreeVector &globalCoord);
+          const G4ThreeVector &globalCoord, VerboseLevel verboseLvl = VerboseLevel::Default);
 
   // Getter
   inline G4VPhysicalVolume *GetVolume() const { return fVolume; }
@@ -41,17 +44,17 @@ class VPortal {
   inline G4VPhysicalVolume *GetTrigger() const { return fTrigger; }
 
   // Setter
-  void SetGlobalCoord(G4ThreeVector vec);
-  void SetVerbose(G4int verboseLvl);
-  void SetTrigger(G4VPhysicalVolume *volume); ///set the trigger of a portal (when trigger is entered, the portal is used
+  void SetGlobalCoord(const G4ThreeVector& vec);
+  void SetVerbose(VerboseLevel verboseLvl);
+  void SetTrigger(G4VPhysicalVolume *volume); ///set the trigger of a portal (when trigger is entered, the portal is used)
 
  protected:
   G4ThreeVector GetLocalCoordSystem() const;
 
   void TransformToLocalCoordinate(G4ThreeVector &vec);
   void TransformToGlobalCoordinate(G4ThreeVector &vec);
-  void UpdatePosition(G4Step *step, const G4ThreeVector &newPosition);
-  void UpdatePositionMomentum(G4Step *step, const G4ThreeVector &newPosition,
+  static void UpdatePosition(G4Step *step, const G4ThreeVector &newPosition);
+  static void UpdatePositionMomentum(G4Step *step, const G4ThreeVector &newPosition,
                               const G4ThreeVector &newDirection);
 
   Logger fLogger;
@@ -62,7 +65,7 @@ class VPortal {
   const PortalType fPortalType;
   G4ThreeVector fGlobalCoord;
   G4bool fGlobalCoordSet;
-  G4VPhysicalVolume *fTrigger;
+  G4VPhysicalVolume *fTrigger{nullptr};
 };
 }  // namespace Surface
-#endif  // SRC_PORTAL_INCLUDE_VPORTAL_HH_
+#endif  // SRC_PORTAL_INCLUDE_VPORTAL_HH

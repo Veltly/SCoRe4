@@ -153,9 +153,9 @@ std::stringstream Surface::FacetStore::StreamInfo() const {
   ss << "Name: " << fName << "\n";
   ss << "Number of Facets: " << fFacetVector.size() << "\n";
 
-  if (fLogger.WriteDetailInfo()) {
+  if (fLogger.IsDetailInfoLvl()) {
     ss << "\n";
-    if (fLogger.WriteDebugInfo()) {
+    if (fLogger.IsDebugInfoLvl()) {
       ss << "Idx, P1,P2,P3,Area[mm^2],Probability %\n";
     } else {
       ss << "Idx, Area[mm^2],Probability %\n";
@@ -165,7 +165,7 @@ std::stringstream Surface::FacetStore::StreamInfo() const {
     for (size_t i = 0; i < fFacetVector.size(); ++i) {
       const auto *facet = fFacetVector.at(i);
       ss << std::setw(5) << i << ",";
-      if (fLogger.WriteDebugInfo()) {
+      if (fLogger.IsDebugInfoLvl()) {
         ss << std::fixed << std::setprecision(10) << facet->GetVertex(0) << ",";
         ss << std::fixed << std::setprecision(10) << facet->GetVertex(1) << ",";
         ss << std::fixed << std::setprecision(10) << facet->GetVertex(2) << ",";

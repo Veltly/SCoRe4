@@ -29,7 +29,7 @@ typedef Describer::SpikeShape Spikeform;
 class RoughnessHelper {
  public:
   explicit RoughnessHelper(const G4String &name);
-  RoughnessHelper(const G4String &name, G4int verboseLvl);
+  RoughnessHelper(const G4String &name, VerboseLevel verboseLvl);
 
   void Generate();
   // Getter
@@ -38,7 +38,7 @@ class RoughnessHelper {
   G4LogicalVolume *LogicRoughness() const;
   FacetStore *FacetStore();
   inline const G4String &GetName() const { return fName; }
-  inline G4double GetVerboseLvl() const { return fLogger.GetVerboseLvl(); }
+  inline VerboseLevel GetVerboseLvl() const { return fLogger.GetVerboseLvl(); }
   inline G4double GetSpikeDx() const { return fDxSpike; }
   inline G4double GetSpikeDy() const { return fDySpike; }
   inline G4double GetSpikeMeanHeight() const { return fDzSpikeMean; }
@@ -56,6 +56,7 @@ class RoughnessHelper {
   inline auto GetStepLimit() const { return fStepLimit; }
 
   // Setter
+  void SetVerbose(VerboseLevel verboseLvl);
   void SetVerbose(G4int verboseLvl);
   void SetSpikeDx(G4double);
   void SetSpikeDy(G4double);

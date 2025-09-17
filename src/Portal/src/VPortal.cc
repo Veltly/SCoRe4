@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-05-24
-// File: VirtualPortal
+/**
+ * @file VPortal.cc
+ * @brief Handles the portal interface
+ * @author C.Gruener
+ * @date 24-05-24
+ */
 
 #include "Portal/include/VPortal.hh"
 
@@ -14,8 +17,8 @@
 #include "Service/include/Logger.hh"
 
 Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
-                          const PortalType type, const G4int verboseLvl)
-    : fLogger("VPortal_" + name, verboseLvl),
+                          const PortalType type, const VerboseLevel verboseLvl)
+    : fLogger(name, verboseLvl),
       fName(name),
       fVolume(volume),
       fPortalType(type),
@@ -24,9 +27,9 @@ Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
 }
 
 Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
-                          const PortalType type, const G4int verboseLvl,
-                          const G4ThreeVector &globalCoord)
-    : fLogger("VPortal_" + name, verboseLvl),
+                          const PortalType type,
+                          const G4ThreeVector &globalCoord, const VerboseLevel verboseLvl)
+    : fLogger(name, verboseLvl),
       fName(name),
       fVolume(volume),
       fPortalType(type),
@@ -42,18 +45,15 @@ G4ThreeVector Surface::VPortal::GetLocalCoordSystem() const {
   if (fGlobalCoordSet) {
     return fGlobalCoord;
   }
-  fLogger.WriteError("Global coodinates not set for: " + fName);
+  fLogger.WriteError("Global coordinates not set for: " + fName);
   exit(EXIT_FAILURE);
 }
 
-void Surface::VPortal::SetGlobalCoord(const G4ThreeVector vec) {
+void Surface::VPortal::SetGlobalCoord(const G4ThreeVector& vec) {
   fGlobalCoord = vec;
   fGlobalCoordSet = true;
   Logger logger{"VPortal"};
-  logger.WriteDebugInfo("Global coord of " + fName +
-                        " is set to x: " + std::to_string(fGlobalCoord.x()) +
-                        " y: " + std::to_string(fGlobalCoord.y()) +
-                        " z: " + std::to_string(fGlobalCoord.z()));
+  logger.WriteDebugInfo("Global coord of " + fName + " is set to ", fGlobalCoord);
 }
 
 void Surface::VPortal::TransformToLocalCoordinate(G4ThreeVector &vec) {
@@ -78,13 +78,9 @@ void Surface::VPortal::UpdatePosition(G4Step *step,
 void Surface::VPortal::UpdatePositionMomentum(
     G4Step *step, const G4ThreeVector &newPosition,
     const G4ThreeVector &newDirection) {
-  //  G4EventManager *eventManager = G4EventManager::GetEventManager();
-  //  G4TrackingManager *trackingManager = eventManager->GetTrackingManager();
-  //  G4SteppingManager *steppingManager =
-  //  trackingManager->GetSteppingManager();
+
   G4Navigator *navigator = G4TransportationManager::GetTransportationManager()
                                ->GetNavigatorForTracking();
-  // G4Navigator *navigator = steppingManager->GetfNavigator();
   G4StepPoint *stepPoint = step->GetPostStepPoint();
   G4VTouchable *touchableStepPoint = stepPoint->GetTouchableHandle()();
   navigator->LocateGlobalPointAndUpdateTouchable(newPosition, newDirection,
@@ -103,13 +99,13 @@ void Surface::VPortal::UpdatePositionMomentum(
 
   G4EventManager *evtm = G4EventManager::GetEventManager();
   G4TrackingManager *tckm = evtm->GetTrackingManager();
-  G4VTrajectory *fpTrajectory = NULL;
+  G4VTrajectory *fpTrajectory = nullptr;
   fpTrajectory = tckm->GimmeTrajectory();
   if (fpTrajectory) {
     fpTrajectory->AppendStep(step);
   }
 }
 
-void Surface::VPortal::SetVerbose(const G4int verboseLvl) {
+void Surface::VPortal::SetVerbose(const VerboseLevel verboseLvl) {
   fLogger.SetVerboseLvl(verboseLvl);
 }

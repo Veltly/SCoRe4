@@ -19,16 +19,12 @@
 #include "Service/include/Locator.hh"
 #include "Service/include/MultiportalHelperMessenger.hh"
 
-Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName)
-    : MultiportalHelper(helperName, Logger::GetDefaultVerboseLvl()){}
-
 Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
-                                              const G4int verboseLvl)
+                                              const VerboseLevel verboseLvl)
     : fHelperName(helperName),
       fNOfDifferentSubworlds(0),
       fCheckOverlaps(false),
       fMotherVolume(nullptr),
-      fVerbose(0),
       fLogger("MPH_" + helperName, verboseLvl),
       fMessenger(new MultiportalHelperMessenger(this, helperName)),
       fDxSub(0),
@@ -130,7 +126,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
 
     // Create Subworld
     auto *portalSubworld = new Surface::MultipleSubworld(
-        nameSub, physSub, transformation, fVerbose);
+        nameSub, physSub, transformation, fLogger.GetVerboseLvl());
 
     // set trigger
     portalSubworld->SetTrigger(physTrig);
@@ -156,7 +152,7 @@ void Surface::MultiportalHelper::GeneratePortal() {
                         fMotherVolume, false, 0, fCheckOverlaps);
 
   fPortal = new Surface::MultipleSubworld(namePortal, physPortal,
-                                          fPlacementPortal, fVerbose);
+                                          fPlacementPortal, fLogger.GetVerboseLvl());
 
   fPortal->SetTrigger(physPortal);
   fPortal->SetAsPortal();
@@ -179,7 +175,7 @@ void Surface::MultiportalHelper::LinkPortalWithSubworlds() {
 
 void Surface::MultiportalHelper::FillSubworldMap() const {
   Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> mapHelper(
-      fVerbose);
+      fLogger.GetVerboseLvl());
   for (G4int i = 0; i < fNOfDifferentSubworlds; ++i) {
     Surface::MultipleSubworld *subworld = fMultipleSubworld.at(i);
     const G4double density = fSubworldProb.at(i);
@@ -206,9 +202,10 @@ void Surface::MultiportalHelper::Generate() {
   AddRoughness();
   fLogger.WriteInfo("Generated Portal with Subworlds");
 
-  if (fLogger.WriteDetailInfo()) {
-    PrintInfo();
-  }
+  fLogger.WriteDetailInfo([this] {return InfoString();});
+  //if (fLogger.IsDetailInfoLvl()) {
+  //  InfoString();
+  //}
 }
 
 // Setter
@@ -236,10 +233,6 @@ void Surface::MultiportalHelper::SetPortalPlacement(
 void Surface::MultiportalHelper::SetMotherVolume(
     G4LogicalVolume *motherVolume) {
   fMotherVolume = motherVolume;
-}
-
-void Surface::MultiportalHelper::SetVerbose(const G4int verboseLvl) {
-  fVerbose = verboseLvl;
 }
 
 void Surface::MultiportalHelper::SetSubworldMaterial(G4Material *mat) {
@@ -321,12 +314,11 @@ std::stringstream Surface::MultiportalHelper::StreamInfo() const {
   return ss;
 }
 
-void Surface::MultiportalHelper::PrintInfo() const {
-  G4cout << StreamInfo().str() << G4endl;
+std::string Surface::MultiportalHelper::InfoString() const {
+  return StreamInfo().str();
 }
 
 // Getter
-
 G4double Surface::MultiportalHelper::GetPortalDx() const { return fDx; }
 G4double Surface::MultiportalHelper::GetPortalDy() const { return fDy; }
 G4double Surface::MultiportalHelper::GetPortalDz() const { return fDz; }
@@ -375,4 +367,12 @@ void Surface::MultiportalHelper::AddRoughness(G4LogicalVolume *vol,
   fRoughness.push_back(vol);
   fTransformRoughness.push_back(trafo);
   fFacetStore.push_back(facetStore);
+}
+
+void Surface::MultiportalHelper::SetVerbose(const G4int verboseLvl) {
+  fLogger.SetVerboseLvl(verboseLvl);
+}
+
+void Surface::MultiportalHelper::SetVerbose(const Surface::VerboseLevel verboseLvl) {
+  fLogger.SetVerboseLvl(verboseLvl);
 }

@@ -32,8 +32,8 @@ class FacetStore {
   };
 
  public:
-  explicit FacetStore(const G4String &name)
-      : fName("FacetStore_" + name), fLogger("FacetStore_" + name) {}
+  explicit FacetStore(const G4String &name , VerboseLevel verboseLvl = VerboseLevel::Default)
+      : fName("FacetStore_" + name), fLogger("FacetStore_" + name, verboseLvl) {}
 
 /**
  * @brief Closes FacetStore and prepares it for usage in simulation.

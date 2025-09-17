@@ -43,7 +43,7 @@ class PeriodicPortal : public VPortal {
 
  public:
   PeriodicPortal(const G4String &name, G4VPhysicalVolume *volume,
-                 const G4ThreeVector &vec, G4int verbose);
+                 const G4ThreeVector &vec, VerboseLevel verbose = VerboseLevel::Default);
 /**
  * @brief Performs the portation
  * @param step

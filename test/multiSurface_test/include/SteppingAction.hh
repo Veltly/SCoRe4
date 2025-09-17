@@ -19,7 +19,7 @@ class SteppingAction : public G4UserSteppingAction {
   void UserSteppingAction(const G4Step *) override;
 
  private:
-  Surface::PortalControl fPortalControl{-1}; // class controls usage of portal
+  Surface::PortalControl fPortalControl{}; // class controls usage of portal
 };
 
 #endif

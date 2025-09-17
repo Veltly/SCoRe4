@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 24-05-25
-// File: PortalControl
+/**
+ * @brief Implementation of PortalControl class
+ * @author C.Gruener
+ * @date 2024-05-25
+ * @file PortalControl.cc
+ */
 
 #include "Portal/include/PortalControl.hh"
 
@@ -17,13 +20,7 @@
 #include "Service/include/Locator.hh"
 #include "Service/include/Logger.hh"
 
-Surface::PortalControl::PortalControl()
-    : fPortalStore(Surface::Locator::GetPortalStore()),
-      fLogger("PortalControl") {
-  fLogger.WriteInfo("PortalControl initialized");
-}
-
-Surface::PortalControl::PortalControl(const G4int verboseLvl)
+Surface::PortalControl::PortalControl(const VerboseLevel verboseLvl)
     : fPortalStore(Surface::Locator::GetPortalStore()),
       fLogger("PortalControl", verboseLvl) {
   fLogger.WriteInfo("PortalControl initialized");
@@ -32,7 +29,7 @@ Surface::PortalControl::PortalControl(const G4int verboseLvl)
   }
 }
 
-// Usefull function because using SteppingAction.hh step is const
+// Useful function because using SteppingAction.hh step is const
 void Surface::PortalControl::DoStep(const G4Step *step) {
   DoStep(const_cast<G4Step *>(step));
 }
@@ -77,35 +74,54 @@ void Surface::PortalControl::DoStep(G4Step *step) {
   fLogger.WriteDebugInfo(stream.str(), postStep->GetPosition());
 }
 
-void Surface::PortalControl::SetVerbose(const G4int verboseLvl) {
+void Surface::PortalControl::SetVerbose(const VerboseLevel verboseLvl) {
   fLogger.SetVerboseLvl(verboseLvl);
 }
 
 void Surface::PortalControl::DoPortation(G4Step *step,
                                          const G4VPhysicalVolume *volume) {
-  VPortal *portal = fPortalStore.GetPortal(volume);
-  const PortalType type = portal->GetPortalType();
+  auto *portal = fPortalStore.GetPortal(volume);
+  if(!portal){
+    fLogger.WriteError("No portal found!");
+    std::exit(EXIT_FAILURE);
+  }
+  const auto type = portal->GetPortalType();
   switch (type) {
     case PortalType::SimplePortal: {
-      SimplePortal *simplePortal = static_cast<SimplePortal *>(portal);
-      fLogger.WriteDebugInfo("Using SimplePortal " + simplePortal->GetName());
-      simplePortal->DoPortation(step);
-      break;
+      auto *simplePortal = dynamic_cast<SimplePortal *>(portal);
+      if(simplePortal) {
+        fLogger.WriteDebugInfo("Using SimplePortal " + simplePortal->GetName());
+        simplePortal->DoPortation(step);
+        break;
+      }else{
+        fLogger.WriteError("Failed to cast portal to SimplePortal!");
+        std::exit(EXIT_FAILURE);
+      }
     }
     case PortalType::PeriodicPortal: {
-      PeriodicPortal *periodicPortal = static_cast<PeriodicPortal *>(portal);
-      fLogger.WriteDebugInfo("Using PeriodicPortal " +
-                             periodicPortal->GetName());
-      periodicPortal->DoPortation(step);
-      break;
+      auto *periodicPortal = dynamic_cast<PeriodicPortal *>(portal);
+      if(periodicPortal) {
+        fLogger.WriteDebugInfo("Using PeriodicPortal " +
+                               periodicPortal->GetName());
+        periodicPortal->DoPortation(step);
+        break;
+      }else{
+        fLogger.WriteError("Failed to cast portal to PeriodicPortal!");
+        std::exit(EXIT_FAILURE);
+      }
     }
     case PortalType::MultipleSubworld: {
-      MultipleSubworld *multipleSubworld =
-          static_cast<MultipleSubworld *>(portal);
-      fLogger.WriteDebugInfo("Using MultipleSubworld " +
-                             multipleSubworld->GetName());
-      multipleSubworld->DoPortation(step);
-      break;
+      auto *multipleSubworld =
+          dynamic_cast<MultipleSubworld *>(portal);
+      if(multipleSubworld) {
+        fLogger.WriteDebugInfo("Using MultipleSubworld " +
+                               multipleSubworld->GetName());
+        multipleSubworld->DoPortation(step);
+        break;
+      } else {
+        fLogger.WriteError("Failed to cast portal to MultipleSubworld!");
+        std::exit(EXIT_FAILURE);
+      }
     }
   }
   fJustPorted = true;

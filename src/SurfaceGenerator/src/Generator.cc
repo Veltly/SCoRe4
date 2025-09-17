@@ -12,21 +12,12 @@
 #include "SurfaceGenerator/include/Describer.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
 
-Surface::SurfaceGenerator::SurfaceGenerator(const G4String &name) noexcept
-    : fSolidHandle(nullptr),
-      fDescriber(Surface::Describer()),
-      fLogger("SurfaceGenerator_" + name),
-      fFacetStore(new FacetStore{name}),
-      fName(name) {
-  fLogger.WriteInfo("initialized");
-}
-
 Surface::SurfaceGenerator::SurfaceGenerator(const G4String &name,
-                                            const G4int verboseLvl) noexcept
+                                            const VerboseLevel verboseLvl) noexcept
     : fSolidHandle(nullptr),
       fDescriber(Surface::Describer()),
       fLogger("SurfaceGenerator_" + name, verboseLvl),
-      fFacetStore(new FacetStore{name}),
+      fFacetStore(new FacetStore{name, verboseLvl}),
       fName(name) {
   fLogger.WriteInfo("initialized");
 }
