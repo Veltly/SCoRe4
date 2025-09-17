@@ -32,19 +32,19 @@ class VPortal {
  public:
   virtual void DoPortation(G4Step *) = 0;  /// Initiates the portation of a tracked particle
 
-  VPortal(const G4String &name, G4VPhysicalVolume *, PortalType,
+  VPortal(G4String name, G4VPhysicalVolume *, PortalType,
           VerboseLevel verboseLvl = VerboseLevel::Default);
-  VPortal(const G4String &name, G4VPhysicalVolume *, PortalType,
-          const G4ThreeVector &globalCoord, VerboseLevel verboseLvl = VerboseLevel::Default);
+  VPortal(G4String name, G4VPhysicalVolume *, PortalType,
+          G4ThreeVector globalCoord, VerboseLevel verboseLvl = VerboseLevel::Default);
 
   // Getter
   inline G4VPhysicalVolume *GetVolume() const { return fVolume; }
-  inline G4String GetName() const { return fName; }
+  inline const G4String &GetName() const { return fName; }
   inline PortalType GetPortalType() const { return fPortalType; }
   inline G4VPhysicalVolume *GetTrigger() const { return fTrigger; }
 
   // Setter
-  void SetGlobalCoord(const G4ThreeVector& vec);
+  void SetGlobalCoord(G4ThreeVector vec);
   void SetVerbose(VerboseLevel verboseLvl);
   void SetTrigger(G4VPhysicalVolume *volume); ///set the trigger of a portal (when trigger is entered, the portal is used)
 
@@ -57,7 +57,7 @@ class VPortal {
   static void UpdatePositionMomentum(G4Step *step, const G4ThreeVector &newPosition,
                               const G4ThreeVector &newDirection);
 
-  Logger fLogger;
+
 
  private:
   const G4String fName;
@@ -66,6 +66,9 @@ class VPortal {
   G4ThreeVector fGlobalCoord;
   G4bool fGlobalCoordSet;
   G4VPhysicalVolume *fTrigger{nullptr};
+
+ protected:
+  Logger fLogger;
 };
 }  // namespace Surface
 #endif  // SRC_PORTAL_INCLUDE_VPORTAL_HH

@@ -235,8 +235,8 @@ void Surface::PeriodicPortal::TransformPortalToSubworld(G4ThreeVector &vec) {
       pMinOtherVol, pMax);
   const G4ThreeVector otherVolumeDistance = pMax - pMinOtherVol;
   const G4ThreeVector shiftedVec = vec + volumeDistance / 2.;
-  G4int NX = shiftedVec.x() / otherVolumeDistance.x();
-  G4int NY = shiftedVec.y() / otherVolumeDistance.y();
+  auto NX = static_cast<G4int>(shiftedVec.x() / otherVolumeDistance.x());
+  auto NY = static_cast<G4int>(shiftedVec.y() / otherVolumeDistance.y());
   if (NX == fOtherPortal->fMaxNX) --NX;
   if (NY == fOtherPortal->fMaxNY) --NY;
 

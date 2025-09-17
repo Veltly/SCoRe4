@@ -5,8 +5,8 @@
  * @date 24-05-24
  */
 
-#ifndef SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_
-#define SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_
+#ifndef SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH
+#define SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH
 
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -33,4 +33,4 @@ class SimplePortal : public VPortal {
 };
 
 }  // namespace Surface
-#endif  // SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH_
+#endif  // SRC_PORTAL_INCLUDE_SIMPLEPORTAL_HH

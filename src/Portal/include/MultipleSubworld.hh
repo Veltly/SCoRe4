@@ -111,9 +111,9 @@ class MultipleSubworld : public VPortal {
 
  private:
   //  Logger fLogger;
-  MultipleSubworld *fPortal;  // TO DO: replace this or delete it!! In transform
+  MultipleSubworld *fPortal{};  // TO DO: replace this or delete it!! In transform
                               // function, example values must be set
-  G4double fEdgeX, fEdgeY, fEdgeZ;
+  G4double fEdgeX{}, fEdgeY{}, fEdgeZ{};
   G4bool fIsPortal;  // True if it is the portal, false if it is the periodic
                      // subworld
   SubworldGrid<MultipleSubworld> *fSubworldGrid;

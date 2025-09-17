@@ -8,6 +8,7 @@
 #include "Portal/include/VPortal.hh"
 
 #include <cstdlib>
+#include <utility>
 
 #include "G4EventManager.hh"
 #include "G4PathFinder.hh"
@@ -16,25 +17,25 @@
 #include "G4VPhysicalVolume.hh"
 #include "Service/include/Logger.hh"
 
-Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
-                          const PortalType type, const VerboseLevel verboseLvl)
-    : fLogger(name, verboseLvl),
-      fName(name),
-      fVolume(volume),
-      fPortalType(type),
-      fGlobalCoordSet(false) {
+Surface::VPortal::VPortal(G4String name, G4VPhysicalVolume *volume,
+                          PortalType type, VerboseLevel verboseLvl)
+    : fName{std::move(name)},
+      fVolume{volume},
+      fPortalType{type},
+      fGlobalCoordSet{false},
+      fLogger{fName, verboseLvl}{
   fLogger.WriteDebugInfo("No global coord set for " + fName);
 }
 
-Surface::VPortal::VPortal(const G4String &name, G4VPhysicalVolume *volume,
-                          const PortalType type,
-                          const G4ThreeVector &globalCoord, const VerboseLevel verboseLvl)
-    : fLogger(name, verboseLvl),
-      fName(name),
-      fVolume(volume),
-      fPortalType(type),
-      fGlobalCoord(globalCoord),
-      fGlobalCoordSet(true) {
+Surface::VPortal::VPortal(G4String name, G4VPhysicalVolume *volume,
+                          PortalType type,
+                          G4ThreeVector globalCoord, VerboseLevel verboseLvl)
+    : fName{std::move(name)},
+      fVolume{volume},
+      fPortalType{type},
+      fGlobalCoord{std::move(globalCoord)},
+      fGlobalCoordSet{true},
+      fLogger{fName, verboseLvl}{
   fLogger.WriteDebugInfo("Global coord of " + fName +
                          " is set to x: " + std::to_string(fGlobalCoord.x()) +
                          " y: " + std::to_string(fGlobalCoord.y()) +
@@ -49,8 +50,8 @@ G4ThreeVector Surface::VPortal::GetLocalCoordSystem() const {
   exit(EXIT_FAILURE);
 }
 
-void Surface::VPortal::SetGlobalCoord(const G4ThreeVector& vec) {
-  fGlobalCoord = vec;
+void Surface::VPortal::SetGlobalCoord(G4ThreeVector vec) {
+  fGlobalCoord = std::move(vec);
   fGlobalCoordSet = true;
   Logger logger{"VPortal"};
   logger.WriteDebugInfo("Global coord of " + fName + " is set to ", fGlobalCoord);
