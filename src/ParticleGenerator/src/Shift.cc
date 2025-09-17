@@ -1,8 +1,11 @@
-// Copyright [2024] C.Gruener
-// Date: 24-06-16
-// File: ShiftTable
+/**
+ * @brief Implementation of class Shift
+ * @author C.Gruener
+ * @date 2024-06-16
+ * @file Shift.cc
+ */
 
-#include "ParticleGenerator/include/ShiftTable.hh"
+#include "ParticleGenerator/include/Shift.hh"
 
 #include <cstdlib>
 #include <fstream>
@@ -15,10 +18,10 @@
 #include "G4TransportationManager.hh"
 #include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
-#include "ParticleGenerator/include/ShiftTableMessenger.hh"
+#include "ParticleGenerator/include/ShiftMessenger.hh"
 #include "Randomize.hh"
 
-Surface::Shift::Shift(const G4int verbose)
+Surface::Shift::Shift(const VerboseLevel verbose)
     : fShiftTableReady(false),
       fMinShift(0.),
       fMaxShift(DBL_MAX),
@@ -26,7 +29,7 @@ Surface::Shift::Shift(const G4int verbose)
       fLogger("Shift", verbose),
       fMessenger(new Surface::ShiftMessenger(this)) {}
 
-Surface::Shift::Shift(const G4String &filename, const G4int verbose)
+Surface::Shift::Shift(const G4String &filename, const VerboseLevel verbose)
     : fShiftTableReady(false),
       fMinShift(0.),
       fMaxShift(DBL_MAX),
@@ -36,8 +39,6 @@ Surface::Shift::Shift(const G4String &filename, const G4int verbose)
   LoadShiftTable(filename);
 }
 
-Surface::Shift::~Shift() {}
-
 G4double Surface::Shift::CalcShift() {
   G4double random = G4UniformRand();
   for (size_t i = 0; i < fBarProbability.size(); ++i) {
@@ -45,8 +46,7 @@ G4double Surface::Shift::CalcShift() {
       return Interpolate(i) * CLHEP::nm;
     }
   }
-  exit(EXIT_FAILURE);  // Path should never happen
-  return 0;
+  exit(EXIT_FAILURE);
 }
 
 void Surface::Shift::DoShift(G4ThreeVector &position,
@@ -114,13 +114,13 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
   std::ifstream file;
   file.open(filename);
   if (!file.is_open()) {
-    fLogger.WriteError("File for shifttable not found at: " + filename);
+    fLogger.WriteError("File for shift table not found at: " + filename);
     return;
   }
   std::string line;
   const std::string delimiter = ",";
   while (getline(file, line)) {
-    const G4int pos = line.find(delimiter);
+    const auto pos = line.find(delimiter);
     const G4double depth = std::stod(line.substr(0, pos));
     const G4double counts = std::stod(line.substr(pos + 1, pos + line.size()));
     fShift.push_back(depth);
@@ -149,7 +149,7 @@ G4double Surface::Shift::Interpolate(const G4double xNormed,
   return result;
 }
 
-G4double Surface::Shift::Interpolate(const G4int idx) {
+G4double Surface::Shift::Interpolate(const size_t idx) {
   const G4double a = fProbability[idx];
   const G4double b = fProbability[idx + 1];
   const G4double rand = G4UniformRand();
@@ -188,7 +188,7 @@ void Surface::Shift::SetMaxShift(const G4double max) {
 }
 
 G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
-  if (fConfineMaterialName == "") {
+  if (fConfineMaterialName.empty()) {
     return true;
   }
   G4ThreeVector null(0., 0., 0.);
@@ -210,6 +210,10 @@ G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
 
 void Surface::Shift::ConfineToMaterial(const G4String &materialName) {
   fConfineMaterialName = materialName;
+}
+
+void Surface::Shift::SetVerboseLvl(const VerboseLevel verboseLvl) {
+  fLogger.SetVerboseLvl(verboseLvl);
 }
 
 void Surface::Shift::SetVerboseLvl(const G4int verboseLvl) {

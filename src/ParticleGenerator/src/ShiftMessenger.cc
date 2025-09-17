@@ -1,10 +1,15 @@
-// Author: C.Gruener
-// Date: 24-07-09
-// File: Shift Messenger
-//
+/**
+ * @brief Implementation of messenger class ShiftMessenger
+ * @author C.Gruener
+ * @date 2024-07-09
+ * @file ShiftMessenger.cc
+ */
 
-#include "../include/ShiftTableMessenger.hh"
-#include "../include/ShiftTable.hh"
+#include "../include/ShiftMessenger.hh"
+
+#include <G4ApplicationState.hh>
+
+#include "../include/Shift.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -12,15 +17,11 @@
 #include "G4UIcommand.hh"
 #include "G4UIdirectory.hh"
 
-#include <G4ApplicationState.hh>
-
 Surface::ShiftMessenger::ShiftMessenger(Surface::Shift *shift)
     : fShift(shift), fDirectory(nullptr), fCmdVerbose(nullptr),
       fCmdPrintShiftTable(nullptr), fCmdLoadShiftTable(nullptr),
       fCmdSetMinShift(nullptr), fCmdSetMaxShift(nullptr),
       fCmdConfineToMaterial(nullptr) {
-  // As the messenger class is instantiated by the PrimaryGeneratorSource, the
-  // pointer Source can not be NULL, hence no test needed.
 
   fDirectory = new G4UIdirectory("/shift/");
   fDirectory->SetGuidance("Controls the shift of the particle source");
@@ -83,15 +84,15 @@ Surface::ShiftMessenger::~ShiftMessenger() {
 void Surface::ShiftMessenger::SetNewValue(G4UIcommand *command,
                                           G4String newValues) {
   if (command == fCmdVerbose) {
-    fShift->SetVerboseLvl(fCmdVerbose->GetNewIntValue(newValues));
+    fShift->SetVerboseLvl(G4UIcmdWithAnInteger::GetNewIntValue(newValues));
   } else if (command == fCmdPrintShiftTable) {
     fShift->PrintShiftTable();
   } else if (command == fCmdLoadShiftTable) {
     fShift->LoadShiftTable(newValues);
   } else if (command == fCmdSetMinShift) {
-    fShift->SetMinShift(fCmdSetMinShift->GetNewDoubleValue(newValues));
+    fShift->SetMinShift(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdSetMaxShift) {
-    fShift->SetMaxShift(fCmdSetMaxShift->GetNewDoubleValue(newValues));
+    fShift->SetMaxShift(G4UIcmdWithADoubleAndUnit::GetNewDoubleValue(newValues));
   } else if (command == fCmdConfineToMaterial) {
     fShift->ConfineToMaterial(newValues);
   }

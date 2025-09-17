@@ -1,7 +1,9 @@
-// Author: C.Gruener
-// Date: 24-07-09
-// File: Shift Messenger
-//
+/**
+ * @brief Definition of class ShiftMessenger
+ * @author C.Gruener
+ * @date 2024-07-09
+ * @file ShiftMessenger.hh
+ */
 
 #ifndef SURFACE_SHIFTMESSENGER
 #define SURFACE_SHIFTMESSENGER
@@ -15,23 +17,21 @@ class G4UIcmdWithAString;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithoutParameter;
 class G4UIcmdWithADoubleAndUnit;
-class G4UIcmdWithABool;
 
 namespace Surface {
 
 class Shift;
 
-//
-//@Messenger for the class Shift
-//
-
+/**
+ * @brief Messenger for class Shift
+ */
 class ShiftMessenger : public G4UImessenger {
 
 public:
-  ShiftMessenger(Surface::Shift *shift);
-  ~ShiftMessenger();
+  explicit ShiftMessenger(Surface::Shift *shift);
+  ~ShiftMessenger() override;
 
-  void SetNewValue(G4UIcommand *command, G4String newValues);
+  void SetNewValue(G4UIcommand *command, G4String newValues) override;
 
 private:
   Surface::Shift *fShift;
@@ -45,4 +45,4 @@ private:
 };
 } // namespace Surface
 
-#endif // SURFACE_SURFACESOURCEMESSENGER
+#endif

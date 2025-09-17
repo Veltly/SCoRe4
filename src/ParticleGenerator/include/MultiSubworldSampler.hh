@@ -1,13 +1,16 @@
-// Author: Copyright [2024] C.Gruener
-// Date: 24-06-18
-// File: MultiSubworldSampler
+/**
+ * @brief Definition of class MultiSubwordlSampler
+ * @author C.Gruener
+ * @date 2024-06-18
+ * @file MultiSubworldSampler.hh
+ */
 
-#ifndef SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH_
-#define SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH_
+#ifndef SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH
+#define SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH
 
 #include "G4GeneralParticleSource.hh"
 #include "G4VPrimaryGenerator.hh"
-#include "ParticleGenerator/include/ShiftTable.hh"
+#include "ParticleGenerator/include/Shift.hh"
 #include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/SubworldGrid.hh"
 #include "Service/include/VSampler.hh"
@@ -25,30 +28,28 @@ std::ostream &operator<<(std::ostream &os, const Coord &coord);
 
 class MultiSubworldSampler : public G4VPrimaryGenerator {
  public:
-  MultiSubworldSampler(const G4String &name, const G4String &portalName,
+  MultiSubworldSampler(G4String name, G4String portalName,
                        const G4String &shiftFilename,
-                       const G4int verboseLvl = 6);
+                       VerboseLevel verboseLvl = VerboseLevel::Default);
 
-  MultiSubworldSampler(const G4String &name, const G4String &portalName,
-                       const G4int verboseLvl = 6);
-  ~MultiSubworldSampler();
-  void GeneratePrimaryVertex(G4Event *argEvent);
+  MultiSubworldSampler(G4String name, G4String portalName,
+                       VerboseLevel verboseLvl = VerboseLevel::Default);
+  ~MultiSubworldSampler() override;
+  void GeneratePrimaryVertex(G4Event *argEvent) override;
 
   void SetSubworld(SubworldGrid<MultipleSubworld> *);
 
   inline G4bool IsSamplerReady() const { return fSamplerReady; }
 
-  void PrintInformation();
-
  private:
   void PrepareSampler();
   G4ThreeVector GetRandom();
-  std::stringstream StreamInformation() const;
+  std::string Information() const;
 
  private:
   const G4String fName;
   const G4String fPortalName;
-  SubworldGrid<MultipleSubworld> *fSubworld;
+  SubworldGrid<MultipleSubworld> *fSubworld{nullptr};
   Surface::Shift fShift;
   const G4bool fShiftActive;
   VSampler<Coord> fSubworldSampler;
@@ -61,4 +62,4 @@ class MultiSubworldSampler : public G4VPrimaryGenerator {
 };
 }  // namespace Surface
 
-#endif  // SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH_
+#endif  // SRC_PARTICLEGENERATOR_INCLUDE_MULTISUBWORLDSAMPLER_HH

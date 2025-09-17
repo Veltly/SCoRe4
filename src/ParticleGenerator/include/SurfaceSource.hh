@@ -1,9 +1,12 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
+/**
+ * @brief Defines class for generating a particle source for a rough surface
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file SurfaceSource.hh
+ */
 
-#ifndef SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH_
-#define SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH_
+#ifndef SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH
+#define SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH
 
 #include "G4VPrimaryGenerator.hh"
 #include "ParticleGenerator/include/SurfaceSourceMessenger.hh"
@@ -12,19 +15,19 @@
 class G4Event;
 class G4Navigator;
 class G4VPhysicalVolume;
-class G4PhysicalVolumeStore;
 class G4GeneralParticleSource;
 
 namespace Surface {
-
-// @brief Generates a particle as a primary event on the surface.
-// Surface has to be detected before first event can be executed.
+/**
+ * @brief Generates a particle as a primary event on the surface.
+ * @details Surface has to be detected before first event can be executed.
+ */
 
 class SurfaceSource : public G4VPrimaryGenerator {
  public:
   SurfaceSource();
-  ~SurfaceSource();
-  void GeneratePrimaryVertex(G4Event *argEvent);
+  ~SurfaceSource() override;
+  void GeneratePrimaryVertex(G4Event *argEvent) override;
   void ShowSurface();
   void LogSurface(const G4String &aFilename);
 
@@ -34,4 +37,4 @@ class SurfaceSource : public G4VPrimaryGenerator {
   Surface::FacetStore fFacetStore;
 };
 }  // namespace Surface
-#endif  // SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH_
+#endif  // SRC_PARTICLEGENERATOR_INCLUDE_SURFACESOURCE_HH

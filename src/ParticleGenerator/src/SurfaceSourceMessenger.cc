@@ -1,10 +1,9 @@
-//
-//
-//
-//
-//	author: C.Gruener
-//
-//
+/**
+ * @brief Implementation of class SurfaceSourceMessenger
+ * @author C.Gruener
+ * @date 2025-09-17
+ * @file SurfaceSourceMessenger.cc
+ */
 
 #include "../include/SurfaceSourceMessenger.hh"
 
@@ -14,16 +13,12 @@
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4Tokenizer.hh"
 #include "G4UIcmdWithoutParameter.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
-#include "G4UIcmdWithABool.hh"
 
-#include "G4StepLimiter.hh"
 #include "../include/SurfaceSource.hh"
 
 Surface::SurfaceSourceMessenger::SurfaceSourceMessenger(
 	Surface::SurfaceSource *source) :
 	Source(source), Directory(nullptr), CmdVerbose(nullptr), CmdShowSurface(nullptr), CmdLogSurface(nullptr){
-	//As the messenger class is instantiated by the PrimaryGeneratorSource, the pointer Source can not be NULL, hence no test needed.
 
 	Directory = new G4UIdirectory("/SurfaceSource/");
 	Directory->SetGuidance("Controls the particle source.");

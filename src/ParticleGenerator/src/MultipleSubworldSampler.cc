@@ -1,8 +1,12 @@
-// Copyright [2024] C.Gruener
-// Date: 24-06-20
-// File MultiSubworldSampler
+/**
+ * @brief Implementation of class MultiSubworldSampler
+ * @author C.Gruener
+ * @date 2024-06-20
+ * @file MultiSubworldSampler.cc
+ */
 
 #include <cstdlib>
+#include <utility>
 
 #include "G4GeneralParticleSource.hh"
 #include "G4ThreeVector.hh"
@@ -10,7 +14,6 @@
 #include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/PortalStore.hh"
 #include "Portal/include/SubworldGrid.hh"
-#include "Service/include/FileLogger.hh"
 #include "Service/include/Locator.hh"
 #include "SurfaceGenerator/include/Calculator.hh"
 #include "SurfaceGenerator/include/FacetStore.hh"
@@ -20,12 +23,12 @@ std::ostream &Surface::operator<<(std::ostream &os, const Coord &coord) {
   return os;
 }
 
-Surface::MultiSubworldSampler::MultiSubworldSampler(const G4String &name,
-                                                    const G4String &portalName,
-                                                    const G4int verboseLvl)
-    : fName(name),
-      fPortalName(portalName),
-      fShift(verboseLvl),
+Surface::MultiSubworldSampler::MultiSubworldSampler(G4String name,
+                                                    G4String portalName,
+                                                    const VerboseLevel verboseLvl)
+    : fName{std::move(name)},
+      fPortalName{std::move(portalName)},
+      fShift{verboseLvl},
       fShiftActive(false),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
       fSamplerReady(false),
@@ -37,10 +40,10 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(const G4String &name,
 }
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(
-    const G4String &name, const G4String &portalName,
-    const G4String &shiftFilename, const G4int verboseLvl)
-    : fName(name),
-      fPortalName(portalName),
+    G4String name, G4String portalName,
+    const G4String &shiftFilename, const VerboseLevel verboseLvl)
+    : fName(std::move(name)),
+      fPortalName(std::move(portalName)),
       fShift(shiftFilename, verboseLvl),
       fShiftActive(true),
       fSubworldSampler(VSampler<Coord>{"MultiSubworldSampler_" + fName}),
@@ -76,8 +79,8 @@ void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
       exit(EXIT_FAILURE);
     }
 
-    Surface::MultipleSubworld *subworld =
-        static_cast<Surface::MultipleSubworld *>(pStore[portalId]);
+    auto *subworld =
+        dynamic_cast<Surface::MultipleSubworld *>(pStore[portalId]);
     SetSubworld(subworld->GetSubworldGrid());
   }
 
@@ -155,7 +158,7 @@ void Surface::MultiSubworldSampler::PrepareSampler() {
 
   fSamplerReady = true;
   fLogger.WriteInfo("MultiSubworldSampler is ready.");
-  fLogger.WriteDetailInfo(StreamInformation().str());
+  fLogger.WriteDetailInfo([this] {return Information();});
 #if NDEBUG
   fFileLogger->WriteLine(StreamInformation().str());
   fFileLogger->WriteLine(
@@ -170,11 +173,7 @@ void Surface::MultiSubworldSampler::SetSubworld(
   fLogger.WriteInfo("SubworldGrid set");
 }
 
-void Surface::MultiSubworldSampler::PrintInformation() {
-  G4cout << StreamInformation().str() << G4endl;
-}
-
-std::stringstream Surface::MultiSubworldSampler::StreamInformation() const {
+std::string Surface::MultiSubworldSampler::Information() const {
   std::stringstream ss;
   ss << "\n";
   ss << "\n";
@@ -206,5 +205,5 @@ std::stringstream Surface::MultiSubworldSampler::StreamInformation() const {
   ss << "\n";
   ss << "**************************************************\n";
   ss << "**************************************************\n";
-  return ss;
+  return ss.str();
 }

@@ -1,6 +1,9 @@
-// Copyright [2024] C.Gruener
-// Date: 23-06-01
-// File:
+/**
+ * @brief Implementation of functions for SurfaceSource class
+ * @author C.Gruener
+ * @date 2023-06-01
+ * @file SurfaceSource.cc
+ */
 
 #include "ParticleGenerator/include/SurfaceSource.hh"
 
@@ -8,6 +11,7 @@
 #include "G4GeneralParticleSource.hh"
 #include "ParticleGenerator/include/SurfaceSourceMessenger.hh"
 #include "Service/include/Locator.hh"
+
 Surface::SurfaceSource::SurfaceSource()
     : fMessenger(new SurfaceSourceMessenger(this)),
       fParticleGenerator(new G4GeneralParticleSource),
