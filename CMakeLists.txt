@@ -3,7 +3,7 @@
 #
 
 # Prior to version 3.3 the find_package(doxygen) feature was broken
-cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 project(
   Surface

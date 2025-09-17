@@ -12,7 +12,7 @@
 /Surface/RoughnessHelper/RoughnessHelperA/setSpikeDy 0.5 cm
 /Surface/RoughnessHelper/RoughnessHelperA/setSpikeMeanHeight 0.5 cm
 /Surface/RoughnessHelper/RoughnessHelperA/setSpikeDevHeight 1 mm
-/Surface/RoughnessHelper/RoughnessHelperA/setSpikeform StandardPyramide
+/Surface/RoughnessHelper/RoughnessHelperA/setSpikeform StandardPyramid
 
 /Surface/RoughnessHelper/RoughnessHelperA/setSpikesNx 2
 /Surface/RoughnessHelper/RoughnessHelperA/setSpikesNy 2
@@ -37,7 +37,7 @@
 /Surface/RoughnessHelper/RoughnessHelperB/setSpikeDy 0.5 cm
 /Surface/RoughnessHelper/RoughnessHelperB/setSpikeMeanHeight 0.5 cm
 /Surface/RoughnessHelper/RoughnessHelperB/setSpikeDevHeight 1 mm
-/Surface/RoughnessHelper/RoughnessHelperB/setSpikeform StandardPyramide
+/Surface/RoughnessHelper/RoughnessHelperB/setSpikeform StandardPyramid
 
 /Surface/RoughnessHelper/RoughnessHelperB/setSpikesNx 2
 /Surface/RoughnessHelper/RoughnessHelperB/setSpikesNy 2
@@ -62,7 +62,7 @@
 /Surface/RoughnessHelper/RoughnessHelperC/setSpikeDy 0.5 cm
 /Surface/RoughnessHelper/RoughnessHelperC/setSpikeMeanHeight 0.5 cm
 /Surface/RoughnessHelper/RoughnessHelperC/setSpikeDevHeight 1 mm
-/Surface/RoughnessHelper/RoughnessHelperC/setSpikeform StandardPyramide
+/Surface/RoughnessHelper/RoughnessHelperC/setSpikeform StandardPyramid
 
 /Surface/RoughnessHelper/RoughnessHelperC/setSpikesNx 2
 /Surface/RoughnessHelper/RoughnessHelperC/setSpikesNy 2

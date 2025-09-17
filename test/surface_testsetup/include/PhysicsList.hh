@@ -7,9 +7,9 @@ class PhysicsList : public G4VModularPhysicsList {
 
 public:
   PhysicsList();
-  ~PhysicsList(){};
+  ~PhysicsList() override = default;
 
-  void SetCuts();
+  void SetCuts() override;
 };
 
 #endif // PHYSICS_LIST_HH

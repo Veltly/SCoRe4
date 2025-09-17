@@ -8,7 +8,7 @@
 /Surface/RoughnessHelper/<HelperName>/setSpikeDy 0.5 cm
 /Surface/RoughnessHelper/<HelperName>/setSpikeMeanHeight 0.5 cm
 /Surface/RoughnessHelper/<HelperName>/setSpikeDevHeight 1 mm
-/Surface/RoughnessHelper/<HelperName>/setSpikeform StandardPyramide
+/Surface/RoughnessHelper/<HelperName>/setSpikeform StandardPyramid
 
 /Surface/RoughnessHelper/<HelperName>/setSpikesNx 2
 /Surface/RoughnessHelper/<HelperName>/setSpikesNy 2

@@ -137,7 +137,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // spike height deviation from set mean height
   describerA.SetHeightDeviation(0.0 * mm);
   // spike form
-  describerA.SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+  describerA.SetSpikeform(Surface::Describer::SpikeShape::UniformPyramid);
 
   describerB.SetNrSpike_X(50);
   describerB.SetNrSpike_Y(50);
@@ -146,7 +146,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   describerB.SetMeanHeight((subworld_sizeZ - basis_sizeZ) * 0.3);
   describerB.SetNLayer(1);
   describerB.SetHeightDeviation(0.0 * mm);
-  describerB.SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+  describerB.SetSpikeform(Surface::Describer::SpikeShape::UniformPyramid);
 
   describerC.SetNrSpike_X(50);
   describerC.SetNrSpike_Y(50);
@@ -155,7 +155,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   describerC.SetMeanHeight((subworld_sizeZ - basis_sizeZ) * 0.1);
   describerC.SetNLayer(1);
   describerC.SetHeightDeviation(0.0 * mm);
-  describerC.SetSpikeform(Surface::Describer::Spikeform::UniformPyramide);
+  describerC.SetSpikeform(Surface::Describer::SpikeShape::UniformPyramid);
 
   // generate surface
   fGeneratorA.GenerateSurface();

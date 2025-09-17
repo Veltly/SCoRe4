@@ -45,7 +45,7 @@ public:
 
   virtual G4VPhysicalVolume *Construct();
 
-  G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
+  __attribute__((unused)) G4LogicalVolume *GetScoringVolume() const { return fScoringVolume; }
 
 protected:
   Surface::SurfaceGenerator fGeneratorA{"GenA"};

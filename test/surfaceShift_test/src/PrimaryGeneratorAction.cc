@@ -4,11 +4,13 @@
 * @date 2025-08-05
 */
 
-#include "ParticleGenerator/include/ShiftTable.hh"
 #include "PrimaryGeneratorAction.hh"
+
+#include <G4ThreeVector.hh>
+
 #include "G4GeneralParticleSource.hh"
 #include "G4RunManager.hh"
-#include <G4ThreeVector.hh>
+#include "ParticleGenerator/include/Shift.hh"
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(), fGps(new G4GeneralParticleSource()),

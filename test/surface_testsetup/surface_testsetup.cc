@@ -1,7 +1,9 @@
-// Author C.Gruener
-// Date 24-05-21
-// File: TestSetup for G4Surface development
-// Testsetup is based on example
+/**
+ * @brief Testsetup for SurfaceGenerator
+ * @author C.Gruener
+ * @date 2024-05-21
+ * @file surface_testsetup.cc
+ */
 
 #include "DetectorConstruction.hh"
 #include "G4RunManager.hh"
@@ -11,15 +13,15 @@
 #include "PhysicsList.hh"
 
 int main(int argc, char **argv) {
-  G4cout << "Surface Testapplication starting ..." << G4endl;
+  G4cout << "Surface test application starting ..." << G4endl;
 
-  G4UIExecutive *ui = 0;
+  G4UIExecutive *ui = nullptr;
   if (argc == 1) {
     ui = new G4UIExecutive(argc, argv);
   }
 
   // Construct the default run manager
-  G4RunManager *runManager = new G4RunManager;
+  auto *runManager = new G4RunManager;
 
   // Initialize visualization
   G4VisManager *visManager = new G4VisExecutive();

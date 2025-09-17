@@ -98,7 +98,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   // generation of roughness using the describer of the surface generator class
   Surface::Describer &describer = fSurfaceGenerator.GetDescriber();
-  describer.SetSpikeform(Surface::Describer::Spikeform::UniformPyramide); // set the spike-form (there are predefined spike-forms)
+  describer.SetSpikeform(Surface::Describer::SpikeShape::UniformPyramid); // set the spike-form (there are predefined spike-forms)
   describer.SetNrSpike_X(2);  // number of spikes in x-direction
   describer.SetNrSpike_Y(2);  // number of spikes in y-direction
   describer.SetSpikeWidth_X(0.5 * mm);  // x-width of spike

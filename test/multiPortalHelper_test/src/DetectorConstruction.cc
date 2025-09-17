@@ -12,6 +12,7 @@
 
 #include "../../../src/Portal/include/MultipleSubworld.hh"
 #include "../../../src/Service/include/MultiportalHelper.hh"
+#include "../../../src/Service/include/Logger.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4NistManager.hh"
@@ -72,7 +73,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4Material *subworldMaterial = nist->FindOrBuildMaterial("G4_Si");
 
   //instantiate the helper class for portal - subworld setup
-  Surface::MultiportalHelper helper("Helper",5);
+  Surface::MultiportalHelper helper("Helper",Surface::VerboseLevel::Default);
 
   //set size of portal
   helper.SetDxPortal(10 * cm);

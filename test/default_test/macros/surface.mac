@@ -7,4 +7,4 @@
 /geometry/surface/setMeanHeight 1 mm
 /geometry/surface/setHeightDeviation 0.2 mm
 /geometry/surface/setNLayer 1
-/geometry/surface/setSpikeform StandardPyramide
+/geometry/surface/setSpikeform StandardPyramid

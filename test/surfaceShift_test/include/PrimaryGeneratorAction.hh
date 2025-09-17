@@ -7,10 +7,11 @@
 #ifndef PrimaryGeneratorAction_surfaceShift_hh
 #define PrimaryGeneratorAction_surfaceShift_hh
 
-#include "ParticleGenerator/include/ShiftTable.hh"
 #include <G4GeneralParticleSource.hh>
+
 #include "G4GeneralParticleSource.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "ParticleGenerator/include/Shift.hh"
 #include "globals.hh"
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
