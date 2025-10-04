@@ -42,6 +42,14 @@ class HeightMap:
         heightmap = np.random.random((self.ny, self.nx)) * height
         self._heightmap = heightmap
 
+    def even_edge(self, height : float = 0.):
+        heightmap = self.heightmap
+        heightmap[0, :] = height
+        heightmap[-1, :] = height
+        heightmap[:, 0] = height
+        heightmap[:, -1] = height
+        self._heightmap = heightmap
+
     def plot(self):
         plt.imshow(self.heightmap,
            origin='lower',   # so y=0 is at bottom
@@ -60,4 +68,5 @@ if __name__ == "__main__":
     heightMap = HeightMap((10,10),(1.,1.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
     heightMap.random()
+    heightMap.even_edge()
     heightMap.plot()

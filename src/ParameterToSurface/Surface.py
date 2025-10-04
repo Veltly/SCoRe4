@@ -485,6 +485,7 @@ def test_height_map_wave():
 def test_height_map_random():
     height_map = HeightMap((10,10), (1.,1.))
     height_map.random(0.1)
+    height_map.even_edge(0.05)
     surface = Surface(heightmap=height_map)
     print(surface)
     #surface.show()
