@@ -267,15 +267,6 @@ class Surface:
         base = base.ravel()
         faces[0::2, :] = np.stack([base, base + 1, base + 1 + nx], axis=1)
         faces[1::2, :] = np.stack([base, base + 1 + nx, base + nx], axis=1)
-        #faces_test = np.empty((2 * (nx - 1) * (ny - 1), 3), dtype=int)
-        #idx = 0
-        #for j in range(ny - 1):
-        #    for i in range(nx - 1):
-        #        lower_triangle = np.array([i, i + 1, i + 1 + nx]) + j * nx
-        #        upper_triangle = np.array([i, i + 1 + nx, i + nx]) + j * nx
-        #        faces_test[idx] = lower_triangle
-        #        faces_test[idx + 1] = upper_triangle
-        #        idx += 2
         mesh = trimesh.Trimesh(vertices, faces)
         return mesh
 
@@ -483,13 +474,21 @@ class Surface:
             test_surface.show()
 
 
-def test_height_map():
+def test_height_map_wave():
     height_map = HeightMap((3000,3000), (1.,1.))
     height_map.wave(1.,0.2)
     surface = Surface(heightmap=height_map)
     print(surface)
+    #surface.show()
     surface.test_calculation(100,False)
 
+def test_height_map_random():
+    height_map = HeightMap((10,10), (1.,1.))
+    height_map.random(0.1)
+    surface = Surface(heightmap=height_map)
+    print(surface)
+    #surface.show()
+    surface.test_calculation(1000,True)
 
 def test_surface_description():
     description = SurfaceDescriptionOptions()
@@ -500,9 +499,11 @@ def test_surface_description():
     description.spike_form = SpikeForm.STANDARD
     surface = Surface(description=description)
     print(surface)
+    #surface.show()
     surface.test_calculation(1000,False)
 
 
 if __name__ == "__main__":
     #test_surface_description()
-    test_height_map()
+    #test_height_map_wave()
+    test_height_map_random()

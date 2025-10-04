@@ -36,6 +36,12 @@ class HeightMap:
             raise ValueError("Invalid direction argument!")
         self._heightmap = np.array(heightmap)
 
+    def random(self,height : float = 1., seed : int | None = None) -> None:
+        if seed is not None:
+            np.random.seed(seed)
+        heightmap = np.random.random((self.ny, self.nx)) * height
+        self._heightmap = heightmap
+
     def plot(self):
         plt.imshow(self.heightmap,
            origin='lower',   # so y=0 is at bottom
@@ -51,6 +57,7 @@ class HeightMap:
         return str(self.heightmap)
 
 if __name__ == "__main__":
-    heightMap = HeightMap((2000,2000),(1.,1.))
-    heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
+    heightMap = HeightMap((10,10),(1.,1.))
+    #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
+    heightMap.random()
     heightMap.plot()
