@@ -127,16 +127,19 @@ class HeightMap:
     def __str__(self) -> str:
         return str(self.heightmap)
 
-    def random_complex(self):
-        self.random(seed=42)
-        #self.add_heights(10,1000)
-        heightMap.set_cluster(1,1000,10)
+    def random_complex(self, cluster_rounds: int, cluster_diameter : float, max_height : float, min_height: float, seed : int | None = None) -> np.ndarray:
+        density = (self.nx * self.ny) / (self.length_x * self.length_y)
+        cluster_size = cluster_diameter**2 * np.arctan(1.) * density
+        self.random(seed=seed)
+        for _ in range(cluster_rounds):
+            self.set_cluster(max_height,cluster_size,1)
+            self.set_cluster(min_height,cluster_size,1)
         self.even_out(1,1,10)
-        self.set_edge(0.5)
+        self.set_edge((min_height + max_height) * 0.5)
 
 
 if __name__ == "__main__":
-    heightMap = HeightMap((100,100),(1.,1.))
+    heightMap = HeightMap((200,200),(100.,100.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
-    heightMap.random_complex()
+    heightMap.random_complex(cluster_rounds=1000,cluster_diameter=10.,max_height=6,min_height=1,seed=1234)
     heightMap.plot()
