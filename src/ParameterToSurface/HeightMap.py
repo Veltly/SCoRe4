@@ -1,6 +1,8 @@
 import numpy as np
 from enum import Enum
 import matplotlib.pyplot as plt
+from line_profiler.line_profiler import LineProfiler
+from scipy.signal import convolve2d
 
 class HeightMap:
     class Direction(Enum):
@@ -17,10 +19,11 @@ class HeightMap:
         self._heightmap = None
 
     @property
-    def heightmap(self):
+    def heightmap(self) -> np.ndarray:
         if self._heightmap is None:
             raise ValueError("No height map generated!")
         return self._heightmap
+
     def wave(self,frequency : float, amplitude : float, direction : Direction = Direction.X ) -> None:
         if direction == HeightMap.Direction.X:
             x = np.linspace(0, self.length_x, self.nx)
@@ -42,7 +45,7 @@ class HeightMap:
         heightmap = np.random.random((self.ny, self.nx)) * height
         self._heightmap = heightmap
 
-    def even_edge(self, height : float = 0.):
+    def set_edge(self, height : float = 0.) -> None:
         heightmap = self.heightmap
         heightmap[0, :] = height
         heightmap[-1, :] = height
@@ -50,7 +53,66 @@ class HeightMap:
         heightmap[:, -1] = height
         self._heightmap = heightmap
 
-    def plot(self):
+    def even_out(self, edge_weight : float = 1., center_weight : float = 1., runs : int = 1) -> None:
+        heightmap = self.heightmap
+        kernel = np.array([
+            [0, edge_weight, 0],
+            [edge_weight, center_weight, edge_weight],
+            [0, edge_weight, 0],
+        ])
+        kernel = kernel / np.sum(kernel)
+        for _ in range(runs):
+            heightmap = convolve2d(heightmap, kernel, mode='same')
+        self._heightmap = heightmap
+
+    def add_heights(self,heights : float, samples : int) -> None:
+        col = np.random.randint(0,self.nx, size=samples)
+        row = np.random.randint(0,self.ny, size=samples)
+        heightmap = self.heightmap
+        heightmap[row,col] = heights
+        self._heightmap = heightmap
+
+    def random_connected_cluster(self, size : int):
+        cols = self.nx
+        rows = self.ny
+        start = (np.random.randint(0,rows), np.random.randint(0,cols))
+        outer_edge = set()
+        visited = set()
+        visited.add(start)
+        y, x = start
+        for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
+            if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in visited:
+                outer_edge.add((ny, nx))
+        while len(visited) < size:
+            if not outer_edge:
+                break  # no more expansion possible
+            new_point = list(outer_edge)[np.random.randint(0,len(outer_edge))]
+            y, x = new_point
+            for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
+                if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in visited:
+                    outer_edge.add((ny, nx))
+            outer_edge.remove(new_point)
+            visited.add(new_point)
+
+
+        mask = np.zeros((rows,cols), dtype=np.bool)
+        cluster = np.array(list(visited))
+        mask[cluster[:,0], cluster[:,1]] = True
+        return mask
+
+    def set_height(self, height : float , mask : np.ndarray[np.dtype[bool]]) -> None:
+        heightmap = self.heightmap
+        heightmap[mask] = height
+        self._heightmap = heightmap
+
+    def set_cluster(self, height : float, cluster_size : int, rounds : int) -> None:
+        heightmap = self.heightmap
+        for _ in range(rounds):
+            mask = self.random_connected_cluster(cluster_size)
+            heightmap[mask] = height
+        self._heightmap = heightmap
+
+    def plot(self) -> None:
         plt.imshow(self.heightmap,
            origin='lower',   # so y=0 is at bottom
            extent=(0., self.length_x, 0., self.length_y),
@@ -61,12 +123,20 @@ class HeightMap:
         plt.ylabel('Y')
         plt.title('Height Map')
         plt.show()
-    def __str__(self):
+
+    def __str__(self) -> str:
         return str(self.heightmap)
 
+    def random_complex(self):
+        self.random(seed=42)
+        #self.add_heights(10,1000)
+        heightMap.set_cluster(1,1000,10)
+        self.even_out(1,1,10)
+        self.set_edge(0.5)
+
+
 if __name__ == "__main__":
-    heightMap = HeightMap((10,10),(1.,1.))
+    heightMap = HeightMap((100,100),(1.,1.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
-    heightMap.random()
-    heightMap.even_edge()
+    heightMap.random_complex()
     heightMap.plot()

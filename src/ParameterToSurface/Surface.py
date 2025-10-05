@@ -125,8 +125,8 @@ class Surface:
         self._base_area = None
         self._dx = None
         self._dy = None
-        self._length_x = None
-        self._length_y = None
+        self._length_x = None #in um
+        self._length_y = None #in um
         self._nx = None
         self._ny = None
         self._src = None
@@ -483,9 +483,8 @@ def test_height_map_wave():
     surface.test_calculation(100,False)
 
 def test_height_map_random():
-    height_map = HeightMap((10,10), (1.,1.))
-    height_map.random(0.1)
-    height_map.even_edge(0.05)
+    height_map = HeightMap((100,100), (100.,100.))
+    height_map.random_complex()
     surface = Surface(heightmap=height_map)
     print(surface)
     #surface.show()
