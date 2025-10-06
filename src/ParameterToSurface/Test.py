@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 
 from src.ParameterToSurface import Surface
@@ -30,9 +32,14 @@ def variation_of_parameters(**kwargs):
                                    'min_height', 'grid_size', 'length', 'runs',
                                    'Sv_mean', 'Sv_std', 'Sq_mean', 'Sq_std',
                                    'Sku_mean', 'Sku_std', 'Ssk_mean', 'Ssk_std'])
-        for cluster_rounds, cluster_diameter, max_height, min_height, grid_size, length in tqdm(combinations):
+        for cluster_rounds, cluster_diameter, max_height, min_height, grid_size, length in tqdm(combinations,
+                                                                                                desc='parameters',
+                                                                                                position=0,
+                                                                                                disable=False,
+                                                                                                ascii=True,
+                                                                                                ncols=80):
             parameters = []
-            for _ in tqdm(range(arg_runs)):
+            for _ in tqdm(range(arg_runs),desc='runs', leave=False, position=1, ascii=True, ncols=80):
                 heightmap = HeightMap.HeightMap(grid_size,length)
                 heightmap.random_complex(cluster_rounds=cluster_rounds, cluster_diameter=cluster_diameter,
                                          max_height=max_height, min_height=min_height)
@@ -47,10 +54,17 @@ def variation_of_parameters(**kwargs):
 
         return df
 
-def plot_data(df, parameter):
+def plot_data(df, parameter, save : str | None = None):
     possible_parameters = ['cluster_rounds', 'cluster_diameter', 'max_height', 'min_height', 'grid_size', 'length']
     if parameter not in possible_parameters:
         raise ValueError(f'Parameter {parameter} not recognized.')
+    plot_parameters = possible_parameters
+    plot_parameters.remove(parameter)
+    df_plot_parameters = df[plot_parameters]
+    df_plot_parameters = df_plot_parameters.drop_duplicates()
+    if df_plot_parameters.shape[0] != 1:
+        raise ValueError(f'Dataframe has multiple different values for rest of parameters')
+
     fig, axes = plt.subplots(2,2, figsize=(10,10), sharex=True)
     axes = axes.flatten()
     metrics = ['Sv','Sq','Sku','Ssk']
@@ -75,19 +89,54 @@ def plot_data(df, parameter):
         ax.grid(True)
         ax.legend()
 
-    plt.suptitle(f"Surface Parameters vs {parameter}", fontsize=14)
-    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    plt.show()
 
-if __name__ == '__main__':
-    #parameters = variation_of_surface_parameters(1000)
-    #print(parameters)
+    print(df_plot_parameters)
+    extra_text = df_plot_parameters.T.to_string(index=True)
+    fig.text(0.5, 0.01, extra_text, ha='center', fontsize=12)
+    plt.suptitle(f"Surface Parameters vs {parameter}", fontsize=14)
+    plt.tight_layout(rect=[0, 0.1, 1, 0.95])
+    if save is not None:
+        plt.savefig(save, dpi=300)
+    else:
+        plt.show()
+
+def test_cluster_rounds():
+    print("Test cluster_rounds")
     df = variation_of_parameters(
         cluster_rounds=[10,20,50,100,200,500,1000],
         cluster_diameter=[10.],
-        max_height=[0.],
-        min_height=[6.],
+        max_height=[6.],
+        min_height=[0.],
         grid_size=[(200,200)],
         length=[(100.,100.)],
         runs=10)
-    plot_data(df, "cluster_rounds")
+    plot_data(df, "cluster_rounds", "cluster_rounds")
+
+def test_cluster_diameter():
+    print("Test cluster_diameter")
+    df = variation_of_parameters(
+        cluster_rounds=[500],
+        cluster_diameter=[1.,2.,5.,10.,20.],
+        max_height=[6.],
+        min_height=[0.],
+        grid_size=[(200,200)],
+        length=[(100.,100.)],
+        runs=10)
+    plot_data(df, "cluster_diameter", "cluster_diameter")
+
+def test_max_height():
+    print("Test max_height")
+    df = variation_of_parameters(
+        cluster_rounds=[500],
+        cluster_diameter=[10.],
+        max_height=[0.1,0.2,0.5,1.,2.,5.,10.,20.,50.],
+        min_height=[0.],
+        grid_size=[(200,200)],
+        length=[(100.,100.)],
+        runs=10)
+    plot_data(df, "max_height", "max_height")
+
+if __name__ == '__main__':
+    test_cluster_rounds()
+    #test_cluster_diameter()
+    #test_max_height()

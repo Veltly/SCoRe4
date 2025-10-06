@@ -1,7 +1,6 @@
 import numpy as np
 from enum import Enum
 import matplotlib.pyplot as plt
-from line_profiler.line_profiler import LineProfiler
 from scipy.signal import convolve2d
 
 class HeightMap:
@@ -112,6 +111,88 @@ class HeightMap:
             heightmap[mask] = height
         self._heightmap = heightmap
 
+    def set_length_cluster(self, height : float, length : int, rounds : int) -> None:
+        heightmap = self.heightmap
+        for _ in range(rounds):
+            mask = self.random_connected_cluster_length(length)
+            heightmap[mask] = height
+        self._heightmap = heightmap
+    def _random_line_to_grid(self,length : int, direction : tuple[float,float]):
+        direction = np.array(direction)
+        direction = direction / np.linalg.norm(direction)
+        dx = direction[0]
+        dy = direction[1]
+        cols = self.nx
+        rows = self.ny
+        step_x = 1 if direction[0] > 0 else -1
+        step_y = 1 if direction[1] > 0 else -1
+
+        start_x, start_y = (np.random.randint(0,rows), np.random.randint(0,cols))
+        x0 = start_x
+        y0 = start_y
+
+        t_max_x = ((x0 + (step_x > 0)) - x0) / dx if dx != 0 else float('inf')
+        t_max_y = ((y0 + (step_y > 0)) - y0) / dy if dy != 0 else float('inf')
+
+        # Distance between subsequent crossings
+        t_delta_x = abs(1 / dx) if dx != 0 else float('inf')
+        t_delta_y = abs(1 / dy) if dy != 0 else float('inf')
+
+        points = [(y0, x0)]
+
+        x, y = x0, y0
+        for _ in range(length):
+            # Step in whichever direction is closer
+            if t_max_x < t_max_y:
+                x += step_x
+                t_max_x += t_delta_x
+            else:
+                y += step_y
+                t_max_y += t_delta_y
+            if x < 0 or x >= self.nx:
+                break
+            if y < 0 or y >= self.ny:
+                break
+            points.append((y, x))
+        return points
+
+    def _find_outer_edge(self, points : np.ndarray) -> np.ndarray:
+        cols = self.nx
+        rows = self.ny
+        outer_edge = set()
+        for point in points:
+            y, x = point
+            for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
+                if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in points:
+                    outer_edge.add((ny, nx))
+        return outer_edge
+    def random_connected_cluster_length(self, cluster_size : int, initial_length : int, direction : tuple[float, float] | None = None) -> np.ndarray:
+        if direction is None:
+            direction = (np.random.random(), np.random.random())
+        cols = self.nx
+        rows = self.ny
+        visited = set(self._random_line_to_grid(initial_length, direction))
+        outer_edge = set(self._find_outer_edge(np.array(list(visited))))
+        print(visited)
+        while len(visited) < cluster_size:
+            if not outer_edge:
+                break  # no more expansion possible
+            new_point = list(outer_edge)[np.random.randint(0,len(outer_edge))]
+            y, x = new_point
+            for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
+                if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in visited:
+                    outer_edge.add((ny, nx))
+            outer_edge.remove(new_point)
+            visited.add(new_point)
+
+        mask = np.zeros((rows,cols), dtype=np.bool)
+        cluster = np.array(list(visited))
+        print(cluster)
+        mask[cluster[:,0], cluster[:,1]] = True
+        return mask
+
+
+
     def plot(self) -> None:
         plt.imshow(self.heightmap,
            origin='lower',   # so y=0 is at bottom
@@ -127,19 +208,19 @@ class HeightMap:
     def __str__(self) -> str:
         return str(self.heightmap)
 
-    def random_complex(self, cluster_rounds: int, cluster_diameter : float, max_height : float, min_height: float, seed : int | None = None) -> np.ndarray:
+    def random_complex(self, cluster_rounds: int, cluster_diameter : float, max_height : float, min_height: float, seed : int | None = None):
         density = (self.nx * self.ny) / (self.length_x * self.length_y)
         cluster_size = cluster_diameter**2 * np.arctan(1.) * density
         self.random(seed=seed)
         for _ in range(cluster_rounds):
-            self.set_cluster(max_height,cluster_size,1)
-            self.set_cluster(min_height,cluster_size,1)
+            self.set_length_cluster(max_height,cluster_size,1)
+            self.set_length_cluster(min_height,cluster_size,1)
         self.even_out(1,1,10)
         self.set_edge((min_height + max_height) * 0.5)
 
 
 if __name__ == "__main__":
-    heightMap = HeightMap((200,200),(100.,100.))
+    heightMap = HeightMap((10,10),(100.,100.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
-    heightMap.random_complex(cluster_rounds=1000,cluster_diameter=10.,max_height=6,min_height=1,seed=1234)
+    heightMap.random_complex(cluster_rounds=1,cluster_diameter=10.,max_height=6,min_height=1)
     heightMap.plot()
