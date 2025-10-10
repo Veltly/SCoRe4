@@ -1,7 +1,4 @@
-import sys
-
 import pandas as pd
-
 from src.ParameterToSurface import Surface
 from src.ParameterToSurface import HeightMap
 from tqdm import tqdm
@@ -94,13 +91,13 @@ def plot_data(df, parameter, save : str | None = None):
     extra_text = df_plot_parameters.T.to_string(index=True)
     fig.text(0.5, 0.01, extra_text, ha='center', fontsize=12)
     plt.suptitle(f"Surface Parameters vs {parameter}", fontsize=14)
-    plt.tight_layout(rect=[0, 0.1, 1, 0.95])
+    plt.tight_layout(rect=(0., 0.1, 1., 0.95))
     if save is not None:
         plt.savefig(save, dpi=300)
     else:
         plt.show()
 
-def test_cluster_rounds():
+def variation_cluster_rounds():
     print("Test cluster_rounds")
     df = variation_of_parameters(
         cluster_rounds=[10,20,50,100,200,500,1000],
@@ -112,7 +109,7 @@ def test_cluster_rounds():
         runs=10)
     plot_data(df, "cluster_rounds", "cluster_rounds")
 
-def test_cluster_diameter():
+def variation_cluster_diameter():
     print("Test cluster_diameter")
     df = variation_of_parameters(
         cluster_rounds=[500],
@@ -124,7 +121,7 @@ def test_cluster_diameter():
         runs=10)
     plot_data(df, "cluster_diameter", "cluster_diameter")
 
-def test_max_height():
+def variation_max_height():
     print("Test max_height")
     df = variation_of_parameters(
         cluster_rounds=[500],
@@ -137,6 +134,6 @@ def test_max_height():
     plot_data(df, "max_height", "max_height")
 
 if __name__ == '__main__':
-    test_cluster_rounds()
-    #test_cluster_diameter()
-    #test_max_height()
+    variation_cluster_rounds()
+    #variation_cluster_diameter()
+    #variation_max_height()
