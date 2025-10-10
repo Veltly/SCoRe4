@@ -1,8 +1,10 @@
 import numpy as np
+from numpy.typing import NDArray
 from enum import Enum
 import matplotlib.pyplot as plt
 from scipy.signal import convolve2d
 from dataclasses import dataclass
+import random
 
 @dataclass
 class RandomComplexParams:
@@ -32,7 +34,7 @@ class HeightMap:
         self._heightmap = None
 
     @property
-    def heightmap(self) -> np.ndarray:
+    def heightmap(self) -> NDArray:
         if self._heightmap is None:
             raise ValueError("No height map generated!")
         return self._heightmap
@@ -85,28 +87,30 @@ class HeightMap:
         heightmap[row,col] = heights
         self._heightmap = heightmap
 
-    def random_connected_cluster(self, size : int):
+    def random_connected_cluster(self, size : int, initial_points : NDArray[tuple[int,int]] | None = None) -> NDArray[np.int_]:
         cols = self.nx
         rows = self.ny
-        start = (np.random.randint(0,rows), np.random.randint(0,cols))
-        outer_edge = set()
-        visited = set()
-        visited.add(start)
-        y, x = start
-        for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
-            if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in visited:
-                outer_edge.add((ny, nx))
+        if initial_points is None:
+            initial_points = (np.random.randint(0, rows), np.random.randint(0, cols))
+            initial_points = np.array([initial_points])
+        outer_edge = self._find_outer_edge(initial_points)
+        visited = set(map(tuple,initial_points))
+
+        def add_neighbors(y:int,x:int) -> None:
+            for ny, nx in [(y, x - 1), (y, x + 1), (y - 1, x), (y + 1, x)]:
+                if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in visited:
+                    outer_edge.add((ny, nx))
+
+        for point in initial_points:
+            add_neighbors(*point)
+
         while len(visited) < size:
             if not outer_edge:
                 break  # no more expansion possible
-            new_point = list(outer_edge)[np.random.randint(0,len(outer_edge))]
-            y, x = new_point
-            for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
-                if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in visited:
-                    outer_edge.add((ny, nx))
+            new_point = random.sample(tuple(outer_edge), 1)[0]
             outer_edge.remove(new_point)
+            add_neighbors(*new_point)
             visited.add(new_point)
-
 
         mask = np.zeros((rows,cols), dtype=np.bool)
         cluster = np.array(list(visited))
@@ -125,76 +129,32 @@ class HeightMap:
             heightmap[mask] = height
         self._heightmap = heightmap
 
-    def set_length_cluster(self, height : float, cluster_size : int, initial_length : int, rounds : int) -> None:
-        heightmap = self.heightmap
-        for _ in range(rounds):
-            mask = self.random_connected_cluster_length(cluster_size=cluster_size, initial_length=initial_length)
-            heightmap[mask] = height
-        self._heightmap = heightmap
 
-    def set_length_cluster_physical(self, height : float, cluster_size : float, initial_length : float, rounds : int ) -> None:
+    def set_length_cluster_physical(self, height : float, width : float, initial_length_physical : float, rounds : int ) -> None:
         heightmap = self.heightmap
         density = self.nx * self.ny / (self.length_y * self.length_x)
-        dx = self.length_x / self.nx
         dy = self.length_y / self.ny
-        length_diag = np.linalg.norm(np.array([dx, dy]))
+        dx = self.length_x / self.nx
         for _ in range(rounds):
-            direction = np.array(np.random.random(), np.random.random())
-            start_line = self._random_line_to_grid_physical()
-            mask = self.random_connected_cluster_length(cluster_size=cluster_size, initial_length=initial_length, start_values=start_line)
+            direction = (random.uniform(-1,1), random.uniform(-1,1))
+            start = (np.random.randint(0,self.ny), np.random.randint(0,self.nx))
+            start_line = self._physical_line_to_grid(start=start, direction=direction, length=initial_length_physical)
+            end = start_line[-1]
+            actual_length = np.linalg.norm([(end[1] - start[1]) * dy, (end[0] - start[0]) * dx])
+            cluster_size = int(width * actual_length * density)
+            mask = self.random_connected_cluster(size=cluster_size, initial_points=start_line)
             heightmap[mask] = height
         self._heightmap = heightmap
 
-    def _random_line_to_grid(self,length : int, direction : tuple[float,float]):
+    def _physical_line_to_grid(self, start : tuple[int,int],length : float, direction : tuple[float,float]) -> NDArray[np.int_]:
+        start_y, start_x = start
         direction = np.array(direction)
         direction = direction / np.linalg.norm(direction)
-        dx = direction[0]
-        dy = direction[1]
-        cols = self.nx
-        rows = self.ny
-        step_x = 1 if direction[0] > 0 else -1
-        step_y = 1 if direction[1] > 0 else -1
+        dx = direction[1]
+        dy = direction[0]
+        step_x = 1 if direction[1] > 0 else -1
+        step_y = 1 if direction[0] > 0 else -1
 
-        start_x, start_y = (np.random.randint(0,rows), np.random.randint(0,cols))
-        x0 = start_x
-        y0 = start_y
-
-        t_max_x = ((x0 + (step_x > 0)) - x0) / dx if dx != 0 else float('inf')
-        t_max_y = ((y0 + (step_y > 0)) - y0) / dy if dy != 0 else float('inf')
-
-        # Distance between subsequent crossings
-        t_delta_x = abs(1 / dx) if dx != 0 else float('inf')
-        t_delta_y = abs(1 / dy) if dy != 0 else float('inf')
-
-        points = [(y0, x0)]
-
-        x, y = x0, y0
-        for _ in range(length):
-            # Step in whichever direction is closer
-            if t_max_x < t_max_y:
-                x += step_x
-                t_max_x += t_delta_x
-            else:
-                y += step_y
-                t_max_y += t_delta_y
-            if x < 0 or x >= self.nx:
-                break
-            if y < 0 or y >= self.ny:
-                break
-            points.append((y, x))
-        return points
-
-    def _random_line_to_grid_physical(self,length : int, direction : tuple[float,float]):
-        direction = np.array(direction)
-        direction = direction / np.linalg.norm(direction)
-        dx = direction[0]
-        dy = direction[1]
-        cols = self.nx
-        rows = self.ny
-        step_x = 1 if direction[0] > 0 else -1
-        step_y = 1 if direction[1] > 0 else -1
-
-        start_x, start_y = (np.random.randint(0,rows), np.random.randint(0,cols))
         x0 = start_x
         y0 = start_y
 
@@ -217,58 +177,35 @@ class HeightMap:
                 x += step_x
                 t_max_x += t_delta_x
                 delta_x += self.dx
-            else:
+            elif t_max_y < t_max_x:
                 y += step_y
                 t_max_y += t_delta_y
                 delta_y += self.dy
+            else:
+                x += step_x
+                y += step_y
+                t_max_x += t_delta_x
+                t_max_y += t_delta_y
+                delta_x += self.dx
+                delta_y += self.dy
+
             if x < 0 or x >= self.nx:
                 break
             if y < 0 or y >= self.ny:
                 break
             points.append((y, x))
-            current_length = np.linalg.norm(np.array([delta_x, delta_y]))
-            print(current_length)
-        return points
+            current_length = np.linalg.norm(np.array([delta_y, delta_x]))
+        return np.array(points, dtype=int)
 
-    def _find_outer_edge(self, points : np.ndarray) -> np.ndarray:
+    def _find_outer_edge(self, points : NDArray[tuple[int,int]]) -> set[tuple[int,int]]:
         cols = self.nx
         rows = self.ny
         outer_edge = set()
-        for point in points:
-            y, x = point
+        for y, x in points:
             for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
-                if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in points:
+                if 0 <= ny < rows and 0 <= nx < cols and not np.any(np.all(points == (ny,nx), axis=1)):
                     outer_edge.add((ny, nx))
         return outer_edge
-
-    def random_connected_cluster_length(self, cluster_size : int, initial_length : int, direction : tuple[float, float] | None = None, start_values : np.ndarray[float] | None = None) -> np.ndarray:
-        if direction is None:
-            direction = (np.random.random(), np.random.random())
-        cols = self.nx
-        rows = self.ny
-        if start_values is None:
-            start_values = self._random_line_to_grid(initial_length, direction)
-        visited = set(start_values)
-        outer_edge = set(self._find_outer_edge(np.array(list(visited))))
-        print(visited)
-        while len(visited) < cluster_size:
-            if not outer_edge:
-                break  # no more expansion possible
-            new_point = list(outer_edge)[np.random.randint(0,len(outer_edge))]
-            y, x = new_point
-            for ny, nx in [(y,x-1),(y,x+1),(y-1,x),(y+1,x)]:
-                if 0 <= ny < rows and 0 <= nx < cols and (nx, ny) not in visited:
-                    outer_edge.add((ny, nx))
-            outer_edge.remove(new_point)
-            visited.add(new_point)
-
-        mask = np.zeros((rows,cols), dtype=np.bool)
-        cluster = np.array(list(visited))
-        print(cluster)
-        mask[cluster[:,0], cluster[:,1]] = True
-        return mask
-
-
 
     def plot(self) -> None:
         plt.imshow(self.heightmap,
@@ -285,7 +222,7 @@ class HeightMap:
     def __str__(self) -> str:
         return str(self.heightmap)
 
-    def random_complex(self, cluster_rounds: int, cluster_diameter : float, max_height : float, min_height: float, seed : int | None = None):
+    def random_complex(self, cluster_rounds: int, cluster_diameter : float, max_height : float, min_height: float, seed : int | None = None) -> None:
         density = (self.nx * self.ny) / (self.length_x * self.length_y)
         cluster_size = cluster_diameter**2 * np.arctan(1.) * density
         self.random(seed=seed)
@@ -295,45 +232,54 @@ class HeightMap:
         self.even_out(1,1,10)
         self.set_edge((min_height + max_height) * 0.5)
 
-    def random_complex_all(self, params : RandomComplexParams = RandomComplexParams()):
+    def random_complex_all(self, params : RandomComplexParams = RandomComplexParams()) -> None:
         self.random(seed=params.seed)
 
-        if params.cluster_diameter and params.cluster_rounds and params.min_height and params.max_height:
+        if params.cluster_diameter is not None and params.cluster_rounds is not None and params.min_height is not None and params.max_height is not None:
             density = (self.nx * self.ny) / (self.length_x * self.length_y)
             cluster_size = params.cluster_diameter**2 * np.arctan(1.) * density
             for _ in range(params.cluster_rounds):
                 self.set_cluster(height=params.max_height,cluster_size=cluster_size, rounds=1)
                 self.set_cluster(height=params.min_height,cluster_size=cluster_size,rounds=1)
 
-        if params.length_cluster_rounds and params.length_cluster_size and params.length_cluster_init_length and \
-                params.max_height and params.min_height:
-            density = (self.nx * self.ny) / (self.length_x * self.length_y)
+        if params.length_cluster_rounds is not None and params.length_cluster_width is not None and\
+                params.length_cluster_init_length is not None and \
+                params.max_height is not None and params.min_height is not None:
             for _ in range(params.length_cluster_rounds):
-                self.set_length_cluster(height=params.max_height,cluster_size=params.length_cluster_size,
-                                        initial_length=params.length_cluster_init_length, rounds=1)
-                self.set_length_cluster(height=params.min_height,cluster_size=params.length_cluster_size,
-                                        initial_length=params.length_cluster_init_length, rounds=1)
-
-        if params.even_out_rounds:
+                self.set_length_cluster_physical(height=params.max_height,
+                                                 initial_length_physical=params.length_cluster_init_length,
+                                                 width=params.length_cluster_width,
+                                                 rounds=1)
+                self.set_length_cluster_physical(height=params.min_height,
+                                                initial_length_physical=params.length_cluster_init_length,
+                                                 width=params.length_cluster_width,
+                                                 rounds=1)
+        if params.even_out_rounds is not None:
             self.even_out(1,1,runs=params.even_out_rounds)
 
-        if params.edge_height:
+        if params.edge_height is not None:
             self.set_edge(params.edge_height)
 
 if __name__ == "__main__":
     heightMap = HeightMap((100,100),(10.,10.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
     #heightMap.random_complex(cluster_rounds=1,cluster_diameter=10.,max_height=6,min_height=1)
-    params = RandomComplexParams()
+    rc_params = RandomComplexParams()
     #params.cluster_rounds = 0
-    params.cluster_diameter = 10.
-    params.length_cluster_rounds = 1
-    params.length_cluster_init_length = 30
-    params.length_cluster_size = 30
-    #params.even_out_rounds = 10
-    #params.edge_height = 3.
-    params.max_height = 6.
-    params.min_height = 0.
-    params.seed = None
+    rc_params.cluster_diameter = 10.
+    rc_params.length_cluster_rounds = 3
+    rc_params.length_cluster_init_length = 4
+    rc_params.length_cluster_width = 1.0
+    rc_params.even_out_rounds = 1
+    #rc_params.edge_height = 3.
+    rc_params.max_height = 6.
+    rc_params.min_height = 0.
+    rc_params.seed = None
     #heightMap.random_complex_all(params)
-    #heightMap.plot()
+    heightMap.random(1.)
+    heightMap.set_length_cluster_physical(height=rc_params.max_height,
+                                     initial_length_physical=rc_params.length_cluster_init_length,
+                                     width=rc_params.length_cluster_width,
+                                     rounds=1)
+    heightMap.even_out(1,1,runs=rc_params.even_out_rounds)
+    heightMap.plot()
