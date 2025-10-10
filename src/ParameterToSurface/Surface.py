@@ -289,7 +289,7 @@ class Surface:
     def facet_mean_height(v1: np.ndarray, v2:np.ndarray, v3:np.ndarray) -> float:
         area = 0.5 * np.linalg.norm(np.cross(v2 - v1, v3 - v1))
         integral = area * (v1[2] + v2[2] + v3[2]) / 3.0
-        return integral
+        return float(integral)
 
     @staticmethod
     @njit
@@ -474,7 +474,7 @@ class Surface:
             test_surface.show()
 
 
-def test_height_map_wave():
+def exec_height_map_wave():
     height_map = HeightMap((3000,3000), (1.,1.))
     height_map.wave(1.,0.2)
     surface = Surface(heightmap=height_map)
@@ -482,7 +482,7 @@ def test_height_map_wave():
     #surface.show()
     surface.test_calculation(100,False)
 
-def test_height_map_random():
+def exec_height_map_random():
     height_map = HeightMap((100,100), (100.,100.))
     height_map.random_complex()
     surface = Surface(heightmap=height_map)
@@ -490,7 +490,7 @@ def test_height_map_random():
     #surface.show()
     surface.test_calculation(1000,True)
 
-def test_surface_description():
+def exec_surface_description():
     description = SurfaceDescriptionOptions()
     description.spike_width = 1.
     description.spike_mean_height = 9.3
@@ -502,8 +502,10 @@ def test_surface_description():
     #surface.show()
     surface.test_calculation(1000,False)
 
+def main():
+    #exec_surface_description()
+    #exec_height_map_wave()
+    exec_height_map_random()
 
 if __name__ == "__main__":
-    #test_surface_description()
-    #test_height_map_wave()
-    test_height_map_random()
+    main()
