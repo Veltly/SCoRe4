@@ -224,7 +224,7 @@ class HeightMap:
 
     def random_complex(self, cluster_rounds: int, cluster_diameter : float, max_height : float, min_height: float, seed : int | None = None) -> None:
         density = (self.nx * self.ny) / (self.length_x * self.length_y)
-        cluster_size = cluster_diameter**2 * np.arctan(1.) * density
+        cluster_size = int(cluster_diameter**2 * np.pi * density / 4.)
         self.random(seed=seed)
         for _ in range(cluster_rounds):
             self.set_cluster(max_height,cluster_size,1)
@@ -237,7 +237,7 @@ class HeightMap:
 
         if params.cluster_diameter is not None and params.cluster_rounds is not None and params.min_height is not None and params.max_height is not None:
             density = (self.nx * self.ny) / (self.length_x * self.length_y)
-            cluster_size = params.cluster_diameter**2 * np.arctan(1.) * density
+            cluster_size = int(params.cluster_diameter**2 * np.pi * density / 4.)
             for _ in range(params.cluster_rounds):
                 self.set_cluster(height=params.max_height,cluster_size=cluster_size, rounds=1)
                 self.set_cluster(height=params.min_height,cluster_size=cluster_size,rounds=1)
@@ -261,15 +261,15 @@ class HeightMap:
             self.set_edge(params.edge_height)
 
 if __name__ == "__main__":
-    heightMap = HeightMap((100,100),(10.,10.))
+    heightMap = HeightMap((1000,1000),(100.,100.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
     #heightMap.random_complex(cluster_rounds=1,cluster_diameter=10.,max_height=6,min_height=1)
     rc_params = RandomComplexParams()
     #params.cluster_rounds = 0
     rc_params.cluster_diameter = 10.
     rc_params.length_cluster_rounds = 3
-    rc_params.length_cluster_init_length = 4
-    rc_params.length_cluster_width = 1.0
+    rc_params.length_cluster_init_length = 15
+    rc_params.length_cluster_width = 5.
     rc_params.even_out_rounds = 1
     #rc_params.edge_height = 3.
     rc_params.max_height = 6.
