@@ -6,6 +6,10 @@ from itertools import product
 from matplotlib import pyplot as plt
 
 import numpy as np
+
+from src.ParameterToSurface.HeightMap import RandomComplexParams
+
+
 def variation_of_surface_parameters(runs : int):
     parameters = []
     for _ in tqdm(range(runs)):
@@ -17,42 +21,69 @@ def variation_of_surface_parameters(runs : int):
     return np.column_stack((np.mean(values,axis=0), np.std(values,axis=0)))
 
 def variation_of_parameters(**kwargs):
-        arg_cluster_rounds = kwargs.get("cluster_rounds")
-        arg_cluster_diameter = kwargs.get("cluster_diameter")
+        #cluster
+        arg_point_cluster_rounds = kwargs.get("point_cluster_rounds")
+        arg_point_cluster_diameter = kwargs.get("point_cluster_diameter")
+        arg_length_cluster_rounds = kwargs.get("length_cluster_rounds")
+        arg_length_cluster_length = kwargs.get("length_cluster_length")
+        arg_length_cluster_width = kwargs.get("length_cluster_width")
         arg_max_height = kwargs.get("max_height")
         arg_min_height = kwargs.get("min_height")
+        #grid
         arg_grid_size = kwargs.get("grid_size")
-        arg_length = kwargs.get("length")
+        arg_grid_length = kwargs.get("grid_length")
+        #postprocessing
+        arg_even_out_rounds = kwargs.get("even_out_rounds")
+        #variation
         arg_runs = kwargs.get("runs")
-        combinations = list(product(arg_cluster_rounds, arg_cluster_diameter, arg_max_height, arg_min_height, arg_grid_size, arg_length))
-        df = pd.DataFrame(columns=['cluster_rounds', 'cluster_diameter', 'max_height',
-                                   'min_height', 'grid_size', 'length', 'runs',
+        combinations = list(product(arg_point_cluster_rounds, arg_point_cluster_diameter,
+                                    arg_length_cluster_rounds, arg_length_cluster_length, arg_length_cluster_width,
+                                    arg_max_height, arg_min_height, arg_even_out_rounds, arg_grid_size, arg_grid_length))
+        df = pd.DataFrame(columns=['point_cluster_rounds', 'point_cluster_diameter', 'length_cluster_rounds',
+                                   'length_cluster_length', 'length_cluster_width', 'max_height',
+                                   'min_height', 'even_out_rounds', 'grid_size', 'grid_length', 'runs',
                                    'Sv_mean', 'Sv_std', 'Sq_mean', 'Sq_std',
                                    'Sku_mean', 'Sku_std', 'Ssk_mean', 'Ssk_std'])
-        for cluster_rounds, cluster_diameter, max_height, min_height, grid_size, length in tqdm(combinations,
+        for (point_cluster_rounds, point_cluster_diameter, length_cluster_rounds, length_cluster_length,
+             length_cluster_width, max_height, min_height, even_out_rounds, grid_size, grid_length) in tqdm(combinations,
                                                                                                 desc='parameters',
                                                                                                 position=0,
                                                                                                 disable=False,
                                                                                                 ascii=True,
                                                                                                 ncols=80):
-            parameters = []
+
+            parameters = RandomComplexParams()
+            parameters.point_cluster_rounds = point_cluster_rounds
+            parameters.point_cluster_diameter = point_cluster_diameter
+            parameters.length_cluster_rounds = length_cluster_rounds
+            parameters.length_cluster_init_length = length_cluster_length
+            parameters.length_cluster_width = length_cluster_width
+            parameters.max_height = max_height
+            parameters.min_height = min_height
+            parameters.grid_size = grid_size
+            parameters.grid_length = grid_length
+            parameters.even_out_rounds = even_out_rounds
+            surface_parameters = []
             for _ in tqdm(range(arg_runs),desc='runs', leave=False, position=1, ascii=True, ncols=80):
-                heightmap = HeightMap.HeightMap(grid_size,length)
-                heightmap.random_complex(cluster_rounds=cluster_rounds, cluster_diameter=cluster_diameter,
-                                         max_height=max_height, min_height=min_height)
+                heightmap = HeightMap.HeightMap(grid_size,grid_length)
+                heightmap.random_complex_all(parameters)
                 surface = Surface.Surface(heightmap=heightmap)
-                parameters.append([surface.mean_height, surface.root_mean_square_height, surface.kurtosis, surface.skewness])
-            values = np.array(parameters)
+                surface_parameters.append([surface.mean_height, surface.root_mean_square_height, surface.kurtosis, surface.skewness])
+            values = np.array(surface_parameters)
             mean = np.mean(values,axis=0)
             std = np.std(values,axis=0)
-            df.loc[len(df)] = [cluster_rounds, cluster_diameter, max_height, min_height, grid_size, length, arg_runs,
+            df.loc[len(df)] = [point_cluster_rounds, point_cluster_diameter, length_cluster_rounds,
+                               length_cluster_length, length_cluster_width,
+                               max_height, min_height, even_out_rounds, grid_size, grid_length, arg_runs,
                                float(mean[0]), float(std[0]), float(mean[1]), float(std[1]),
                                float(mean[2]), float(std[2]), float(mean[3]), float(std[3])]
 
         return df
 
 def plot_data(df, parameter, save : str | None = None):
-    possible_parameters = ['cluster_rounds', 'cluster_diameter', 'max_height', 'min_height', 'grid_size', 'length']
+    possible_parameters = ['point_cluster_rounds', 'point_cluster_diameter', 'length_cluster_rounds',
+                           'length_cluster_length', 'length_cluster_width',
+                           'max_height', 'min_height', 'even_out_rounds', 'grid_size', 'grid_length']
     if parameter not in possible_parameters:
         raise ValueError(f'Parameter {parameter} not recognized.')
     plot_parameters = possible_parameters
@@ -97,43 +128,89 @@ def plot_data(df, parameter, save : str | None = None):
     else:
         plt.show()
 
-def variation_cluster_rounds():
+def variation_point_cluster_rounds():
     print("Test cluster_rounds")
     df = variation_of_parameters(
-        cluster_rounds=[10,20,50,100,200,500,1000],
-        cluster_diameter=[10.],
+        point_cluster_rounds=[10,20,50,100,200,500,1000],
+        point_cluster_diameter=[10.],
+        length_cluster_rounds=[0],
+        length_cluster_length=[10.],
+        length_cluster_width=[10.],
         max_height=[6.],
         min_height=[0.],
+        even_out_rounds=[0],
         grid_size=[(200,200)],
-        length=[(100.,100.)],
+        grid_length=[(100.,100.)],
         runs=10)
-    plot_data(df, "cluster_rounds", "cluster_rounds")
+    plot_data(df, "point_cluster_rounds", "point_cluster_rounds")
 
 def variation_cluster_diameter():
     print("Test cluster_diameter")
     df = variation_of_parameters(
-        cluster_rounds=[500],
-        cluster_diameter=[1.,2.,5.,10.,20.],
+        point_cluster_rounds=[500],
+        point_cluster_diameter=[1.,2.,5.,10.,20.],
+        length_cluster_rounds=[0],
+        length_cluster_length=[10.],
+        length_cluster_width=[10.],
         max_height=[6.],
         min_height=[0.],
+        even_out_rounds=[0],
         grid_size=[(200,200)],
-        length=[(100.,100.)],
+        grid_length=[(100.,100.)],
         runs=10)
-    plot_data(df, "cluster_diameter", "cluster_diameter")
+    plot_data(df, "point_cluster_diameter", "point_cluster_diameter")
 
 def variation_max_height():
     print("Test max_height")
     df = variation_of_parameters(
-        cluster_rounds=[500],
-        cluster_diameter=[10.],
+        point_cluster_rounds=[500],
+        point_cluster_diameter=[10.],
+        length_cluster_rounds=[0],
+        length_cluster_length=[10.],
+        length_cluster_width=[10.],
         max_height=[0.1,0.2,0.5,1.,2.,5.,10.,20.,50.],
         min_height=[0.],
+        even_out_rounds=[0],
         grid_size=[(200,200)],
-        length=[(100.,100.)],
+        grid_length=[(100.,100.)],
         runs=10)
     plot_data(df, "max_height", "max_height")
 
+def variation_length_cluster_length():
+    print("Test cluster_length")
+    df = variation_of_parameters(
+        point_cluster_rounds=[0],
+        point_cluster_diameter=[10.],
+        length_cluster_rounds=[500],
+        length_cluster_length=[5.,10.,20.,30.,50.],
+        length_cluster_width=[5.],
+        max_height=[6.],
+        min_height=[0.],
+        even_out_rounds=[0],
+        grid_size=[(200,200)],
+        grid_length=[(100.,100.)],
+        runs=10)
+    plot_data(df, "length_cluster_length", "length_cluster_length")
+
+def variation_even_out_rounds():
+    print("Test even_out rounds")
+    df = variation_of_parameters(
+        point_cluster_rounds=[0],
+        point_cluster_diameter=[10.],
+        length_cluster_rounds=[500],
+        length_cluster_length=[20.],
+        length_cluster_width=[5.],
+        max_height=[6.],
+        min_height=[0.],
+        even_out_rounds=[0,1,2,3,4,5,10,20,50,100],
+        grid_size=[(200,200)],
+        grid_length=[(100.,100.)],
+        runs=10)
+    plot_data(df, "even_out_rounds", "even_out_rounds")
+
 if __name__ == '__main__':
-    variation_cluster_rounds()
+    variation_even_out_rounds()
+    #variation_point_cluster_rounds()
+    #variation_length_cluster_length()
     #variation_cluster_diameter()
     #variation_max_height()
