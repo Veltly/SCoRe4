@@ -7,11 +7,11 @@ from dataclasses import dataclass
 import random
 
 @dataclass
-class RandomComplexParams:
+class HeightMapParameters:
     point_cluster_rounds: int | None = None
     point_cluster_diameter: float | None = None
     length_cluster_rounds: int | None = None
-    length_cluster_init_length: float | None = None
+    length_cluster_length: float | None = None
     length_cluster_width: float | None = None
     even_out_rounds: int | None = None
     edge_height: float | None = None
@@ -232,7 +232,7 @@ class HeightMap:
         self.even_out(1,1,10)
         self.set_edge((min_height + max_height) * 0.5)
 
-    def random_complex_all(self, params : RandomComplexParams = RandomComplexParams()) -> None:
+    def random_complex_all(self, params : HeightMapParameters = HeightMapParameters()) -> None:
         self.random(seed=params.seed)
 
         if params.point_cluster_diameter is not None and params.point_cluster_rounds is not None and params.min_height is not None and params.max_height is not None:
@@ -243,15 +243,15 @@ class HeightMap:
                 self.set_cluster(height=params.min_height,cluster_size=cluster_size,rounds=1)
 
         if params.length_cluster_rounds is not None and params.length_cluster_width is not None and\
-                params.length_cluster_init_length is not None and \
+                params.length_cluster_length is not None and \
                 params.max_height is not None and params.min_height is not None:
             for _ in range(params.length_cluster_rounds):
                 self.set_length_cluster_physical(height=params.max_height,
-                                                 initial_length_physical=params.length_cluster_init_length,
+                                                 initial_length_physical=params.length_cluster_length,
                                                  width=params.length_cluster_width,
                                                  rounds=1)
                 self.set_length_cluster_physical(height=params.min_height,
-                                                initial_length_physical=params.length_cluster_init_length,
+                                                 initial_length_physical=params.length_cluster_length,
                                                  width=params.length_cluster_width,
                                                  rounds=1)
         if params.even_out_rounds is not None:
@@ -264,11 +264,11 @@ if __name__ == "__main__":
     heightMap = HeightMap((100,100),(10.,10.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
     #heightMap.random_complex(cluster_rounds=1,cluster_diameter=10.,max_height=6,min_height=1)
-    rc_params = RandomComplexParams()
+    rc_params = HeightMapParameters()
     #params.cluster_rounds = 0
     #rc_params.cluster_diameter = 10.
     rc_params.length_cluster_rounds = 100
-    rc_params.length_cluster_init_length = 3
+    rc_params.length_cluster_length = 3
     rc_params.length_cluster_width = 1.
     rc_params.even_out_rounds = 2
     #rc_params.edge_height = 3.
