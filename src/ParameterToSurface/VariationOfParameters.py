@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 import numpy as np
 
-from src.ParameterToSurface.HeightMap import RandomComplexParams
+from src.ParameterToSurface.HeightMap import HeightMapParameters
 
 
 def variation_of_surface_parameters(runs : int):
@@ -52,11 +52,11 @@ def variation_of_parameters(**kwargs):
                                                                                                 ascii=True,
                                                                                                 ncols=80):
 
-            parameters = RandomComplexParams()
+            parameters = HeightMapParameters()
             parameters.point_cluster_rounds = point_cluster_rounds
             parameters.point_cluster_diameter = point_cluster_diameter
             parameters.length_cluster_rounds = length_cluster_rounds
-            parameters.length_cluster_init_length = length_cluster_length
+            parameters.length_cluster_length = length_cluster_length
             parameters.length_cluster_width = length_cluster_width
             parameters.max_height = max_height
             parameters.min_height = min_height
