@@ -207,7 +207,7 @@ class HeightMap:
                     outer_edge.add((ny, nx))
         return outer_edge
 
-    def plot(self) -> None:
+    def plot(self, export_path: str | None = None, show: bool = True) -> None:
         plt.imshow(self.heightmap,
            origin='lower',   # so y=0 is at bottom
            extent=(0., self.length_x, 0., self.length_y),
@@ -217,7 +217,10 @@ class HeightMap:
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.title('Height Map')
-        plt.show()
+        if export_path is not None:
+            plt.savefig(export_path + ".png")
+        if show:
+            plt.show()
 
     def __str__(self) -> str:
         return str(self.heightmap)
