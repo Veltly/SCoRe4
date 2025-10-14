@@ -5,7 +5,7 @@ from numba import njit
 import numpy as np
 import trimesh
 
-from src.ParameterToSurface.HeightMap import HeightMap
+from HeightMap import HeightMap
 
 
 @dataclass

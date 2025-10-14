@@ -4,9 +4,9 @@ import yaml
 from pathlib import Path
 import sys
 
-from src.ParameterToSurface.GDMLWriter import GDMLWriter
-from src.ParameterToSurface.HeightMap import HeightMap, HeightMapParameters
-from src.ParameterToSurface.Surface import Surface
+from GDMLWriter import GDMLWriter
+from HeightMap import HeightMap, HeightMapParameters
+from Surface import Surface
 
 # --- Config values with type and default argument ---
 #define all config values here. Is later used by argparse and class Config.

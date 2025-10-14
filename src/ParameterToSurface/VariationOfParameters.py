@@ -1,6 +1,6 @@
 import pandas as pd
-from src.ParameterToSurface import Surface
-from src.ParameterToSurface import HeightMap
+from Surface import Surface
+from HeightMap import HeightMap
 from tqdm import tqdm
 from itertools import product
 from matplotlib import pyplot as plt
