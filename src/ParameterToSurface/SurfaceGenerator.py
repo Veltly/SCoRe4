@@ -128,7 +128,7 @@ def exec_program(config: Config, control) -> None:
         heightmap.random_complex_all(heightmap_params)
 
     if control["heightmap"]:
-        plot_heightmap_export_path = str(config["export_path"]) + "_heightmap"
+        plot_heightmap_export_path = str(config["export_name"]) + "_heightmap"
         show_plot = not control["silent"]
         heightmap.plot(plot_heightmap_export_path, show=show_plot)
 
