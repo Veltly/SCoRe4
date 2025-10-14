@@ -444,6 +444,11 @@ class Surface:
     def show(self):
         self.mesh.show()
 
+    def write_parameters(self, path:str):
+        filename = path + "_parameters.txt"
+        with open(filename, "w") as file:
+            file.write(str(self))
+
     def test_calculation(self, samples = 1000, plot = False):
         import surfalize
         height_map = self.height_map(samples,samples)
@@ -479,7 +484,7 @@ def exec_height_map_wave():
     height_map.wave(1.,0.2)
     surface = Surface(heightmap=height_map)
     print(surface)
-    #surface.show()
+    surface.show()
     surface.test_calculation(100,False)
 
 def exec_height_map_random():
@@ -504,8 +509,8 @@ def exec_surface_description():
 
 def main():
     #exec_surface_description()
-    #exec_height_map_wave()
-    exec_height_map_random()
+    exec_height_map_wave()
+    #exec_height_map_random()
 
 if __name__ == "__main__":
     main()

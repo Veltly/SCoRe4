@@ -13,15 +13,15 @@ from Surface import Surface
 surface_params = {
     "grid_nx": [int, 10],
     "grid_ny": [int, 10],
-    "grid_dx": [float, 1.],
-    "grid_dy": [float, 1.],
+    "grid_lx": [float, 1.],
+    "grid_ly": [float, 1.],
     "point_cluster_rounds": [int, 0],
     "point_cluster_diameter": [float, 0.1],
     "length_cluster_rounds": [int, 0],
     "length_cluster_length": [float, 0.3],
     "length_cluster_width": [float, 0.1],
     "even_out_rounds": [int, 0],
-    "edge_height": [float, 5.],
+    "edge_height": [float, 0.],
     "max_height": [float, 10.],
     "min_height": [float, 0.],
     "seed": [int, None],
@@ -111,7 +111,7 @@ def exec_program(config: Config, control) -> None:
     heightmap = None
     if control["heightmap"] or control["parameters"] or control["surface"] or control["gdml"]:
         # --- Generate height map
-        heightmap = HeightMap(n=(config["grid_nx"], config["grid_ny"]),length=(config["length_dx"], config["length_dy"]))
+        heightmap = HeightMap(n=(config["grid_nx"], config["grid_ny"]),length=(config["grid_lx"], config["grid_ly"]))
 
         heightmap_params = HeightMapParameters()
         heightmap_params.point_cluster_rounds = config["point_cluster_rounds"]
@@ -129,7 +129,7 @@ def exec_program(config: Config, control) -> None:
 
     if control["heightmap"]:
         plot_heightmap_export_path = str(config["export_path"]) + "_heightmap"
-        show_plot = ~control["silent"]
+        show_plot = not control["silent"]
         heightmap.plot(plot_heightmap_export_path, show=show_plot)
 
     surface = None
@@ -140,7 +140,11 @@ def exec_program(config: Config, control) -> None:
             surface.show()
 
         if control["parameters"]:
-            print(surface)
+            export_path = str(config["export_name"]) + "_surface"
+            surface.write_parameters(export_path)
+            if not control["silent"]:
+                print(surface)
+
 
     if control["gdml"]:
         gdml_filename = config["export_name"]
@@ -170,7 +174,7 @@ def main():
         "silent": "Generate no graphical output"
     }
     for name, description in control_params.items():
-        control_group.add_argument(f"--{name.replace('_','-')}", help=f"{description}", action="store_true", default=False)
+        control_group.add_argument(f"-{name.replace('_','-')}", help=f"{description}", action="store_true", default=False)
 
     # --- Surface control options ---
     surface_group = parser.add_argument_group("Surface control options",
@@ -212,7 +216,7 @@ def main():
         print("Writing config to default config file")
 
     # --- Execute program ---
-    control = {key: getattr(args, key) for key in control_params if getattr(args, key)}
+    control = {key: getattr(args, key) for key in control_params}
     exec_program(config, control)
 
 if __name__ == "__main__":
