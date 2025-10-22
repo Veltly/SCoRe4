@@ -132,7 +132,7 @@ class Surface:
         self._ny = None
         self._src = None
         self._surface_description = None
-        self.body_height = 10.
+        self._body_height = 10.
         if "body_height" in kwargs:
             self._body_height = kwargs["body_height"]
         if "description" in kwargs:
@@ -227,7 +227,7 @@ class Surface:
     def generate_body(self, vertices):
         #Add walls
         nx = self.nx
-        height = self.body_height
+        height = self._body_height
         length = len(vertices)
         id_x_minus_y = np.array(range(nx))
         id_x_plus_y = np.array(range(length - nx, length))
