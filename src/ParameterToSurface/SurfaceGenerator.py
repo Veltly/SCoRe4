@@ -24,6 +24,7 @@ surface_params = {
     "edge_height": [float, 0.],
     "max_height": [float, 10.],
     "min_height": [float, 0.],
+    "body_height": [float, 1.],
     "seed": [int, None],
     "export_name": [str, "default"],
     "solid_name": [str, "solid"]
@@ -134,7 +135,7 @@ def exec_program(config: Config, control) -> None:
 
     surface = None
     if control["surface"] or control["parameters"] or control["gdml"]:
-        surface = Surface(heightmap=heightmap)
+        surface = Surface(heightmap=heightmap, body_height=config["body_height"])
 
         if control["surface"] and not control["silent"]:
             surface.show()

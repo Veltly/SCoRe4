@@ -132,6 +132,9 @@ class Surface:
         self._ny = None
         self._src = None
         self._surface_description = None
+        self.body_height = 10.
+        if "body_height" in kwargs:
+            self._body_height = kwargs["body_height"]
         if "description" in kwargs:
             self._src = "description"
             surface_description = kwargs.get("description")
@@ -221,64 +224,10 @@ class Surface:
             raise ValueError("Value surface_description not set!")
         return self._surface_description
 
-    # def generate_body(self,vertices, height: float) -> (np.array,np.array):
-    #     ##Add walls
-    #     nx = self.nx
-    #     ny = self.ny
-    #     length = len(vertices)
-    #     id_x_minus_y = np.array(range(nx))
-    #     id_x_plus_y = np.array(range(length - nx, length))
-    #     id_y_minus_x = np.array(range(0,length,nx))
-    #     id_y_plus_x = np.array(range(nx-1, length, nx))
-    #     x_minus_y = vertices[id_x_minus_y]
-    #     x_plus_y = vertices[id_x_plus_y]
-    #     y_minus_x = vertices[id_y_minus_x]
-    #     y_plus_x = vertices[id_y_plus_x]
-    #     x_minus_y[:,2] = -height
-    #     x_plus_y[:,2] = -height
-    #     y_minus_x[:,2] = -height
-    #     y_plus_x[:,2] = -height
-    #     id_x_minus_y_shifted = len(vertices) + np.array(range(len(x_minus_y)))
-    #     id_x_plus_y_shifted = len(vertices) + len(x_minus_y) + np.array(range(len(x_plus_y)))
-    #     id_y_minus_x_shifted = len(vertices)+ len(x_minus_y) + len(x_plus_y) + np.array(range(len(y_minus_x)))
-    #     id_y_plus_x_shifted = len(vertices) + len(x_minus_y) + len(x_plus_y) + len(y_minus_x) + np.array(range(len(y_plus_x)))
-    #     def calc_faces_x_minus_y(list_lower, list_upper):
-    #         faces = []
-    #         for i in range(len(list_lower) - 1):
-    #             faces.append([list_lower[i], list_lower[i+1], list_upper[i+1]])
-    #         for i in range(len(list_lower) - 1):
-    #             faces.append([list_lower[i], list_upper[i+1], list_upper[i]])
-    #         return faces
-    #
-    #     def calc_faces_x_plus_y(list_lower, list_upper):
-    #         faces = []
-    #         for i in range(len(list_lower) - 1):
-    #             faces.append([list_lower[i], list_upper[i+1], list_lower[i+1]])
-    #         for i in range(len(list_lower) - 1):
-    #             faces.append([list_lower[i], list_upper[i], list_upper[i+1]])
-    #         return faces
-    #
-    #     faces_x_minus_y = calc_faces_x_minus_y(id_x_minus_y_shifted, id_x_minus_y)
-    #     faces_x_plus_y = calc_faces_x_plus_y(id_x_plus_y_shifted, id_x_plus_y)
-    #     faces_y_minus_x = calc_faces_x_plus_y(id_y_minus_x_shifted, id_y_minus_x)
-    #     faces_y_plus_x = calc_faces_x_minus_y(id_y_plus_x_shifted, id_y_plus_x)# + faces_upper(id_y_plus_x_shifted, id_y_plus_x)
-    #     all_faces = faces_x_minus_y + faces_x_plus_y + faces_y_minus_x + faces_y_plus_x
-    #     all_vertices = np.concat((x_minus_y, x_plus_y, y_minus_x, y_plus_x), axis=0)
-    #     ## Add bottom
-    #     upper_line = np.concat((id_y_minus_x_shifted, id_x_plus_y_shifted), axis=0)
-    #     lower_line = np.concat((id_x_minus_y_shifted, id_y_plus_x_shifted), axis=0)
-    #     face_bottom = calc_faces_x_minus_y(lower_line, upper_line)
-    #     #print(x_minus_y)
-    #     #print(x_plus_y)
-    #     #print(y_minus_x)
-    #     #print(y_plus_x)
-    #     all_faces = all_faces + face_bottom
-    #     return all_vertices, all_faces
-
-
-    def generate_body(self, vertices, height):
+    def generate_body(self, vertices):
         #Add walls
         nx = self.nx
+        height = self.body_height
         length = len(vertices)
         id_x_minus_y = np.array(range(nx))
         id_x_plus_y = np.array(range(length - nx, length))
@@ -329,6 +278,10 @@ class Surface:
         offset = (np.arange(len(grid_points)) * number_of_vertices)[:,None,None]
         faces = volume_faces[None,:,:] + offset
         faces = faces.reshape(-1,3)
+        #add body
+        body_vertices, body_faces = self.generate_body(vertices)
+        vertices = np.concat((vertices, body_vertices), axis=0)
+        faces = np.concat((faces, body_faces), axis=0)
         #return mesh
         return trimesh.Trimesh(vertices, faces)
 
@@ -348,14 +301,14 @@ class Surface:
         grid_x, grid_y = np.meshgrid(x, y)
         heightmap = surface_height.heightmap
         vertices = np.column_stack([grid_x.ravel(), grid_y.ravel(), heightmap.reshape(-1)])
-
         faces = np.empty((2 * (nx - 1) * (ny - 1), 3), dtype=int)
         i, j = np.meshgrid(np.arange(nx - 1), np.arange(ny - 1), indexing='xy')
         base = i + j * nx
         base = base.ravel()
         faces[0::2, :] = np.stack([base, base + 1, base + 1 + nx], axis=1)
         faces[1::2, :] = np.stack([base, base + 1 + nx, base + nx], axis=1)
-        body_vertices, body_faces = self.generate_body(vertices, 3.)
+        #add body
+        body_vertices, body_faces = self.generate_body(vertices)
         vertices = np.concat((vertices, body_vertices), axis=0)
         faces = np.concat((faces, body_faces), axis=0)
         mesh = trimesh.Trimesh(vertices, faces)
