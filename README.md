@@ -28,6 +28,18 @@ cd G4Surface && mkdir build && cd build && cmake ..
 make install
 ```
 
+## Used Libraries
+
+- Numpy
+- Matplotlib
+- Scipy
+- numba
+- trimesh
+- lxml
+- pandas
+- tqdm 
+- yaml
+
 ## Citation
 
 If you use this library in your work please reference it accordingly.
