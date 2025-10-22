@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import convolve2d
 from dataclasses import dataclass
 import random
+from matplotlib.colors import LinearSegmentedColormap
 
 @dataclass
 class HeightMapParameters:
@@ -17,6 +18,7 @@ class HeightMapParameters:
     edge_height: float | None = None
     max_height: float | None = None
     min_height: float | None = None
+    randomize_scale: float | None = None
     seed: int | None = None
 
 class HeightMap:
@@ -79,6 +81,11 @@ class HeightMap:
         for _ in range(runs):
             heightmap = convolve2d(heightmap, kernel, mode='same')
         self._heightmap = heightmap
+
+    def randomize_heights(self, scale : float = 0.1) -> None:
+        random_factors = np.random.normal(loc=1.0, scale=scale, size=self.heightmap.shape)
+        #random_factors[random_factors < 0] = 0
+        self._heightmap = self.heightmap * random_factors
 
     def add_heights(self,heights : float, samples : int) -> None:
         col = np.random.randint(0,self.nx, size=samples)
@@ -208,10 +215,12 @@ class HeightMap:
         return outer_edge
 
     def plot(self, export_path: str | None = None, show: bool = True) -> None:
+        colors = ['black', 'blue', 'green', 'yellow', 'red']
+        custom_cmap = LinearSegmentedColormap.from_list('black_blue_green_yellow_red', colors)
         plt.imshow(self.heightmap,
            origin='lower',   # so y=0 is at bottom
            extent=(0., self.length_x, 0., self.length_y),
-           cmap='viridis',   # color map
+           cmap=custom_cmap,   # color map
            aspect='auto')    # make axes proportional
         plt.colorbar(label='Height')
         plt.xlabel('X')
@@ -236,8 +245,8 @@ class HeightMap:
         self.set_edge((min_height + max_height) * 0.5)
 
     def random_complex_all(self, params : HeightMapParameters = HeightMapParameters()) -> None:
-        self.random(seed=params.seed)
-
+        height = params.max_height * 0.5 if params.max_height is not None else 1.
+        self.random(height=height, seed=params.seed)
         if params.point_cluster_diameter is not None and params.point_cluster_rounds is not None and params.min_height is not None and params.max_height is not None:
             density = (self.nx * self.ny) / (self.length_x * self.length_y)
             cluster_size = int(params.point_cluster_diameter ** 2 * np.pi * density / 4.)
@@ -257,6 +266,8 @@ class HeightMap:
                                                  initial_length_physical=params.length_cluster_length,
                                                  width=params.length_cluster_width,
                                                  rounds=1)
+        if params.randomize_scale is not None:
+            self.randomize_heights(params.randomize_scale)
         if params.even_out_rounds is not None:
             self.even_out(1,1,runs=params.even_out_rounds)
 
@@ -264,19 +275,20 @@ class HeightMap:
             self.set_edge(params.edge_height)
 
 if __name__ == "__main__":
-    heightMap = HeightMap((100,100),(10.,10.))
+    heightMap = HeightMap((100,100),(100.,100.))
     #heightMap.wave(frequency = 1., amplitude = 10., direction = HeightMap.Direction.X)
     #heightMap.random_complex(cluster_rounds=1,cluster_diameter=10.,max_height=6,min_height=1)
     rc_params = HeightMapParameters()
-    #params.cluster_rounds = 0
-    #rc_params.cluster_diameter = 10.
-    rc_params.length_cluster_rounds = 100
-    rc_params.length_cluster_length = 3
-    rc_params.length_cluster_width = 1.
+    rc_params.point_cluster_rounds = 0
+    rc_params.point_cluster_diameter = 1
+    rc_params.length_cluster_rounds = 250
+    rc_params.length_cluster_length = 10
+    rc_params.length_cluster_width = 4
     rc_params.even_out_rounds = 2
     #rc_params.edge_height = 3.
-    rc_params.max_height = 6.
+    rc_params.max_height = 5
     rc_params.min_height = 0.
     rc_params.seed = None
+    rc_params.randomize_scale = 0.2
     heightMap.random_complex_all(rc_params)
     heightMap.plot()
