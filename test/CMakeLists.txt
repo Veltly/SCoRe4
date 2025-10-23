@@ -17,3 +17,7 @@ add_subdirectory(surfaceShift_test)
 add_subdirectory(multiSurface_test)
 
 add_subdirectory(default_test)
+
+add_subdirectory(gdml_test)
+
+add_subdirectory(test_surface_placement)
