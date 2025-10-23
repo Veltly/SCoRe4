@@ -311,8 +311,19 @@ class Surface:
         body_vertices, body_faces = self.generate_body(vertices)
         vertices = np.concat((vertices, body_vertices), axis=0)
         faces = np.concat((faces, body_faces), axis=0)
+        vertices = Surface.shift(vertices, 0, 0, self._body_height)
         mesh = trimesh.Trimesh(vertices, faces)
         return mesh
+
+    @staticmethod
+    def shift(vertices, shift_x, shift_y, shift_z) -> np.ndarray:
+        if shift_x != 0:
+            vertices[:,0] += shift_x
+        if shift_y != 0:
+            vertices[:,1] += shift_y
+        if shift_z != 0:
+            vertices[:,2] += shift_z
+        return vertices
 
     def height_map(self,nx:int, ny:int):
         x_min, y_min, z_min = self.mesh.bounds[0]
