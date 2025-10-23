@@ -9,7 +9,7 @@ class GDMLWriter:
     def __init__(self,vertices: NDArray[tuple[float,float,float]], faces: NDArray[tuple[int,int,int]], solid_name, output_file) -> None:
         self.NS_XSI = "http://www.w3.org/2001/XMLSchema-instance"
         self.XSI_SCHEMA = "http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd"
-        self.unit = "mm"
+        self.unit = "um"
         self.schema_dir = "schema"
         gdml = self.generate_gdml(vertices, faces, solid_name)
         if not self.valid(gdml):
