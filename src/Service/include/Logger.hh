@@ -83,6 +83,13 @@ class Logger {
   void WriteDebugInfo(const std::stringstream &&) const;
   void WriteDebugInfo(const std::function<std::string()>& string) const;
 
+  void WriteAlways(const G4String &) const;
+  void WriteAlways(const G4String &&) const;
+  void WriteAlways(const G4String &, const G4ThreeVector &) const;
+  void WriteAlways(const G4String &&, const G4ThreeVector &) const;
+  void WriteAlways(const std::stringstream &&) const;
+  void WriteAlways(const std::function<std::string()>& string) const;
+
   // Setter
   void SetVerboseLvl(VerboseLevel aVerboseLvl);
   void SetVerboseLvl(G4int aIntVerboseLvl);

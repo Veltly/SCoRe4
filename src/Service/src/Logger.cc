@@ -54,7 +54,7 @@ void Surface::Logger::WriteInfo(const G4String &&aMsg) const {
 void Surface::Logger::WriteInfo(const G4String &aMsg,
                                       const G4ThreeVector &aVec) const {
   if (IsInfoLvl()) {
-    G4cout << " ----DebugInfo----> " << fLoggerName << ": " << aMsg
+    G4cout << " ----Info---------> " << fLoggerName << ": " << aMsg
            << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
            << G4endl;
   }
@@ -80,7 +80,7 @@ void Surface::Logger::WriteInfo(const std::function<std::string()> &string) cons
 
 void Surface::Logger::WriteDetailInfo(const G4String &aMsg) const {
   if (IsDetailInfoLvl()) {
-    G4cout << " ----Info---------> " << fLoggerName << ": " << aMsg << G4endl;
+    G4cout << " ----DetailInfo---> " << fLoggerName << ": " << aMsg << G4endl;
   }
 }
 
@@ -91,7 +91,7 @@ void Surface::Logger::WriteDetailInfo(const G4String &&aMsg) const {
 void Surface::Logger::WriteDetailInfo(const G4String &aMsg,
                                  const G4ThreeVector &aVec) const {
   if (IsDetailInfoLvl()) {
-    G4cout << " ----DebugInfo----> " << fLoggerName << ": " << aMsg
+    G4cout << " ----DetailInfo---> " << fLoggerName << ": " << aMsg
            << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
            << G4endl;
   }
@@ -128,7 +128,7 @@ void Surface::Logger::WriteWarning(const G4String &&aMsg) const {
 void Surface::Logger::WriteWarning(const G4String &aMsg,
                                  const G4ThreeVector &aVec) const {
   if (IsWarningLvl()) {
-    G4cout << " ----DebugInfo----> " << fLoggerName << ": " << aMsg
+    G4cout << " ----Warning------> " << fLoggerName << ": " << aMsg
            << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
            << G4endl;
   }
@@ -166,7 +166,7 @@ void Surface::Logger::WriteError(const G4String &&aMsg) const {
 void Surface::Logger::WriteError(const G4String &aMsg,
                                      const G4ThreeVector &aVec) const {
   if (IsErrorLvl()) {
-    G4cout << " ----DebugInfo----> " << fLoggerName << ": " << aMsg
+    G4cout << " ----Error--------> " << fLoggerName << ": " << aMsg
            << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
            << G4endl;
   }
@@ -225,3 +225,33 @@ void Surface::Logger::WriteDebugInfo(const std::function<std::string()> &string)
   }
 }
 
+// ----------------------------------------------
+// ------------------- Always -------------------
+// ----------------------------------------------
+
+void Surface::Logger::WriteAlways(const G4String &aMsg) const {
+    G4cout << " ----Info---------> " << fLoggerName << ": " << aMsg << G4endl;
+}
+
+void Surface::Logger::WriteAlways(const G4String &&aMsg) const {
+  WriteAlways(aMsg);
+}
+
+void Surface::Logger::WriteAlways(const G4String &aMsg,
+                                const G4ThreeVector &aVec) const {
+    G4cout << " ----Info---------> " << fLoggerName << ": " << aMsg
+           << " X: " << aVec.x() << " Y: " << aVec.y() << " Z: " << aVec.z()
+           << G4endl;
+}
+
+void Surface::Logger::WriteAlways(const G4String &&aMsg, const G4ThreeVector &aVec) const {
+  WriteAlways(aMsg,aVec);
+}
+
+void Surface::Logger::WriteAlways(const std::stringstream &&aMsg) const {
+  WriteAlways(aMsg.str());
+}
+
+void Surface::Logger::WriteAlways(const std::function<std::string()> &string) const {
+    G4cout << string() <<G4endl;
+}
