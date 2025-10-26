@@ -2,7 +2,7 @@
 #define PrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "ParticleGenerator/include/SurfaceSource.hh"
+#include "Surface/Source.hh"
 #include "globals.hh"
 
 class G4Event;
@@ -16,7 +16,7 @@ public:
   void GeneratePrimaries(G4Event *) override;
 
 private:
-  Surface::SurfaceSource *fSurfaceSource;
+  Surface::Source fSurfaceSource{"SurfaceSource"};
 };
 
 #endif

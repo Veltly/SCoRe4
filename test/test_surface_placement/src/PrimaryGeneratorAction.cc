@@ -2,11 +2,19 @@
 #include "G4RunManager.hh"
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
-    : G4VUserPrimaryGeneratorAction(),
-      fSurfaceSource(new Surface::SurfaceSource()) {}
+    : G4VUserPrimaryGeneratorAction(){}
 
-PrimaryGeneratorAction::~PrimaryGeneratorAction() { delete fSurfaceSource; }
+PrimaryGeneratorAction::~PrimaryGeneratorAction() {}
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent) {
-  fSurfaceSource->GeneratePrimaryVertex(anEvent);
+  fSurfaceSource.GeneratePrimaryVertex(anEvent);
 }
+
+//PrimaryGeneratorAction::PrimaryGeneratorAction()
+//    : G4VUserPrimaryGeneratorAction(){}
+//
+//PrimaryGeneratorAction::~PrimaryGeneratorAction() { }
+//
+//void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent) {
+//;
+//}
