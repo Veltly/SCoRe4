@@ -58,20 +58,20 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   auto *surface = new Surface::LogicalSurface{"SurfaceLV",
                                   "macros/test_small.gdml",
-                                  1, 1,
+  //                                            "macros/realistic_surface.gdml",
+                                  10, 10,
                                   roughness_mat,
                                   world_mat,
                                   Surface::VerboseLevel::DebugInfo};
-
-//  new G4PVPlacement(nullptr, G4ThreeVector(), surface.get_logical_handle(),"Surface",logicWorld,0,false,checkOverlaps);
-
-  Surface::SurfacePlacement(nullptr,
+auto *rotation = new G4RotationMatrix (1,1,0);
+  Surface::SurfacePlacement(rotation,
                             G4ThreeVector(),
                             surface,
-                            "Surface",
+                            "Surface1",
                             logicWorld,
                             checkOverlaps,
                             true);
+
 
   surface->force_probability_generation();
   surface->show_information();

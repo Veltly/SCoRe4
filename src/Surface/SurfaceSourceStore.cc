@@ -6,6 +6,7 @@
 */
 
 #include "SurfaceSourceStore.hh"
+#include "LogicalSurface.hh"
 
 namespace Surface {
 
@@ -17,7 +18,7 @@ namespace Surface {
 
   void SurfaceSourceStore::add(G4RotationMatrix *matrix,
                                const G4ThreeVector &position,
-                               G4LogicalVolume *volume) {
+                               LogicalSurface *volume) {
     f_rotation.push_back(matrix);
     f_position.push_back(position);
     f_volume.push_back(volume);

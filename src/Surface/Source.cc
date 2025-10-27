@@ -69,9 +69,9 @@ void Source::GeneratePrimaryVertex(G4Event *event) {
   G4ThreeVector point{};
   G4ThreeVector direction{};
   volume->sample_point(point, direction);
+  auto *rotation_matrix = f_store.get_rotation(idx);
+  point.transform(rotation_matrix->inverse()); //inverse because I go from local to global
   point += f_store.get_position(idx);
-  //auto *rotation_matrix = f_store.get_rotation(idx); // needed for shift
-  //direction = (*rotation_matrix) * direction;
   f_particle_generator->GeneratePrimaryVertex(event);
   event->GetPrimaryVertex(0)->SetPosition(point.x(), point.y(), point.z());
   f_logger.WriteDebugInfo("Set point for primary vertex: ", point);

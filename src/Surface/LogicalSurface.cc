@@ -106,6 +106,16 @@ G4bool LogicalSurface::facet_above_height(G4TriangularFacet * facet) {
   return true;
 }
 
+G4bool LogicalSurface::facet_part_of_surface(G4TriangularFacet *facet){
+  for(G4int idx = 0; idx < 3; idx++){
+    const auto vertex = facet->GetVertex(idx);
+    if(vertex.getZ() == 0.){
+      return false;
+    }
+  }
+  return true;
+}
+
 size_t LogicalSurface::random_select_facet() const {
   const G4double random = G4UniformRand();
   const size_t size = f_probability.size();
@@ -152,10 +162,11 @@ void LogicalSurface::fill_facet_store() {
   size_t number_of_facets = f_surface_element->GetNumberOfFacets();
   for(size_t idx = 0; idx < number_of_facets; idx++){
     auto *facet = dynamic_cast<G4TriangularFacet*>(f_surface_element->GetFacet(static_cast<G4int>(idx)));
-    if(facet_above_height(facet)){
+    if(facet_part_of_surface(facet)){
       f_facets.push_back(facet);
     }
   }
+  f_logger.WriteDebugInfo("Filled facet store with " + std::to_string(f_facets.size()) + " facets");
 }
 void LogicalSurface::generate_probability() {
   f_logger.WriteDetailInfo("Generating probability vector");

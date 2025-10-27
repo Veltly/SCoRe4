@@ -25,7 +25,7 @@ class LogicalSurface {
  public:
   LogicalSurface(G4String name, G4String gdml_filename, G4int nx, G4int ny,
                  G4Material* material, G4Material* envelope_material,
-                 VerboseLevel verbose_lvl = VerboseLevel::Default);
+                 VerboseLevel verbose_lvl = VerboseLevel::DebugInfo);
 
 
 
@@ -46,6 +46,7 @@ class LogicalSurface {
   void place_surface_element_inside_volume();
 
   static G4bool facet_above_height(G4TriangularFacet * facet) ;
+  static G4bool facet_part_of_surface(G4TriangularFacet *facet);
 
   void fill_facet_store();
   void generate_probability();
@@ -72,6 +73,7 @@ class LogicalSurface {
   std::vector<G4TriangularFacet*> f_facets;
   std::vector<G4double> f_probability;
   G4bool f_probability_generated{false};
+
 
 };
 
