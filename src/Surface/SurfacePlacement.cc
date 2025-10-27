@@ -12,22 +12,7 @@
 namespace Surface {
 SurfacePlacement::SurfacePlacement(G4RotationMatrix *rotation_matrix,
                                    const G4ThreeVector &position,
-                                   LogicalSurface &logical_surface,
-                                   const G4String &name,
-                                   G4LogicalVolume *logical_mother_volume,
-                                   G4bool check_overlaps,
-                                   G4bool add_to_particle_generator)
-    : SurfacePlacement(rotation_matrix,
-                       position,
-                       logical_surface.get_logical_handle(),
-                       name,
-                       logical_mother_volume,
-                       check_overlaps,
-                       add_to_particle_generator) {}
-
-SurfacePlacement::SurfacePlacement(G4RotationMatrix *rotation_matrix,
-                                   const G4ThreeVector &position,
-                                   G4LogicalVolume *logical_surface,
+                                   LogicalSurface *logical_surface,
                                    const G4String &name,
                                    G4LogicalVolume *logical_mother_volume,
                                    G4bool check_overlaps,
@@ -37,7 +22,7 @@ SurfacePlacement::SurfacePlacement(G4RotationMatrix *rotation_matrix,
 
   new G4PVPlacement(rotation_matrix,
                 position,
-                logical_surface,
+                logical_surface->get_logical_handle(),
                 name,
                 logical_mother_volume,
                 false,
@@ -48,7 +33,7 @@ SurfacePlacement::SurfacePlacement(G4RotationMatrix *rotation_matrix,
 
 void SurfacePlacement::add_to_surface_source_store(G4RotationMatrix* rotation_matrix ,
                                                    const G4ThreeVector& position,
-                                                   G4LogicalVolume* volume) {
+                                                   LogicalSurface* volume) {
   auto &store = SurfaceSourceStore::getInstance();
   store.add(rotation_matrix, position,volume);
 }

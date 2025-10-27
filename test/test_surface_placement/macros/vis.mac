@@ -106,6 +106,7 @@
 /vis/geometry/set/colour World 0 0 1 1 .2
 # "Envelope" is transparent blue to represent water
 /vis/geometry/set/colour SurfaceLV 0 0 0 1 .05
+/vis/geometry/set/colour SurfaceLV_surface_LV 0 1 1 1
 /vis/viewer/set/style surface
 /vis/viewer/set/hiddenMarker true
 #/vis/viewer/set/viewpointThetaPhi 120 150

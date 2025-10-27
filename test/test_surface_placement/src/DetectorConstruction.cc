@@ -15,6 +15,7 @@
 #include "G4ThreeVector.hh"
 #include "Surface/LogicalSurface.hh"
 #include "Surface/SurfacePlacement.hh"
+#include "Surface/SurfaceSourceStore.hh"
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(),
@@ -55,9 +56,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // generation of a patch of rough surface
   G4Material *roughness_mat = nist->FindOrBuildMaterial("G4_Si");
 
-  Surface::LogicalSurface surface{"SurfaceLV",
+  auto *surface = new Surface::LogicalSurface{"SurfaceLV",
                                   "macros/test_small.gdml",
-                                  5, 7,
+                                  1, 1,
                                   roughness_mat,
                                   world_mat,
                                   Surface::VerboseLevel::DebugInfo};
@@ -71,10 +72,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                             logicWorld,
                             checkOverlaps,
                             true);
-  surface.force_probability_generation();
-  surface.show_information();
-  surface.show_probability_information();
-  surface.show_placed_elements_information();
+
+  surface->force_probability_generation();
+  surface->show_information();
+  surface->show_probability_information();
+  surface->show_placed_elements_information();
 
   //return the physical World
   return physWorld;

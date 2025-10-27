@@ -12,6 +12,7 @@
 #include "Service/include/Logger.hh"
 #include "G4LogicalVolume.hh"
 #include <vector>
+#include "LogicalSurface.hh"
 
 namespace Surface {
 /**
@@ -34,7 +35,7 @@ class SurfaceSourceStore{
     return instance;
   }
 
-  void add(G4RotationMatrix *matrix, const G4ThreeVector& position, G4LogicalVolume* volume);
+  void add(G4RotationMatrix *matrix, const G4ThreeVector& position, LogicalSurface* volume);
 
   inline G4RotationMatrix* get_rotation(size_t idx) const {
     return f_rotation.at(idx);
@@ -44,7 +45,7 @@ class SurfaceSourceStore{
     return f_position.at(idx);
   }
 
-  inline G4LogicalVolume* get_volume(size_t idx) const {
+  inline LogicalSurface* get_volume(size_t idx) const {
     return f_volume.at(idx);
   }
 
@@ -53,7 +54,7 @@ class SurfaceSourceStore{
   G4String information() const;
 
  private:
-  std::vector<G4LogicalVolume*> f_volume;
+  std::vector<LogicalSurface*> f_volume;
   std::vector<G4RotationMatrix*> f_rotation;
   std::vector<G4ThreeVector> f_position;
   G4String f_name{"SurfaceSourceStore"};

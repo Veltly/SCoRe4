@@ -1,8 +1,8 @@
 /**
- * @brief Testsetup for SurfaceGenerator
+ * @brief Testsetup for surface implementation
  * @author C.Gruener
- * @date 2024-05-21
- * @file surface_testsetup.cc
+ * @date 2025-10-25
+ * @file test_surface_placement.cc
  */
 
 #include "DetectorConstruction.hh"
@@ -11,6 +11,7 @@
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
 #include "PhysicsList.hh"
+#include "ActionInitialization.hh"
 
 int main(int argc, char **argv) {
   G4cout << "Surface test application starting ..." << G4endl;
@@ -23,6 +24,8 @@ int main(int argc, char **argv) {
   // Construct the default run manager
   auto *runManager = new G4RunManager;
 
+
+
   // Initialize visualization
   G4VisManager *visManager = new G4VisExecutive();
   visManager->Initialize();
@@ -33,7 +36,7 @@ int main(int argc, char **argv) {
   //
   // Detector construction
   runManager->SetUserInitialization(new DetectorConstruction());
-
+  runManager->SetUserInitialization(new ActionInitialization());
   // Get the pointer to the User Interface manager
   G4UImanager *UImanager = G4UImanager::GetUIpointer();
 

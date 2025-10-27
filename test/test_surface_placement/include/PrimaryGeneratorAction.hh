@@ -16,7 +16,7 @@ public:
   void GeneratePrimaries(G4Event *) override;
 
 private:
-  Surface::Source fSurfaceSource{"SurfaceSource"};
+  Surface::Source *f_surface_source;
 };
 
 #endif

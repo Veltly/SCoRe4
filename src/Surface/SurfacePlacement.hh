@@ -22,16 +22,7 @@ class SurfacePlacement {
  public:
   SurfacePlacement(G4RotationMatrix *rotation_matrix,
                    const G4ThreeVector &position,
-                   Surface::LogicalSurface &logical_surface,
-                   const G4String &name,
-                   G4LogicalVolume *logical_mother_volume,
-                   G4bool check_overlaps,
-                   G4bool add_to_particle_generator
-                   );
-
-  SurfacePlacement(G4RotationMatrix *rotation_matrix,
-                   const G4ThreeVector &position,
-                   G4LogicalVolume *logical_surface,
+                   LogicalSurface *logical_surface,
                    const G4String &name,
                    G4LogicalVolume *logical_mother_volume,
                    G4bool check_overlaps,
@@ -41,7 +32,7 @@ class SurfacePlacement {
  private:
   static void add_to_surface_source_store(G4RotationMatrix*,
                                           const G4ThreeVector &,
-                                          G4LogicalVolume* volume);
+                                          LogicalSurface* volume);
 };
 
 }  // namespace Surface

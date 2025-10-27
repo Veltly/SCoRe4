@@ -14,7 +14,7 @@
 namespace Surface {
 
 Source::Source(const G4String &name, VerboseLevel verbose_lvl)
-    :fParticleGenerator(new G4GeneralParticleSource),
+    :f_particle_generator(new G4GeneralParticleSource()),
       f_name(name),
       f_logger(name, verbose_lvl) {
   f_logger.WriteDetailInfo("Instantiated Source " + f_name);
@@ -26,7 +26,7 @@ void Source::generate_probability() {
   std::vector<G4double> areas;
   areas.reserve(size);
   for (size_t idx = 0; idx < size; idx++) {
-    auto *volume = dynamic_cast<LogicalSurface *>(f_store.get_volume(idx));
+    auto *volume = f_store.get_volume(idx);
     areas.push_back(volume->surface_area());
   }
   f_probability.clear();
@@ -35,6 +35,12 @@ void Source::generate_probability() {
   G4double cumulative_sum{0};
   for (auto area : areas) {
     cumulative_sum += area;
+    if(total_area <= 0){
+      G4String error_msg = "Total area of surface <= 0!";
+      G4Exception("Source::generate_probability()",
+                  "", FatalException,
+                  error_msg);
+    }
     f_probability.push_back(cumulative_sum / total_area);
   }
   f_probability_generated = true;
@@ -57,18 +63,21 @@ void Source::GeneratePrimaryVertex(G4Event *event) {
   if (not f_probability_generated) {
     generate_probability();
   }
-  for (int i = 0; i < event->GetNumberOfPrimaryVertex(); i++) {
-    const size_t idx = random_select_logical_surface_idx();
-    auto *volume = dynamic_cast<LogicalSurface *>(f_store.get_volume(idx));
-    G4ThreeVector point{};
-    G4ThreeVector direction{};
-    volume->sample_point(point, direction);
-    point += f_store.get_position(idx);
-    //auto *rotation_matrix = f_store.get_rotation(idx); // needed for shift
-    //direction = (*rotation_matrix) * direction;
-    fParticleGenerator->GeneratePrimaryVertex(event);
-    event->GetPrimaryVertex(i)->SetPosition(point.x(), point.y(), point.z());
-    f_logger.WriteDebugInfo("Set point for primary vertex: ", point);
-  }
+
+  const size_t idx = random_select_logical_surface_idx();
+  auto *volume = dynamic_cast<LogicalSurface *>(f_store.get_volume(idx));
+  G4ThreeVector point{};
+  G4ThreeVector direction{};
+  volume->sample_point(point, direction);
+  point += f_store.get_position(idx);
+  //auto *rotation_matrix = f_store.get_rotation(idx); // needed for shift
+  //direction = (*rotation_matrix) * direction;
+  f_particle_generator->GeneratePrimaryVertex(event);
+  event->GetPrimaryVertex(0)->SetPosition(point.x(), point.y(), point.z());
+  f_logger.WriteDebugInfo("Set point for primary vertex: ", point);
+}
+
+Source::~Source() {
+  delete f_particle_generator;
 }
 } // namespace Surface

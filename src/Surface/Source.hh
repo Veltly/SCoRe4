@@ -21,6 +21,7 @@ namespace Surface {
 class Source : public G4VPrimaryGenerator {
  public:
   explicit Source(const G4String &name, VerboseLevel verbose_lvl = VerboseLevel::Default);
+  ~Source() override;
   void GeneratePrimaryVertex(G4Event *event) override;
 
  private:
@@ -28,7 +29,7 @@ class Source : public G4VPrimaryGenerator {
   size_t random_select_logical_surface_idx() const;
 
  private:
-  G4GeneralParticleSource *fParticleGenerator;
+  G4GeneralParticleSource *f_particle_generator;
   SurfaceSourceStore &f_store = SurfaceSourceStore::getInstance();
   std::vector<G4double> f_probability;
   G4bool f_probability_generated{false};
