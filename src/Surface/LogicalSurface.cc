@@ -45,19 +45,18 @@ void LogicalSurface::load_gdml() {
   f_surface_element = dynamic_cast<G4TessellatedSolid*>(importedSolid);
 }
 
-
 void LogicalSurface::place_surface_element_inside_volume() {
-  double extend_x = f_surface_element->GetMaxXExtent();
-  double extend_y = f_surface_element->GetMaxYExtent();
-  double extend_z = f_surface_element->GetMaxXExtent();
+  const double extend_x = f_surface_element->GetMaxXExtent();
+  const double extend_y = f_surface_element->GetMaxYExtent();
+  const double extend_z = f_surface_element->GetMaxXExtent();
 
-  int nx{f_nx};
-  int ny{f_ny};
+  const int nx{f_nx};
+  const int ny{f_ny};
 
-  G4double envelope_size_x = extend_x * nx;
-  G4double envelope_size_y = extend_y * ny;
-  G4double envelope_size_z = extend_z;
-
+  const G4double envelope_size_x = extend_x * nx;
+  const G4double envelope_size_y = extend_y * ny;
+  const G4double envelope_size_z = extend_z;
+  f_shift_to_zero = envelope_size_z;
 
   auto *envelope_solid = new G4Box(f_name + "_SD",envelope_size_x,
                                    envelope_size_y, envelope_size_z);

@@ -21,3 +21,5 @@ add_subdirectory(default_test)
 add_subdirectory(gdml_test)
 
 add_subdirectory(test_surface_placement)
+
+add_subdirectory(example_surface)

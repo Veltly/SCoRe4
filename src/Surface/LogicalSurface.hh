@@ -27,8 +27,6 @@ class LogicalSurface {
                  G4Material* material, G4Material* envelope_material,
                  VerboseLevel verbose_lvl = VerboseLevel::DebugInfo);
 
-
-
   G4LogicalVolume* get_logical_handle();
 
   void sample_point(G4ThreeVector &point, G4ThreeVector &direction);
@@ -37,9 +35,13 @@ class LogicalSurface {
 
   void force_probability_generation();
 
+  inline G4double get_shift_to_zero() const {return f_shift_to_zero;}
+
   void show_information() const;
   void show_probability_information() const;
   void show_placed_elements_information()const;
+
+
 
  private:
   void load_gdml();
@@ -58,13 +60,12 @@ class LogicalSurface {
   G4String probability_information() const;
   G4String placed_elements_information() const;
 
-
-
  private:
   G4String f_name;
   G4String f_gdml_filename;
   G4int f_nx;
   G4int f_ny;
+  G4double f_shift_to_zero;
   G4Material *f_material;
   G4Material *f_envelope_material;
   Logger f_logger;
@@ -73,10 +74,7 @@ class LogicalSurface {
   std::vector<G4TriangularFacet*> f_facets;
   std::vector<G4double> f_probability;
   G4bool f_probability_generated{false};
-
-
 };
-
 }  // namespace Surface
 
 #endif  // LogicalSurface_LogicalSurface_HH

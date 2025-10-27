@@ -13,9 +13,10 @@
 
 namespace Surface {
 
-Source::Source(const G4String &name, VerboseLevel verbose_lvl)
+Source::Source(const G4String &name, Shift* shift, VerboseLevel verbose_lvl)
     :f_particle_generator(new G4GeneralParticleSource()),
       f_name(name),
+      f_shift(shift),
       f_logger(name, verbose_lvl) {
   f_logger.WriteDetailInfo("Instantiated Source " + f_name);
 }
@@ -58,7 +59,6 @@ size_t Source::random_select_logical_surface_idx() const {
   exit(EXIT_FAILURE);  // should never happen
 }
 
-
 void Source::GeneratePrimaryVertex(G4Event *event) {
   if (not f_probability_generated) {
     generate_probability();
@@ -71,8 +71,12 @@ void Source::GeneratePrimaryVertex(G4Event *event) {
   volume->sample_point(point, direction);
   auto *rotation_matrix = f_store.get_rotation(idx);
   point.transform(rotation_matrix->inverse()); //inverse because I go from local to global
+  direction.transform(rotation_matrix->inverse());
   point += f_store.get_position(idx);
   f_particle_generator->GeneratePrimaryVertex(event);
+  if(f_shift != nullptr){
+    f_shift->DoShift(point, direction);
+  }
   event->GetPrimaryVertex(0)->SetPosition(point.x(), point.y(), point.z());
   f_logger.WriteDebugInfo("Set point for primary vertex: ", point);
 }
