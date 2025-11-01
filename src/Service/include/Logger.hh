@@ -25,6 +25,19 @@ enum class VerboseLevel : G4int {
   Default = 2
 };
 
+#include <ostream>
+
+inline std::ostream& operator<<(std::ostream& os, VerboseLevel level) {
+  switch (level) {
+    case VerboseLevel::Error: return os << "Error";
+    case VerboseLevel::Warning:  return os << "Warning";
+    case VerboseLevel::Info: return os << "Info";
+    case VerboseLevel::DetailInfo: return os << "DetailInfo";
+    case VerboseLevel::DebugInfo: return os << "DebugInfo";
+    default: return os << "Unknown";
+  }
+}
+
 /**
  * @brief comparison operator for VerboseLevel
  * @param lhs
@@ -99,11 +112,11 @@ class Logger {
   inline const G4String &GetLoggerName() const { return fLoggerName; }
   static VerboseLevel GetDefaultVerboseLvl() {return VerboseLevel::Default;}
 
-  inline G4bool IsErrorLvl() const {return fVerboseLvl <= VerboseLevel::Error;}
-  inline G4bool IsWarningLvl() const {return fVerboseLvl <= VerboseLevel::Warning;}
-  inline G4bool IsInfoLvl() const {return fVerboseLvl <= VerboseLevel::Info;}
-  inline G4bool IsDetailInfoLvl() const {return fVerboseLvl <= VerboseLevel::DetailInfo;}
-  inline G4bool IsDebugInfoLvl() const {return fVerboseLvl <= VerboseLevel::DebugInfo;}
+  inline G4bool IsErrorLvl() const {return VerboseLevel::Error <= fVerboseLvl;}
+  inline G4bool IsWarningLvl() const {return VerboseLevel::Warning <= fVerboseLvl;}
+  inline G4bool IsInfoLvl() const {return VerboseLevel::Info <= fVerboseLvl;}
+  inline G4bool IsDetailInfoLvl() const {return VerboseLevel::DetailInfo <= fVerboseLvl;}
+  inline G4bool IsDebugInfoLvl() const {return VerboseLevel::DebugInfo <= fVerboseLvl;}
 
  private:
   G4String fLoggerName; /// logger name of instance
