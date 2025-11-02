@@ -103,7 +103,9 @@
 # To get nice view
 # Make the "World" box invisible
 /vis/geometry/set/visibility World 0 true
-/vis/geometry/set/colour World 0 0 1 1 .2
+/vis/geometry/set/colour WorldLV 0 0 1 1 .05
+/vis/geometry/set/colour ShellLV 0 1 0 1 .05
+/vis/geometry/set/colour EnvelopeLV 0 0 1 1 .05
 # "Envelope" is transparent blue to represent water
 /vis/geometry/set/colour SurfaceLV 0 0 0 1 .05
 /vis/geometry/set/colour SurfaceLV_surface_LV 0 1 1 1

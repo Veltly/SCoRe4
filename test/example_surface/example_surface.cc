@@ -12,6 +12,7 @@
 #include "G4VisExecutive.hh"
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
+#include "RunAction.hh"
 
 int main(int argc, char **argv) {
   G4cout << "Surface test application starting ..." << G4endl;
@@ -37,6 +38,7 @@ int main(int argc, char **argv) {
   // Detector construction
   runManager->SetUserInitialization(new DetectorConstruction());
   runManager->SetUserInitialization(new ActionInitialization());
+  runManager->SetUserAction(new RunAction());
   // Get the pointer to the User Interface manager
   G4UImanager *UImanager = G4UImanager::GetUIpointer();
 

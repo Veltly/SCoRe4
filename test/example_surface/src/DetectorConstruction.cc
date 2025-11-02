@@ -17,6 +17,8 @@
 #include "Surface/SurfacePlacement.hh"
 #include "G4SDManager.hh"
 #include "SensitiveDetector.hh"
+#include "BoundarySensitiveDetector.hh"
+#include "G4SubtractionSolid.hh"
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(),
@@ -29,19 +31,23 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   G4NistManager *nist = G4NistManager::Instance();
 
   const G4bool checkOverlaps = false;
+  const Surface::VerboseLevel verboseLvl = Surface::VerboseLevel::Info;
 
   //create world
+
   const G4double world_sizeXY = 1 * m;
   const G4double world_sizeZ = 1 * m;
+
+
   G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
-  auto *solidWorld = new G4Box("World",  // its name
+  auto *solidWorld = new G4Box("WorldSolid",  // its name
                                0.5 * world_sizeXY, 0.5 * world_sizeXY,
                                0.5 * world_sizeZ);  // its size
 
   auto *logicWorld = new G4LogicalVolume(solidWorld,  // its solid
                                          world_mat, // its material
-                                         "World");     // its name
+                                         "WorldLV");     // its name
 
   G4VPhysicalVolume *physWorld =
       new G4PVPlacement(nullptr,                // no rotation
@@ -52,6 +58,40 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                         false,            // no boolean operation
                         0,                // copy number
                         checkOverlaps);   // overlaps checking
+
+  //create envelope
+  const G4double shell_thickness = 10*cm;
+
+  auto *solid_envelope = new G4Box("EnvelopeSolid",
+                             0.5 * (world_sizeXY - shell_thickness),
+                             0.5 * (world_sizeXY - shell_thickness),
+                             0.5 * (world_sizeZ - shell_thickness));
+
+  auto *logic_envelope = new G4LogicalVolume(solid_envelope, world_mat, "EnvelopeLV");
+
+  new G4PVPlacement(nullptr,
+                    G4ThreeVector(),
+                    logic_envelope,
+                    "Envelope",
+                    logicWorld,
+                    false,
+                    0,
+                    checkOverlaps);
+
+  //create outer scoring detector
+  auto *solid_shell = new G4SubtractionSolid("ShellSolid", solidWorld, solid_envelope);
+
+  auto *logic_shell = new G4LogicalVolume(solid_shell, world_mat, "ShellLV");
+
+  new G4PVPlacement(nullptr,
+                    G4ThreeVector(),
+                    logic_shell,
+                    "Shell",
+                    logicWorld,
+                    false,
+                    0,
+                    checkOverlaps);
+
 
   //Generate cube
   G4Material *cubeMaterial = nist->FindOrBuildMaterial("G4_Si");
@@ -71,7 +111,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                     G4ThreeVector(),
                     logicCube,
                     "Cube",
-                    logicWorld,
+                    logic_envelope,
                     false,
                     0,
                     checkOverlaps);
@@ -84,7 +124,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                                   6, 6,
                                   cubeMaterial,
                                   world_mat,
-                                  Surface::VerboseLevel::DebugInfo};
+                                  verboseLvl};
 
   //top
   const auto shift_to_zero = surface->get_shift_to_zero();
@@ -94,7 +134,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                             position_top,
                             surface,
                             "Surface_top",
-                            logicWorld,
+                            logic_envelope,
                             checkOverlaps,
                             true);
 
@@ -106,7 +146,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                             position_bottom,
                             surface,
                             "Surface_bottom",
-                            logicWorld,
+                            logic_envelope,
                             checkOverlaps,
                             true);
 
@@ -117,7 +157,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                             position_plus_x,
                             surface,
                             "Surface_plus_x",
-                            logicWorld,
+                            logic_envelope,
                             checkOverlaps,
                             true);
 
@@ -128,7 +168,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                             position_minus_x,
                             surface,
                             "Surface_minus_x",
-                            logicWorld,
+                            logic_envelope,
                             checkOverlaps,
                             true);
 
@@ -139,7 +179,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                             position_plus_y,
                             surface,
                             "Surface_plus_y",
-                            logicWorld,
+                            logic_envelope,
                             checkOverlaps,
                             true);
 
@@ -150,13 +190,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                             position_minus_y,
                             surface,
                             "Surface_minus_y",
-                            logicWorld,
+                            logic_envelope,
                             checkOverlaps,
                             true);
   surface->force_probability_generation();
-  surface->show_information();
-  surface->show_probability_information();
-  surface->show_placed_elements_information();
+//  surface->show_information();
+//  surface->show_probability_information();
+//  surface->show_placed_elements_information();
+
 
   //return the physical World
   return physWorld;
@@ -168,4 +209,8 @@ void DetectorConstruction::ConstructSDandField() {
   sdManager->AddNewDetector(sensitive_detector);
   SetSensitiveDetector("CubeLV", sensitive_detector);
   SetSensitiveDetector("SurfaceLV", sensitive_detector);
+
+  auto boundary_detector = new BoundarySensitiveDetector("BoundaryDetector");
+  sdManager->AddNewDetector(boundary_detector);
+  SetSensitiveDetector("ShellLV", boundary_detector,true);
 }

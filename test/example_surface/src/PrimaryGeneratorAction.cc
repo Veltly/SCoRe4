@@ -11,7 +11,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(),
       f_surface_source(new Surface::Source("SurfaceSource",
                                            nullptr,
-                                           Surface::VerboseLevel::DebugInfo)
+                                           Surface::VerboseLevel::Default)
                        ){}
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()= default;
