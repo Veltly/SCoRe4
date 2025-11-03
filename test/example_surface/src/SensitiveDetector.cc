@@ -34,5 +34,6 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*){
 void SensitiveDetector::EndOfEvent(G4HCofThisEvent*){
   auto *analysis_manager = G4AnalysisManager::Instance();
   const auto total_edep = std::accumulate(f_edep.begin(),f_edep.end(),0.0);
+  G4cout << "Total Energy : " << total_edep << G4endl;
   analysis_manager->FillH1(0, total_edep);
 }

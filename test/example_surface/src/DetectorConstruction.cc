@@ -39,7 +39,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   const G4double world_sizeZ = 1 * m;
 
 
-  G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
+  G4Material *world_mat = nist->FindOrBuildMaterial("G4_Galactic");
 
   auto *solidWorld = new G4Box("WorldSolid",  // its name
                                0.5 * world_sizeXY, 0.5 * world_sizeXY,
