@@ -5,8 +5,6 @@
  * @file Shift.cc
  */
 
-#include "ParticleGenerator/include/Shift.hh"
-
 #include <cstdlib>
 #include <fstream>
 #include <limits>
@@ -18,10 +16,11 @@
 #include "G4TransportationManager.hh"
 #include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
+#include "ParticleGenerator/include/PointShift.hh"
 #include "ParticleGenerator/include/ShiftMessenger.hh"
 #include "Randomize.hh"
 
-Surface::Shift::Shift(const VerboseLevel verbose)
+Surface::PointShift::PointShift(const VerboseLevel verbose)
     : fShiftTableReady(false),
       fMinShift(0.),
       fMaxShift(DBL_MAX),
@@ -29,7 +28,7 @@ Surface::Shift::Shift(const VerboseLevel verbose)
       fLogger("Shift", verbose),
       fMessenger(new Surface::ShiftMessenger(this)) {}
 
-Surface::Shift::Shift(const G4String &filename, const VerboseLevel verbose)
+Surface::PointShift::PointShift(const G4String &filename, const VerboseLevel verbose)
     : fShiftTableReady(false),
       fMinShift(0.),
       fMaxShift(DBL_MAX),
@@ -39,7 +38,7 @@ Surface::Shift::Shift(const G4String &filename, const VerboseLevel verbose)
   LoadShiftTable(filename);
 }
 
-G4double Surface::Shift::CalcShift() {
+G4double Surface::PointShift::CalcShift() {
   G4double random = G4UniformRand();
   for (size_t i = 0; i < fBarProbability.size(); ++i) {
     if (random <= fBarProbability[i]) {
@@ -49,7 +48,7 @@ G4double Surface::Shift::CalcShift() {
   exit(EXIT_FAILURE);
 }
 
-void Surface::Shift::DoShift(G4ThreeVector &position,
+void Surface::PointShift::DoShift(G4ThreeVector &position,
                              const G4ThreeVector &direction) {
   if (!fShiftTableReady) {
     fLogger.WriteError(
@@ -87,14 +86,14 @@ void Surface::Shift::DoShift(G4ThreeVector &position,
   }
 }
 
-void Surface::Shift::DoShiftByValue(const G4double shift,
+void Surface::PointShift::DoShiftByValue(const G4double shift,
                                     G4ThreeVector &position,
                                     const G4ThreeVector &direction) {
   const G4ThreeVector normedDirection = direction.unit();
   position -= normedDirection * shift;
 }
 
-std::stringstream Surface::Shift::StreamShiftTable() const {
+std::stringstream Surface::PointShift::StreamShiftTable() const {
   std::stringstream ss;
   ss << "Shift table:\n";
   for (size_t i = 0; i < fProbability.size(); ++i) {
@@ -106,11 +105,11 @@ std::stringstream Surface::Shift::StreamShiftTable() const {
   return ss;
 }
 
-void Surface::Shift::PrintShiftTable() {
+void Surface::PointShift::PrintShiftTable() {
   fLogger.WriteInfo(StreamShiftTable().str());
 }
 
-void Surface::Shift::LoadShiftTable(const std::string &filename) {
+void Surface::PointShift::LoadShiftTable(const std::string &filename) {
   std::ifstream file;
   file.open(filename);
   if (!file.is_open()) {
@@ -141,7 +140,7 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
   fShiftTableReady = true;
 }
 
-G4double Surface::Shift::Interpolate(const G4double xNormed,
+G4double Surface::PointShift::Interpolate(const G4double xNormed,
                                      const G4double lowerY,
                                      const G4double upperY) {
   const G4double k = (upperY - lowerY);
@@ -149,7 +148,7 @@ G4double Surface::Shift::Interpolate(const G4double xNormed,
   return result;
 }
 
-G4double Surface::Shift::Interpolate(const size_t idx) {
+G4double Surface::PointShift::Interpolate(const size_t idx) {
   const G4double a = fProbability[idx];
   const G4double b = fProbability[idx + 1];
   const G4double rand = G4UniformRand();
@@ -178,16 +177,16 @@ G4double Surface::Shift::Interpolate(const size_t idx) {
   return shift;
 }
 
-void Surface::Shift::SetMinShift(const G4double min) {
+void Surface::PointShift::SetMinShift(const G4double min) {
   fMinShift = min;
   fLogger.WriteInfo("Min shift set to " + std::to_string(min));
 }
-void Surface::Shift::SetMaxShift(const G4double max) {
+void Surface::PointShift::SetMaxShift(const G4double max) {
   fMaxShift = max;
   fLogger.WriteInfo("Max shift set to " + std::to_string(max));
 }
 
-G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
+G4bool Surface::PointShift::IsConfinedToMaterial(const G4ThreeVector &point) {
   if (fConfineMaterialName.empty()) {
     return true;
   }
@@ -208,14 +207,14 @@ G4bool Surface::Shift::IsConfinedToMaterial(const G4ThreeVector &point) {
   return false;
 }
 
-void Surface::Shift::ConfineToMaterial(const G4String &materialName) {
+void Surface::PointShift::ConfineToMaterial(const G4String &materialName) {
   fConfineMaterialName = materialName;
 }
 
-void Surface::Shift::SetVerboseLvl(const VerboseLevel verboseLvl) {
+void Surface::PointShift::SetVerboseLvl(const VerboseLevel verboseLvl) {
   fLogger.SetVerboseLvl(verboseLvl);
 }
 
-void Surface::Shift::SetVerboseLvl(const G4int verboseLvl) {
+void Surface::PointShift::SetVerboseLvl(const G4int verboseLvl) {
   fLogger.SetVerboseLvl(verboseLvl);
 }

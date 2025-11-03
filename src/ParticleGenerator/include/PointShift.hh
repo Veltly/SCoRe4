@@ -20,11 +20,11 @@ namespace Surface {
  * @brief Shift class moves a position along a set direction.
  * @details The moved distance can be set randomly based on a set probability distribution
  */
-class Shift {
+class PointShift {
  public:
-  explicit Shift(VerboseLevel verboseLvl = VerboseLevel::Default);
-  explicit Shift(const G4String &filename, VerboseLevel verboseLvl = VerboseLevel::Default);
-  ~Shift() = default;
+  explicit PointShift(VerboseLevel verboseLvl = VerboseLevel::Default);
+  explicit PointShift(const G4String &filename, VerboseLevel verboseLvl = VerboseLevel::Default);
+  ~PointShift() = default;
   void DoShift(G4ThreeVector &position, const G4ThreeVector &direction);
   static void DoShiftByValue(G4double shift, G4ThreeVector &position,
                       const G4ThreeVector &direction);
