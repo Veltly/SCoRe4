@@ -5,7 +5,7 @@
  * @file Shift.cc
  */
 
-#include "ParticleGenerator/include/Shift.hh"
+#include "Shift.hh"
 
 #include <cstdlib>
 #include <fstream>
@@ -18,7 +18,6 @@
 #include "G4TransportationManager.hh"
 #include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
-#include "ParticleGenerator/include/ShiftMessenger.hh"
 #include "Randomize.hh"
 
 Surface::Shift::Shift(const VerboseLevel verbose)
@@ -26,16 +25,14 @@ Surface::Shift::Shift(const VerboseLevel verbose)
       fMinShift(0.),
       fMaxShift(DBL_MAX),
       fConfineMaterialName(""),
-      fLogger("Shift", verbose),
-      fMessenger(new Surface::ShiftMessenger(this)) {}
+      fLogger("Shift", verbose) {}
 
 Surface::Shift::Shift(const G4String &filename, const VerboseLevel verbose)
     : fShiftTableReady(false),
       fMinShift(0.),
       fMaxShift(DBL_MAX),
       fConfineMaterialName(""),
-      fLogger("Shift", verbose),
-      fMessenger(new Surface::ShiftMessenger(this)) {
+      fLogger("Shift", verbose){
   LoadShiftTable(filename);
 }
 
@@ -52,10 +49,10 @@ G4double Surface::Shift::CalcShift() {
 void Surface::Shift::DoShift(G4ThreeVector &position,
                              const G4ThreeVector &direction) {
   if (!fShiftTableReady) {
-    fLogger.WriteError(
-        "Shift called, but ShiftTable not ready\n"
-        "No shift done!");
-    return;
+    const G4String error_msg = "Shift called, but ShiftTable not ready. No shift done!";
+    G4Exception("Shift::DoShift()",
+                "", FatalException,
+                error_msg);
   }
 
   G4int counter{0};
@@ -114,7 +111,10 @@ void Surface::Shift::LoadShiftTable(const std::string &filename) {
   std::ifstream file;
   file.open(filename);
   if (!file.is_open()) {
-    fLogger.WriteError("File for shift table not found at: " + filename);
+    const G4String error_msg = "File for shift table not found at: " + filename;
+    G4Exception("Shift::LoadShiftTable()",
+                "", FatalException,
+                error_msg);
     return;
   }
   std::string line;

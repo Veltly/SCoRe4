@@ -25,7 +25,7 @@ class LogicalSurface {
  public:
   LogicalSurface(G4String name, G4String gdml_filename, G4int nx, G4int ny,
                  G4Material* material, G4Material* envelope_material,
-                 VerboseLevel verbose_lvl = VerboseLevel::DebugInfo);
+                 VerboseLevel verbose_lvl = VerboseLevel::Default);
 
   G4LogicalVolume* get_logical_handle();
 

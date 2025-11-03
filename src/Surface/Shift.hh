@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "G4ThreeVector.hh"
-#include "ShiftMessenger.hh"
 #include "Service/include/Logger.hh"
 
 namespace Surface {
@@ -52,7 +51,7 @@ class Shift {
   G4double fMaxShift;
   G4String fConfineMaterialName;
   Logger fLogger;
-  ShiftMessenger *fMessenger;
+  //ShiftMessenger *fMessenger;
 };
 }  // namespace Surface
 #endif  // SURFACE_SHIFT_HH

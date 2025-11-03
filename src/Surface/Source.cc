@@ -13,7 +13,7 @@
 
 namespace Surface {
 
-Source::Source(const G4String &name, Shift* shift, VerboseLevel verbose_lvl)
+Source::Source(const G4String &name, Shift * shift, VerboseLevel verbose_lvl)
     :f_particle_generator(new G4GeneralParticleSource()),
       f_name(name),
       f_shift(shift),
@@ -83,5 +83,9 @@ void Source::GeneratePrimaryVertex(G4Event *event) {
 
 Source::~Source() {
   delete f_particle_generator;
+  if(f_shift != nullptr){
+    delete f_shift;
+    f_shift = nullptr;
+  }
 }
 } // namespace Surface
