@@ -63,11 +63,11 @@ void LogicalSurface::place_surface_element_inside_volume() {
 
   f_logical_envelope = new G4LogicalVolume(envelope_solid,
                                          f_envelope_material,
-                                         f_name);
+                                         f_name + "_envelope");
 
   auto *logical_surface_element = new G4LogicalVolume(f_surface_element,
                                                       f_material,
-                                                      f_name + "_surface_LV");
+                                                      f_name);
 //place surface element inside envelope
   for(int ix=0; ix < nx; ix++){
     for(int iy=0; iy < ny; iy++){
