@@ -23,8 +23,7 @@ public:
   void GeneratePrimaries(G4Event *) override;
 
 private:
-  G4ParticleGun *fParticleGun;
-//  Surface::Source *f_surface_source;
+  Surface::Source *f_surface_source;
 };
 
 #endif //PRIMARY_GENERATOR_ACTION_EXAMPLE_SURFACE_HH

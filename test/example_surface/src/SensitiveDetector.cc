@@ -20,7 +20,7 @@ void SensitiveDetector::Initialize(G4HCofThisEvent*){
 G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*){
   G4double edep = step->GetTotalEnergyDeposit();
   if (edep == 0.) return false;
-
+//  G4cout << "Energy is : " << edep << G4endl;
 //  auto volume_name = step->GetPreStepPoint()->GetTouchableHandle()
 //                     ->GetVolume()->GetLogicalVolume()->GetName();
 //
@@ -28,6 +28,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step* step, G4TouchableHistory*){
   G4int copyNo = step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
   if (copyNo >= 0 && copyNo < (G4int)f_edep.size())
     f_edep[copyNo] += edep;
+//    G4cout << "Energy is : " << edep << G4endl;
   return true;
 }
 
