@@ -15,4 +15,4 @@
 #
 # Visualization setting
 /control/execute macros/vis.mac
-/control/execute macros/source.mac
+#/control/execute macros/source.mac

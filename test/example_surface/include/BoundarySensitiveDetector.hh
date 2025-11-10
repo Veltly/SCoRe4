@@ -4,8 +4,8 @@
 * @date 2025-11-02
  */
 
-#ifndef SURFACE_BOUNDARYSENSITIVEDETECTOR_HH
-#define SURFACE_BOUNDARYSENSITIVEDETECTOR_HH
+#ifndef EXAMPLE_SURFACE_BOUNDARYSENSITIVEDETECTOR_HH
+#define EXAMPLE_SURFACE_BOUNDARYSENSITIVEDETECTOR_HH
 
 #include "G4VSensitiveDetector.hh"
 #include "G4Step.hh"
@@ -17,11 +17,16 @@ class BoundarySensitiveDetector : public G4VSensitiveDetector {
  public:
   explicit BoundarySensitiveDetector(const G4String& name) : G4VSensitiveDetector(name){};
 
+  void Initialize(G4HCofThisEvent*) override;
   G4bool ProcessHits(G4Step* step, G4TouchableHistory*) override;
+  void EndOfEvent(G4HCofThisEvent*) override;
 
+ private:
+  G4double f_total_edep;
 };
 
 
 
 
-#endif  // SURFACE_BOUNDARYSENSITIVEDETECTOR_HH
+
+#endif  // EXAMPLE_SURFACE_BOUNDARYSENSITIVEDETECTOR_HH

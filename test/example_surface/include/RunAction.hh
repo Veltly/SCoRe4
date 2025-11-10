@@ -2,8 +2,8 @@
 // Created by chris on 01.11.25.
 //
 
-#ifndef SURFACE_RUNACTION_HH
-#define SURFACE_RUNACTION_HH
+#ifndef EXAMPLE_SURFACE_RUNACTION_HH
+#define EXAMPLE_SURFACE_RUNACTION_HH
 
 #include "G4UserRunAction.hh"
 
@@ -15,4 +15,4 @@ class RunAction : public G4UserRunAction {
   void EndOfRunAction(const G4Run*) override;
 };
 
-#endif  // SURFACE_RUNACTION_HH
+#endif  // EXAMPLE_SURFACE_RUNACTION_HH

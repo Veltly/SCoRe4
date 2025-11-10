@@ -117,11 +117,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
                     checkOverlaps);
 
   //generating surface
-  const G4String gdml_filename = "macros/test_small.gdml";
-
+//  const G4String gdml_filename = "macros/test_small.gdml";
+//  const G4String gdml_filename = "macros/realistic_surface.gdml";
+//  const G4String gdml_filename = "macros/simpler_surface.gdml";
+  const G4String gdml_filename = "macros/very_simple.gdml";
+//  const G4String gdml_filename = "macros/flat.gdml";
   auto *surface = new Surface::LogicalSurface{"SurfaceLV",
                                   gdml_filename,
-                                  6, 6,
+                                  240, 240,
                                   cubeMaterial,
                                   world_mat,
                                   verboseLvl};

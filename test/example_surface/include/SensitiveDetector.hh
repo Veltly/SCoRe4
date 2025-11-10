@@ -4,8 +4,8 @@
 * @date 2025-10-27
 */
 
-#ifndef SURFACE_SENSITIVE_DETECTOR_HH
-#define SURFACE_SENSITIVE_DETECTOR_HH
+#ifndef EXAMPLE_SURFACE_SENSITIVE_DETECTOR_HH
+#define EXAMPLE_SURFACE_SENSITIVE_DETECTOR_HH
 
 #include "G4VSensitiveDetector.hh"
 #include "G4Step.hh"
@@ -28,4 +28,4 @@ class SensitiveDetector : public G4VSensitiveDetector {
 };
 
 
-#endif  // SURFACE_SENSITIVE_DETECTOR_HH
+#endif  // EXAMPLE_SURFACE_SENSITIVE_DETECTOR_HH
