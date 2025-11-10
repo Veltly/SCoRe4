@@ -1,0 +1,6 @@
+/gps/particle alpha
+/gps/ene/mono 5.3 MeV
+/gps/ang/type iso
+
+/run/printProgress 10
+/run/beamOn 10

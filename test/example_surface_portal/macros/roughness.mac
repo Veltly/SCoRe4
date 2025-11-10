@@ -1,0 +1,39 @@
+# Portal
+
+/Surface/MultiportalHelper/PortalHelper/setVerbose 5
+
+/Surface/MultiportalHelper/PortalHelper/setDxPortal 3 cm
+/Surface/MultiportalHelper/PortalHelper/setDyPortal 3 cm
+/Surface/MultiportalHelper/PortalHelper/setDzPortal 0.5 cm
+
+/Surface/MultiportalHelper/PortalHelper/setDxSubworld 0.5 cm
+/Surface/MultiportalHelper/PortalHelper/setDySubworld 0.5 cm
+/Surface/MultiportalHelper/PortalHelper/setDzSubworld 0.5 cm
+
+/Surface/MultiportalHelper/PortalHelper/setNxSubworld 6
+/Surface/MultiportalHelper/PortalHelper/setNySubworld 6
+
+/Surface/MultiportalHelper/PortalHelper/setMaterial G4_Galactic
+
+# Roughness
+
+/Surface/RoughnessHelper/RoughnessHelper/setVerbose 5
+
+/Surface/RoughnessHelper/RoughnessHelper/setBasisDx 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelper/setBasisDy 0.5 cm
+/Surface/RoughnessHelper/RoughnessHelper/setBasisDz 0.25 cm
+
+/Surface/RoughnessHelper/RoughnessHelper/setSpikeDx 0.25 cm
+/Surface/RoughnessHelper/RoughnessHelper/setSpikeDy 0.25 cm
+/Surface/RoughnessHelper/RoughnessHelper/setSpikeMeanHeight 0.25 cm
+/Surface/RoughnessHelper/RoughnessHelper/setSpikeDevHeight 1 mm
+/Surface/RoughnessHelper/RoughnessHelper/setSpikeform StandardPyramid
+
+/Surface/RoughnessHelper/RoughnessHelper/setSpikesNx 2
+/Surface/RoughnessHelper/RoughnessHelper/setSpikesNy 2
+
+/Surface/RoughnessHelper/RoughnessHelper/setMaterial G4_Si
+
+/Surface/RoughnessHelper/RoughnessHelper/setBoundaryNx 1000
+/Surface/RoughnessHelper/RoughnessHelper/setBoundaryNy 1000
+/Surface/RoughnessHelper/RoughnessHelper/setBoundaryNz 1000
