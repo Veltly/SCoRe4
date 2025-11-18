@@ -25,7 +25,7 @@ Surface::MultiportalHelper::MultiportalHelper(const G4String &helperName,
       fNOfDifferentSubworlds(0),
       fCheckOverlaps(false),
       fMotherVolume(nullptr),
-      fLogger("MPH_" + helperName, verboseLvl),
+      fLogger(helperName, verboseLvl),
       fMessenger(new MultiportalHelperMessenger(this, helperName)),
       fDxSub(0),
       fDySub(0),
@@ -105,7 +105,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
     const G4Transform3D transformation = fPlacementSub.at(i);
 
     // Create Trigger
-    const G4String nameTrig = fSubName + "_Trigger_" + std::to_string(i);
+    const G4String nameTrig = fSubName + "Trigger_" + std::to_string(i);
     auto solidTrig =
         new G4Box(nameTrig, 1.1 * fDxSub, 1.1 * fDySub, 1.1 * fDzSub);
     auto logicTrig =
@@ -113,8 +113,9 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
     G4VPhysicalVolume *physTrig =
         new G4PVPlacement(transformation, logicTrig, nameTrig, fMotherVolume,
                           false, 0, fCheckOverlaps);
-
+    fLogger.WriteDetailInfo("Creating trigger: " + nameTrig);
     // Create Subworld
+
     const G4String nameSub = fSubName + "Subworld_" + std::to_string(i);
     auto solidSub = new G4Box(nameSub, fDxSub, fDySub, fDzSub);
     auto logicSub =
@@ -123,7 +124,7 @@ void Surface::MultiportalHelper::GenerateSubworlds() {
     G4VPhysicalVolume *physSub =
         new G4PVPlacement(nullptr, placementSub, logicSub, nameSub, logicTrig, false,
                           0, fCheckOverlaps);
-
+    fLogger.WriteDetailInfo("Creating subworld: " + nameSub);
     // Create Subworld
     auto *portalSubworld = new Surface::MultipleSubworld(
         nameSub, physSub, transformation, fLogger.GetVerboseLvl());

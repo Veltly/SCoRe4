@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "G4ThreeVector.hh"
-#include "ParticleGenerator/include/ShiftMessenger.hh"
+#include "ParticleGenerator/include/PointShiftMessenger.hh"
 #include "Service/include/Logger.hh"
 
 namespace Surface {
@@ -52,7 +52,7 @@ class PointShift {
   G4double fMaxShift;
   G4String fConfineMaterialName;
   Logger fLogger;
-  ShiftMessenger *fMessenger;
+  PointShiftMessenger *fMessenger;
 };
 }  // namespace Surface
 #endif  // SRC_PARTICLEGENERATOR_INCLUDE_SHIFT_HH

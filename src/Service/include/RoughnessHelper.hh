@@ -37,6 +37,7 @@ class RoughnessHelper {
   G4MultiUnion *SolidRoughness() const;
   G4LogicalVolume *LogicRoughness() const;
   FacetStore *FacetStore();
+  G4String GetRoughnessLogicalVolumeName() const;
   inline const G4String &GetName() const { return fName; }
   inline VerboseLevel GetVerboseLvl() const { return fLogger.GetVerboseLvl(); }
   inline G4double GetSpikeDx() const { return fDxSpike; }

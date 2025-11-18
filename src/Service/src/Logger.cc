@@ -19,13 +19,15 @@ Surface::Logger::Logger(G4String aLoggerName, G4int aVerboseLvl)
 
 Surface::VerboseLevel Surface::Logger::ToVerboseLvl(
     G4int aIntVerboseLvl) {
+  if(aIntVerboseLvl < 0){
+    return Surface::VerboseLevel::Error;
+  }
   switch (aIntVerboseLvl){
     case 0: return Surface::VerboseLevel::Error;
     case 1: return Surface::VerboseLevel::Warning;
     case 2: return Surface::VerboseLevel::Info;
     case 3: return Surface::VerboseLevel::DetailInfo;
-    case 4: return Surface::VerboseLevel::DebugInfo;
-    default: return Surface::VerboseLevel::Default;
+    default: return Surface::VerboseLevel::DebugInfo; // 4 or higher
   }
 }
 

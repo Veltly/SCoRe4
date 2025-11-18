@@ -71,12 +71,17 @@ void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
     if (portalId < 0) {
       fLogger.WriteError("Error: No portal with name \"" + fPortalName +
                          "\" found!!");
+      G4String possible_names = "Possible names: ";
       fLogger.WriteError("Possible portals in Store are:");
       for (auto &portal : pStore) {
+        possible_names = possible_names + ", " + portal->GetName();
         fLogger.WriteError(portal->GetName());
       }
-
-      exit(EXIT_FAILURE);
+      G4String error_msg = "Error: No portal with name " + fPortalName + " found!\n" + possible_names;
+      G4Exception("MultiSubworldSampler::GeneratePrimaryVertex()",
+                  "",
+                  FatalException,
+                  error_msg);
     }
 
     auto *subworld =

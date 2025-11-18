@@ -5,6 +5,8 @@
  * @file Shift.cc
  */
 
+#include "ParticleGenerator/include/PointShift.hh"
+
 #include <cstdlib>
 #include <fstream>
 #include <limits>
@@ -16,8 +18,7 @@
 #include "G4TransportationManager.hh"
 #include "G4Types.hh"
 #include "G4VPhysicalVolume.hh"
-#include "ParticleGenerator/include/PointShift.hh"
-#include "ParticleGenerator/include/ShiftMessenger.hh"
+#include "ParticleGenerator/include/PointShiftMessenger.hh"
 #include "Randomize.hh"
 
 Surface::PointShift::PointShift(const VerboseLevel verbose)
@@ -26,7 +27,7 @@ Surface::PointShift::PointShift(const VerboseLevel verbose)
       fMaxShift(DBL_MAX),
       fConfineMaterialName(""),
       fLogger("Shift", verbose),
-      fMessenger(new Surface::ShiftMessenger(this)) {}
+      fMessenger(new Surface::PointShiftMessenger(this)) {}
 
 Surface::PointShift::PointShift(const G4String &filename, const VerboseLevel verbose)
     : fShiftTableReady(false),
@@ -34,7 +35,7 @@ Surface::PointShift::PointShift(const G4String &filename, const VerboseLevel ver
       fMaxShift(DBL_MAX),
       fConfineMaterialName(""),
       fLogger("Shift", verbose),
-      fMessenger(new Surface::ShiftMessenger(this)) {
+      fMessenger(new Surface::PointShiftMessenger(this)) {
   LoadShiftTable(filename);
 }
 
@@ -45,7 +46,10 @@ G4double Surface::PointShift::CalcShift() {
       return Interpolate(i) * CLHEP::nm;
     }
   }
-  exit(EXIT_FAILURE);
+  G4Exception("PointShift::CalcShift()",
+              "",
+              FatalException,
+              "should never happen.");
 }
 
 void Surface::PointShift::DoShift(G4ThreeVector &position,

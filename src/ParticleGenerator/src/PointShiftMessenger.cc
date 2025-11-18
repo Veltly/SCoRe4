@@ -5,11 +5,10 @@
  * @file ShiftMessenger.cc
  */
 
-#include "../include/ShiftMessenger.hh"
-
 #include <G4ApplicationState.hh>
 
-#include "../include/Shift.hh"
+#include "../include/PointShift.hh"
+#include "../include/PointShiftMessenger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
@@ -17,7 +16,7 @@
 #include "G4UIcommand.hh"
 #include "G4UIdirectory.hh"
 
-Surface::ShiftMessenger::ShiftMessenger(Surface::Shift *shift)
+Surface::PointShiftMessenger::PointShiftMessenger(Surface::PointShift *shift)
     : fShift(shift), fDirectory(nullptr), fCmdVerbose(nullptr),
       fCmdPrintShiftTable(nullptr), fCmdLoadShiftTable(nullptr),
       fCmdSetMinShift(nullptr), fCmdSetMaxShift(nullptr),
@@ -64,7 +63,7 @@ Surface::ShiftMessenger::ShiftMessenger(Surface::Shift *shift)
   fCmdConfineToMaterial->SetDefaultValue("");
 }
 
-Surface::ShiftMessenger::~ShiftMessenger() {
+Surface::PointShiftMessenger::~PointShiftMessenger() {
   delete fDirectory;
   fDirectory = nullptr;
   delete fCmdVerbose;
@@ -81,7 +80,7 @@ Surface::ShiftMessenger::~ShiftMessenger() {
   fCmdConfineToMaterial = nullptr;
 }
 
-void Surface::ShiftMessenger::SetNewValue(G4UIcommand *command,
+void Surface::PointShiftMessenger::SetNewValue(G4UIcommand *command,
                                           G4String newValues) {
   if (command == fCmdVerbose) {
     fShift->SetVerboseLvl(G4UIcmdWithAnInteger::GetNewIntValue(newValues));

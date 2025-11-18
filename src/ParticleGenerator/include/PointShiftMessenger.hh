@@ -20,21 +20,21 @@ class G4UIcmdWithADoubleAndUnit;
 
 namespace Surface {
 
-class Shift;
+class PointShift;
 
 /**
  * @brief Messenger for class Shift
  */
-class ShiftMessenger : public G4UImessenger {
+class PointShiftMessenger : public G4UImessenger {
 
 public:
-  explicit ShiftMessenger(Surface::Shift *shift);
-  ~ShiftMessenger() override;
+  explicit PointShiftMessenger(Surface::PointShift *shift);
+  ~PointShiftMessenger() override;
 
   void SetNewValue(G4UIcommand *command, G4String newValues) override;
 
 private:
-  Surface::Shift *fShift;
+  Surface::PointShift *fShift;
   G4UIdirectory *fDirectory;
   G4UIcmdWithAnInteger *fCmdVerbose;
   G4UIcmdWithoutParameter *fCmdPrintShiftTable;

@@ -10,7 +10,7 @@
 
 #include "G4GeneralParticleSource.hh"
 #include "G4VPrimaryGenerator.hh"
-#include "ParticleGenerator/include/Shift.hh"
+#include "ParticleGenerator/include/PointShift.hh"
 #include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/SubworldGrid.hh"
 #include "Service/include/VSampler.hh"
@@ -50,7 +50,7 @@ class MultiSubworldSampler : public G4VPrimaryGenerator {
   const G4String fName;
   const G4String fPortalName;
   SubworldGrid<MultipleSubworld> *fSubworld{nullptr};
-  Surface::Shift fShift;
+  Surface::PointShift fShift;
   const G4bool fShiftActive;
   VSampler<Coord> fSubworldSampler;
   G4bool fSamplerReady;

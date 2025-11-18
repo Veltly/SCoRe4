@@ -266,3 +266,6 @@ void Surface::RoughnessHelper::Finalize() {
 Surface::FacetStore *Surface::RoughnessHelper::FacetStore() {
   return fGenerator.GetFacetStore();
 }
+G4String Surface::RoughnessHelper::GetRoughnessLogicalVolumeName() const {
+  return LogicRoughness()->GetName();
+}
