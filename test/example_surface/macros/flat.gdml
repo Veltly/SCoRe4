@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+  <define>
+    <position name="v0" unit="um" x="-125.0" y="-125.0" z="40.0" />
+    <position name="v1" unit="um" x="125.0" y="-125.0" z="40.0" />
+    <position name="v2" unit="um" x="-125.0" y="125.0" z="40.0" />
+    <position name="v3" unit="um" x="125.0" y="125.0" z="40.0" />
+    <position name="v4" unit="um" x="-125.0" y="-125.0" z="0.0" />
+    <position name="v5" unit="um" x="125.0" y="-125.0" z="0.0" />
+    <position name="v6" unit="um" x="125.0" y="125.0" z="0.0" />
+    <position name="v7" unit="um" x="-125.0" y="125.0" z="0.0" />
+  </define>
+  <materials />
+  <solids>
+    <tessellated aunit="degree" lunit="um" name="solid">
+      <triangular vertex1="v0" vertex2="v1" vertex3="v3" type="ABSOLUTE" />
+      <triangular vertex1="v0" vertex2="v3" vertex3="v2" type="ABSOLUTE" />
+      <triangular vertex1="v4" vertex2="v5" vertex3="v1" type="ABSOLUTE" />
+      <triangular vertex1="v4" vertex2="v1" vertex3="v0" type="ABSOLUTE" />
+      <triangular vertex1="v5" vertex2="v6" vertex3="v3" type="ABSOLUTE" />
+      <triangular vertex1="v5" vertex2="v3" vertex3="v1" type="ABSOLUTE" />
+      <triangular vertex1="v6" vertex2="v7" vertex3="v2" type="ABSOLUTE" />
+      <triangular vertex1="v6" vertex2="v2" vertex3="v3" type="ABSOLUTE" />
+      <triangular vertex1="v7" vertex2="v4" vertex3="v0" type="ABSOLUTE" />
+      <triangular vertex1="v7" vertex2="v0" vertex3="v2" type="ABSOLUTE" />
+      <triangular vertex1="v4" vertex2="v7" vertex3="v5" type="ABSOLUTE" />
+      <triangular vertex1="v5" vertex2="v7" vertex3="v6" type="ABSOLUTE" />
+    </tessellated>
+  </solids>
+  <structure />
+  <userinfo />
+  <setup name="tessellated_surface" version="1.0">
+    <world ref="World" />
+  </setup>
+</gdml>
