@@ -49,7 +49,7 @@ class SteppingAction : public G4UserSteppingAction {
   virtual void UserSteppingAction(const G4Step *);
 
  private:
-  Surface::PortalControl fPortalControl{-1};
+  Surface::PortalControl fPortalControl{Surface::VerboseLevel::Default};
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

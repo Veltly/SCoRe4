@@ -2,7 +2,7 @@
 #include "G4RunManager.hh"
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
-    : G4VUserPrimaryGeneratorAction(), f_surface_source(new Surface::Source("SurfaceSource",Surface::VerboseLevel::DebugInfo)){
+    : G4VUserPrimaryGeneratorAction(), f_surface_source(new Surface::Source("SurfaceSource", nullptr, Surface::VerboseLevel::DebugInfo)){
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()= default;

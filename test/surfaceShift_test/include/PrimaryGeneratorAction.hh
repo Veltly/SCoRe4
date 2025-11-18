@@ -11,7 +11,7 @@
 
 #include "G4GeneralParticleSource.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "ParticleGenerator/include/Shift.hh"
+#include "ParticleGenerator/include/PointShift.hh"
 #include "globals.hh"
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
@@ -23,7 +23,8 @@ public:
 
 private:
   G4GeneralParticleSource *fGps;
-  Surface::Shift *fShiftTable; // definition of shift table for vertex-shift
+  Surface::PointShift
+      *fShiftTable; // definition of shift table for vertex-shift
 };
 
 #endif

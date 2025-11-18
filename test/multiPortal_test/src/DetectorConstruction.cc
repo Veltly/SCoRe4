@@ -4,13 +4,8 @@
 
 #include "DetectorConstruction.hh"
 
-#include <G4MultiUnion.hh>
-#include <G4Region.hh>
-#include <G4RotationMatrix.hh>
 #include <G4ThreeVector.hh>
-#include <G4Transform3D.hh>
 #include <G4UserLimits.hh>
-#include <cfloat>
 
 #include "../../../src/Portal/include/MultipleSubworld.hh"
 #include "../../../src/Portal/include/PortalStore.hh"
@@ -22,7 +17,7 @@
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "Portal/include/SubworldGrid.hh"
-#include "Portal/include/VPortal.hh"
+#include "../../multiPortal_test/include/DetectorConstruction.hh"
 
 DetectorConstruction::DetectorConstruction()
     : G4VUserDetectorConstruction(), fScoringVolume(0) {}
@@ -221,14 +216,14 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 
   Surface::PortalStore &portalStore = Surface::Locator::GetPortalStore();
   Surface::MultipleSubworld *portalEntrance =
-      new Surface::MultipleSubworld("Entrance", physPortal, portalPlacement, 3);
+      new Surface::MultipleSubworld("Entrance", physPortal, portalPlacement, Surface::VerboseLevel::Default);
 
   Surface::MultipleSubworld *portalSubworldA = new Surface::MultipleSubworld(
-      "Subworld-A", physSubworldA, subworldTriggerPlacementA, 3);
+      "Subworld-A", physSubworldA, subworldTriggerPlacementA, Surface::VerboseLevel::Default);
   Surface::MultipleSubworld *portalSubworldB = new Surface::MultipleSubworld(
-      "Subworld-B", physSubworldB, subworldTriggerPlacementB, 3);
+      "Subworld-B", physSubworldB, subworldTriggerPlacementB, Surface::VerboseLevel::Default);
   Surface::MultipleSubworld *portalSubworldC = new Surface::MultipleSubworld(
-      "Subworld-C", physSubworldC, subworldTriggerPlacementC, 3);
+      "Subworld-C", physSubworldC, subworldTriggerPlacementC, Surface::VerboseLevel::Default);
 
   // set trigger for portals
   portalEntrance->SetTrigger(physPortal);
@@ -239,12 +234,12 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   portalEntrance->SetAsPortal();
   portalEntrance->SetSubworldEdge(subworld_sizeXY, subworld_sizeXY,
                                   subworld_sizeZ);
-  portalEntrance->SetGrid(griddim, griddim, 0);
+  portalEntrance->SetGrid(griddim, griddim, Surface::VerboseLevel::Default);
   portalEntrance->SetOtherPortal(portalSubworldA);
   portalSubworldA->SetOtherPortal(portalEntrance);
   portalSubworldB->SetOtherPortal(portalEntrance);
   portalSubworldC->SetOtherPortal(portalEntrance);
-  Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> subworldHelper(0);
+  Surface::HelperFillSubworldGrid<Surface::MultipleSubworld> subworldHelper(Surface::VerboseLevel::Default);
   subworldHelper.AddAvailableSubworld(portalSubworldA, 0.3);
   subworldHelper.AddAvailableSubworld(portalSubworldB, 0.5);
   subworldHelper.AddAvailableSubworld(portalSubworldC, 0.2);

@@ -10,11 +10,11 @@
 
 #include "G4GeneralParticleSource.hh"
 #include "G4RunManager.hh"
-#include "ParticleGenerator/include/Shift.hh"
+#include "ParticleGenerator/include/PointShift.hh"
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
     : G4VUserPrimaryGeneratorAction(), fGps(new G4GeneralParticleSource()),
-      fShiftTable(new Surface::Shift{3}) {}
+      fShiftTable(new Surface::PointShift{3}) {}
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() {
   delete fGps;
