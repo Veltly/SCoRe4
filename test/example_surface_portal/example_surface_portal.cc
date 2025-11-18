@@ -18,8 +18,12 @@ int main(int argc, char **argv) {
   G4cout << "Surface test application starting ..." << G4endl;
   G4UIExecutive *ui = nullptr;
   if (argc == 1) {
-    ui = new G4UIExecutive(argc, argv,"tcsh");
-//    ui = new G4UIExecutive(argc, argv);
+    ui = new G4UIExecutive(argc, argv);
+  }
+
+  if (argc == 2){
+    const G4String command = argv[1];
+    ui = new G4UIExecutive(argc, argv, command);
   }
   // Construct the default run manager
   auto *runManager = new G4RunManager;

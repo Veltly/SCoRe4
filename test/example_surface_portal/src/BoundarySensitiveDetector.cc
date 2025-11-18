@@ -6,6 +6,7 @@
 
 #include "BoundarySensitiveDetector.hh"
 #include "Analysis.hh"
+#include "G4SystemOfUnits.hh"
 
 void BoundarySensitiveDetector::Initialize(G4HCofThisEvent *) {
   f_total_edep = 0;
@@ -24,7 +25,9 @@ G4bool BoundarySensitiveDetector::ProcessHits(G4Step *step, G4TouchableHistory *
     return true;
 }
 
-void BoundarySensitiveDetector::EndOfEvent(G4HCofThisEvent*){
+void BoundarySensitiveDetector::EndOfEvent(G4HCofThisEvent*) {
   auto *analysis_manager = G4AnalysisManager::Instance();
-  analysis_manager->FillH1(1, f_total_edep);
+  if(f_total_edep != 0) {
+    analysis_manager->FillH1(1, f_total_edep);
+  }
 }

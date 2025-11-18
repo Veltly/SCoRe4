@@ -16,16 +16,12 @@ void RunAction::BeginOfRunAction(const G4Run *) {
   analysis_manager->OpenFile("DepositedEnergyOutput");
 
   analysis_manager->SetVerboseLevel(1);
-  //analysis_manager->SetNtupleMerging(true);
 
-  analysis_manager->CreateH1("Cube", "Deposited Energy in Cube", 100, 0., 10*MeV);
-  analysis_manager->CreateH1("Shell", "Deposited Energy in Shell", 100,0.,10.*MeV);
-
-  //analysis_manager->CreateNtuple("Energy", "Energy per event");
-  //analysis_manager->CreateNtupleDColumn("Cube");
-  //analysis_manager->FinishNtuple();
-
-
+  const G4double max_energy = 6. * MeV;
+  const G4double min_energy = 0 * eV;
+  const G4int bins = 300;
+  analysis_manager->CreateH1("Cube", "Deposited Energy in Cube", bins, min_energy, max_energy);
+  analysis_manager->CreateH1("Shell", "Deposited Energy in Shell", bins,min_energy,max_energy);
 }
 
 void RunAction::EndOfRunAction(const G4Run *) {

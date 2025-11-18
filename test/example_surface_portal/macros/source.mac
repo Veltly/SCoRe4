@@ -2,5 +2,5 @@
 /gps/ene/mono 5.3 MeV
 /gps/ang/type iso
 
-/run/printProgress 10
-/run/beamOn 10
+/run/printProgress 100
+/run/beamOn 10000
