@@ -19,7 +19,3 @@ add_subdirectory(multiSurface_test)
 add_subdirectory(default_test)
 
 add_subdirectory(test_surface_placement)
-
-add_subdirectory(example_surface)
-
-add_subdirectory(example_surface_portal)

@@ -33,6 +33,8 @@ if(DOC)
   include(cmake/FindDoxygen.cmake)
 endif()
 
+add_subdirectory(examples)
+
 if(COMPILE_TEST)
   add_subdirectory(test)
 endif()
