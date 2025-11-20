@@ -222,12 +222,15 @@ class HeightMap:
            extent=(0., self.length_x, 0., self.length_y),
            cmap=custom_cmap,   # color map
            aspect='auto')    # make axes proportional
-        plt.colorbar(label='Height')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.title('Height Map')
+        cbar = plt.colorbar(label='Height [µm]')
+        cbar.ax.set_ylabel('Height [µm]', fontsize=14)
+        cbar.ax.tick_params(labelsize=14)
+        plt.tick_params(axis='both', labelsize=14)
+        plt.xlabel('X - Dimension [µm]', fontsize=14)
+        plt.ylabel('Y - Dimension [µm]', fontsize=14)
+        #plt.title('Height Map', fontsize=14)
         if export_path is not None:
-            plt.savefig(export_path + ".png")
+            plt.savefig(export_path + ".png", dpi=300, bbox_inches='tight')
         if show:
             plt.show()
 
