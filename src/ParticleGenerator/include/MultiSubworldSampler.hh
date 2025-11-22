@@ -14,9 +14,7 @@
 #include "Portal/include/MultipleSubworld.hh"
 #include "Portal/include/SubworldGrid.hh"
 #include "Service/include/VSampler.hh"
-#if NDEBUG
-#include "Service/include/FileLogger.hh"
-#endif
+
 namespace Surface {
 
 struct Coord {
@@ -56,9 +54,6 @@ class MultiSubworldSampler : public G4VPrimaryGenerator {
   G4bool fSamplerReady;
   Logger fLogger;
   G4GeneralParticleSource *fParticleGenerator;
-#if NDEBUG
-  FileLogger *fFileLogger;
-#endif
 };
 }  // namespace Surface
 

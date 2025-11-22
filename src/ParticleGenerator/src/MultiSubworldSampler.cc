@@ -5,7 +5,6 @@
  * @file MultiSubworldSampler.cc
  */
 
-#include <cstdlib>
 #include <utility>
 
 #include "G4GeneralParticleSource.hh"
@@ -34,9 +33,6 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(G4String name,
       fSamplerReady(false),
       fLogger("MultiSubworldSampler_" + fName, verboseLvl),
       fParticleGenerator(new G4GeneralParticleSource) {
-#if NDEBUG
-  fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
-#endif
 }
 
 Surface::MultiSubworldSampler::MultiSubworldSampler(
@@ -50,16 +46,10 @@ Surface::MultiSubworldSampler::MultiSubworldSampler(
       fSamplerReady(false),
       fLogger("MultiSubworldSampler_" + fName, verboseLvl),
       fParticleGenerator(new G4GeneralParticleSource) {
-#if NDEBUG
-  fFileLogger = new Surface::FileLogger{"MultiSubworldSamperl_log"};
-#endif
 }
 
 Surface::MultiSubworldSampler::~MultiSubworldSampler() {
 
-#if NDEBUG
-  delete fFileLogger;
-#endif
 }
 
 void Surface::MultiSubworldSampler::GeneratePrimaryVertex(G4Event *event) {
@@ -113,27 +103,9 @@ G4ThreeVector Surface::MultiSubworldSampler::GetRandom() {
 
   G4ThreeVector surfaceNormal;
   G4ThreeVector randomPoint = facetStore->GetRandomPoint(surfaceNormal);
-#if NDEBUG
-  *fFileLogger << std::to_string(randomCoord.x) + "," +
-                      std::to_string(randomCoord.y) + ",";
-
-  *fFileLogger << std::to_string(randomPoint.x()) + "," +
-                      std::to_string(randomPoint.y()) + "," +
-                      std::to_string(randomPoint.z()) + ",";
-#endif
   if (fShiftActive) {
     fShift.DoShift(randomPoint, surfaceNormal);
   }
-#if NDEBUG
-  *fFileLogger << std::to_string(randomPoint.x()) + "," +
-                      std::to_string(randomPoint.y()) + "," +
-                      std::to_string(randomPoint.z()) + ",";
-
-  *fFileLogger << std::to_string(surfaceNormal.x()) + "," +
-                      std::to_string(surfaceNormal.y()) + "," +
-                      std::to_string(surfaceNormal.z());
-  fFileLogger->WriteLine();
-#endif
   fLogger.WriteDebugInfo(
       "Selected Subworld X: " + std::to_string(randomCoord.x) +
       " Y: " + std::to_string(randomCoord.y));
@@ -164,12 +136,6 @@ void Surface::MultiSubworldSampler::PrepareSampler() {
   fSamplerReady = true;
   fLogger.WriteInfo("MultiSubworldSampler is ready.");
   fLogger.WriteDetailInfo([this] {return Information();});
-#if NDEBUG
-  fFileLogger->WriteLine(StreamInformation().str());
-  fFileLogger->WriteLine(
-      "Grid_X,Grid_Y,Point_X,Point_Y,Point_Z,Shift_X,Shift_y,Shift_Z,Direction_"
-      "X,Direction_Y,Direction_Z\n");
-#endif
 }
 
 void Surface::MultiSubworldSampler::SetSubworld(

@@ -24,9 +24,9 @@ Implements the portation of particles to reuse a smaller simulated volume multip
 ## Installation
 
 ```
-git clone https://github.com/Veltly/G4Surface.git && 
-cd G4Surface && mkdir build && cd build && cmake ..
-make install
+git clone https://github.com/Veltly/SCoRe4.git && \
+ cd SCoRe4 && mkdir build && cd build && cmake .. && \
+ make install
 ```
 ## Examples
 
