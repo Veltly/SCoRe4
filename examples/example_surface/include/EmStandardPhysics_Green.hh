@@ -9,7 +9,6 @@
 #include "G4EmParticleList.hh"
 #include "G4VPhysicsConstructor.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class EmStandardPhysics_Green : public G4VPhysicsConstructor {
 public:
@@ -25,6 +24,5 @@ private:
   G4EmParticleList partList;
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

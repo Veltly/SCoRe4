@@ -141,6 +141,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
   // generate portal
   f_portal_helper.Generate();
 
+  // extra function to check if surface and subworld do fit
   CheckValues();
 
   Surface::MultipleSubworld *sub = f_portal_helper.GetSubworld(0);

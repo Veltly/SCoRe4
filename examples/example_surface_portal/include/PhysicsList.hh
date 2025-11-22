@@ -16,7 +16,6 @@ public:
   ~PhysicsList() override = default;
   void ConstructProcess();
 
-//  void SetCuts() override;
 };
 
 #endif // PHYSICS_LIST_EXAMPLE_SURFACE_PORTAL_HH

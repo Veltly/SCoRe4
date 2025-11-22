@@ -1,7 +1,6 @@
 // author: C.Gruener
 // date: 12.03.2024
 //
-// EmStandardPhysics_Green is a variation of G4EmStandardPhysics_option4
 
 #ifndef EmStandardPhysics_Green_HH
 #define EmStandardPhysics_Green_HH
@@ -9,7 +8,6 @@
 #include "G4EmParticleList.hh"
 #include "G4VPhysicsConstructor.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class EmStandardPhysics_Green : public G4VPhysicsConstructor {
 public:
@@ -25,6 +23,5 @@ private:
   G4EmParticleList partList;
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

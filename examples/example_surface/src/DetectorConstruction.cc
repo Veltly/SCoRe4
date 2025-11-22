@@ -122,24 +122,24 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
 //  const G4String gdml_filename = "macros/simpler_surface.gdml";
   const G4String gdml_filename = "macros/very_simple.gdml";
 //  const G4String gdml_filename = "macros/flat.gdml";
-  auto *surface = new Surface::LogicalSurface{"SurfaceLV",
-                                  gdml_filename,
-                                  240, 240,
-                                  cubeMaterial,
-                                  world_mat,
-                                  verboseLvl};
+  auto *surface = new Surface::LogicalSurface{"SurfaceLV", //name
+                                  gdml_filename, // gdml filepath
+                                  240, 240, // repeat loaded volume in x and y
+                                  cubeMaterial, // material
+                                  world_mat, // material of envelope
+                                  verboseLvl}; // verbose level
 
   //top
   const auto shift_to_zero = surface->get_shift_to_zero();
   const G4ThreeVector position_top{0,0,cube_z + shift_to_zero};
   auto *rotation_top = new G4RotationMatrix (0,0,0);
-  Surface::SurfacePlacement(rotation_top,
-                            position_top,
-                            surface,
-                            "Surface_top",
-                            logic_envelope,
-                            checkOverlaps,
-                            true);
+  Surface::SurfacePlacement(rotation_top, //rotation
+                            position_top, // position
+                            surface, // logical_surface
+                            "Surface_top", // name
+                            logic_envelope, // its mother volume
+                            checkOverlaps, // check for overlaps
+                            true); // add to particle generator
 
 
   //bottom

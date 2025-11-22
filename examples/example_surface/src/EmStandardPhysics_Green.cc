@@ -82,7 +82,6 @@
 //
 G4_DECLARE_PHYSCONSTR_FACTORY(EmStandardPhysics_Green);
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EmStandardPhysics_Green::EmStandardPhysics_Green(G4int ver, const G4String &)
     : G4VPhysicsConstructor("EmStandard_Green"), verbose(ver) {
@@ -105,11 +104,9 @@ EmStandardPhysics_Green::EmStandardPhysics_Green(G4int ver, const G4String &)
   SetPhysicsType(bElectromagnetic);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EmStandardPhysics_Green::~EmStandardPhysics_Green() {}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EmStandardPhysics_Green::ConstructParticle() {
   // gamma
@@ -139,7 +136,6 @@ void EmStandardPhysics_Green::ConstructParticle() {
   G4GenericIon::GenericIonDefinition();
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EmStandardPhysics_Green::ConstructProcess() {
   if (verbose > 1) {
@@ -330,19 +326,6 @@ void EmStandardPhysics_Green::ConstructProcess() {
       ph->RegisterProcess(pnuc, particle);
 
     } else if (particleName == "GenericIon") {
-      // Implementation standard option4
-      // G4ionIonisation *ionIoni = new G4ionIonisation();
-      // ionIoni->SetEmModel(new G4IonParametrisedLossModel());
-      // ionIoni->SetStepFunction(0.1, 1 * um);
-
-      // ph->RegisterProcess(hmsc, particle);
-      // ph->RegisterProcess(ionIoni, particle);
-      // ph->RegisterProcess(pnuc, particle);
-
-      //
-      //
-      //  Implementation found in TestEM7
-
       G4double energyLimit = 1 * MeV;
       G4hMultipleScattering *NRmsc = new G4hMultipleScattering();
       G4UrbanMscModel *model = new G4UrbanMscModel();
@@ -420,5 +403,3 @@ void EmStandardPhysics_Green::ConstructProcess() {
   man->SetAtomDeexcitation(new G4UAtomicDeexcitation());
   G4EmModelActivator mact(GetPhysicsName());
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

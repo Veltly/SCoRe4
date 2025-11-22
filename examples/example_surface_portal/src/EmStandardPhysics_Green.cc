@@ -13,19 +13,16 @@
 #include "G4ComptonScattering.hh"
 #include "G4CoulombScattering.hh"
 #include "G4Deuteron.hh"
-#include "G4DummyModel.hh"
 #include "G4Electron.hh"
 #include "G4EmModelActivator.hh"
 #include "G4EmParameters.hh"
 #include "G4Gamma.hh"
 #include "G4GammaConversion.hh"
 #include "G4GammaGeneralProcess.hh"
-#include "G4Generator2BN.hh"
 #include "G4Generator2BS.hh"
 #include "G4GenericIon.hh"
 #include "G4GoudsmitSaundersonMscModel.hh"
 #include "G4He3.hh"
-#include "G4IonCoulombScatteringModel.hh"
 #include "G4IonParametrisedLossModel.hh"
 #include "G4KaonMinus.hh"
 #include "G4KaonPlus.hh"
@@ -36,11 +33,9 @@
 #include "G4LowEPComptonModel.hh"
 #include "G4MscStepLimitType.hh"
 #include "G4MuBremsstrahlung.hh"
-#include "G4MuBremsstrahlungModel.hh"
 #include "G4MuIonisation.hh"
 #include "G4MuMultipleScattering.hh"
 #include "G4MuPairProduction.hh"
-#include "G4MuPairProductionModel.hh"
 #include "G4MuonMinus.hh"
 #include "G4MuonPlus.hh"
 #include "G4NuclearStopping.hh"
@@ -70,19 +65,14 @@
 #include "G4ePairProduction.hh"
 #include "G4eplusAnnihilation.hh"
 #include "G4hBremsstrahlung.hh"
-#include "G4hBremsstrahlungModel.hh"
 #include "G4hIonisation.hh"
 #include "G4hMultipleScattering.hh"
 #include "G4hPairProduction.hh"
-#include "G4hPairProductionModel.hh"
 #include "G4ionIonisation.hh"
 
-// factory
 #include "G4PhysicsConstructorFactory.hh"
-//
-G4_DECLARE_PHYSCONSTR_FACTORY(EmStandardPhysics_Green);
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+G4_DECLARE_PHYSCONSTR_FACTORY(EmStandardPhysics_Green);
 
 EmStandardPhysics_Green::EmStandardPhysics_Green(G4int ver, const G4String &)
     : G4VPhysicsConstructor("EmStandard_Green"), verbose(ver) {
@@ -105,11 +95,9 @@ EmStandardPhysics_Green::EmStandardPhysics_Green(G4int ver, const G4String &)
   SetPhysicsType(bElectromagnetic);
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EmStandardPhysics_Green::~EmStandardPhysics_Green() {}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EmStandardPhysics_Green::ConstructParticle() {
   // gamma
@@ -138,8 +126,6 @@ void EmStandardPhysics_Green::ConstructParticle() {
   G4Alpha::Alpha();
   G4GenericIon::GenericIonDefinition();
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EmStandardPhysics_Green::ConstructProcess() {
   if (verbose > 1) {
@@ -330,19 +316,6 @@ void EmStandardPhysics_Green::ConstructProcess() {
       ph->RegisterProcess(pnuc, particle);
 
     } else if (particleName == "GenericIon") {
-      // Implementation standard option4
-      // G4ionIonisation *ionIoni = new G4ionIonisation();
-      // ionIoni->SetEmModel(new G4IonParametrisedLossModel());
-      // ionIoni->SetStepFunction(0.1, 1 * um);
-
-      // ph->RegisterProcess(hmsc, particle);
-      // ph->RegisterProcess(ionIoni, particle);
-      // ph->RegisterProcess(pnuc, particle);
-
-      //
-      //
-      //  Implementation found in TestEM7
-
       G4double energyLimit = 1 * MeV;
       G4hMultipleScattering *NRmsc = new G4hMultipleScattering();
       G4UrbanMscModel *model = new G4UrbanMscModel();
@@ -420,5 +393,3 @@ void EmStandardPhysics_Green::ConstructProcess() {
   man->SetAtomDeexcitation(new G4UAtomicDeexcitation());
   G4EmModelActivator mact(GetPhysicsName());
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
