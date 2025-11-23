@@ -100,7 +100,6 @@ One stores the energy introduced into the surface + crystal, the other stores th
 
 ## Used Libraries and Frameworks
 
-- Geant4
 - Numpy
 - Matplotlib
 - Scipy
@@ -110,6 +109,8 @@ One stores the energy introduced into the surface + crystal, the other stores th
 - pandas
 - tqdm 
 - yaml
+
+- Geant4 (development is based on Geant4 v10.6.3)
 
 ## Contributions, Bugs, Suggestions:
 If you have any feedback, problems, suggestions, or ideas and would like to contribute, please contact Christoph Grüner (christoph.gruener(at)oeaw.ac.at).
