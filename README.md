@@ -1,13 +1,13 @@
 # SCoRe4 - A Geant4-based library for Surface Contamination and Roughness effects Simulations
 
-As this code is further under development please report any found bugs.
-!!(Readme will still be updated with more description)
+As this code is still under development, you can find the latest version on GitHub.\
+https://github.com/Veltly/SCoRe4
 
 This library is used to simulate surface near particle tracks including a surface structure in micrometer range.
-It is used to simulate a patch of rough surface structure based on defined parameters and simulate a large surface using the developed portation ansatz.
+It is used to simulate a patch of rough surface structure based on defined parameters and simulate a large surface using the developed portal ansatz.
 Two different approaches are provided.
-One that is purely C++ and Geant4 based implementing a rough surface by using spike-like structures and extending the surface to bigger surfaces using a portal-subworld setup.
-The corresponding used modules can be found in:
+One is based purely on C++ and Geant4 and implements a rough surface using spike-like structures and extends the surface to larger surfaces using a portal subworld configuration.
+The corresponding modules used can be found at:
 
     - src/SurfaceGenerator
     - src/ParticleGenerator
@@ -17,7 +17,7 @@ Further, helper classes can be found in src/Service.
 An example of this implementation can be found in examples/example_surface_portal
 
 The second approach is split between the generation of a surface using a python command line tool and the simulation in Geant4.
-It allows for much more complex surfaces, however is slower by a factor of two in comparison to the other approach.
+It enables significantly more complex surfaces, but is two orders of magnitude slower than the other approach and is still under development.
 
 The corresponding modules can be found in:
 
@@ -30,45 +30,50 @@ An example can be found in examples/example_surface
 
 The surface generator creates a patch of rough surface represented by multiple spike-shaped structures.
 A single structure can be either one physical volume or a combination of multiple physical volumes.
-All spikes in a batch look alike to reduce the memory footprint of the object and increase simulation speed.
+All spikes in a batch look the same to reduce the memory footprint of the object and increase simulation speed.
 
-For generating the patch a helpe class "RoughnessHelper" is implemented and can be found in src/Service.
-The class can be controlled by a macro file. A template can be found in mac/.
+To generate the area, an auxiliary class “RoughnessHelper” is implemented, which is located in src/Service.
+The class can be controlled via a macro file. A template can be found in mac/.
+It is recommended to use only the auxiliary class to ensure correct setup.
 
 ## Portal
 
-The key element for a surface simulation with macroscopic areas is the portal-subworld module.
-This allows to represent a bigger volume by a much smaller subvolume which can be traversed multiple times by a particle interacting with the big volume.
+The key element for surface simulation with macroscopic areas is the Portal Subworld module.
+This allows a larger volume to be represented by a much smaller sub-volume, which can be traversed multiple times by a particle interacting with the large volume.
 
-To simplify its setup, a helper class Surface::MultiportalHelper is provided, which first gathers all the needed information, such as the
-size of the portal, size of the subworld, number of different subworlds and their frequency, materials,
-etc. After providing the information, the helper generates a portal-subworld pair.
-Some options can be controlled via a macro file. A template is provided in mac/.
+To simplify setup, an auxiliary class Surface::MultiportalHelper is provided, which first collects all the necessary information, such as the
+size of the portal, the size of the subworld, the number of different subworlds and their frequency, materials,
+etc. After providing the information, the auxiliary class generates a portal-subworld pair.
+Some options can be controlled via a macro file. A template is available in mac/.
 
-To use the portal mechanism it is important to add the DoStep(...) command from the portal class to the G4UserSteppingAction.
+To use the portal mechanism, it is important to add the DoStep(...) command from the Portal class to G4UserSteppingAction.
+
+It is recommended to use only the auxiliary class to ensure correct setup.
 
 ## Particle Generator
 
-The particle generator can evenly distribute points on the rough surface with respect to its placement in a portal subworld.
-For that, the generated rough surface must be linked to the portal.
+The particle generator can evenly distribute points on the rough surface in relation to their placement in a portal subworld.
+To do this, the generated rough surface must be linked to the portal.
 
-It is recommended to use the helper classes Surface::MultiportalHelper and Surface::RoughnessHelper for a proper portal-rough-surface setup.
-The classes also link the surface and subworld to the particle generator which can now be used to generate primary events.
+It is recommended to use the auxiliary classes Surface::MultiportalHelper and Surface::RoughnessHelper for correct setup of the portal and rough surface.
+The classes also link the surface and subworld to the particle generator, which can now be used to generate primary events.
 
-An example setup of a rough surface using the portal can be found in examples/example_surface_portal.
+For an example of setting up a rough surface using the portal, see examples/example_surface_portal.
 
 ## ParameterToSurface
 
-This extension can be used to generate a random and much more complex surface profile for simulation.
-In the current implementation it can be used by following these steps:
+This extension can be used to generate a random and significantly more complex surface profile for simulation.
+In the current implementation, it can be used as follows:
 
-    - Use the python commandline-tool to generate a more complex surface and export it to a gdml file. This file format can be read in by Geant4.
-    - In Geant4 use the class LogicalSurface to generate a G4LogicalVolume from the gdml file.
-    - Use the class SurfacePlacement to place the logical surface volume as a physical volume.
+- Use the Python command line tool to generate a more complex surface and export it to a GDML file. This file format can be read by Geant4.
+- In Geant4, use the provided LogicalSurface class to generate a G4LogicalVolume from the GDML file.
+- Use the provided SurfacePlacement class to place the logical surface volume as a physical volume.
 
 Loading the volume with the provided class links the surface to the provided particle generator.
 
-An example can be found in examples/example_surface.
+For an example, see examples/example_surface.
+
+A list of required python libraries can be found in src/ParameterToSurface/requirements.txt
 
 ## Installation
 
@@ -78,6 +83,7 @@ cd SCoRe4 && mkdir -p build && cd build && \
 cmake .. -DCMAKE_INSTALL_PREFIX=<install_path> && \
 make -j4 && make install
 ```
+
 ## Examples
 
 Two examples are provided:
@@ -85,11 +91,12 @@ Two examples are provided:
     - example_surface
     - example_surface_portal
 
-### Example_Surface:
-Description of example
+After installing the library, both examples can be compiled and executed separately.
+Both examples simulate a rough surface with structures in the micrometer range on a G4_SI crystal and particle contamination placed on the surface.
+The simulation can be controlled using the macro files provided.
 
-### Example_Surface_Portal:
-Description of example
+The simulations output two CSV-files.
+One stores the energy introduced into the surface + crystal, the other stores the energy that has escaped.
 
 ## Used Libraries and Frameworks
 
@@ -104,12 +111,12 @@ Description of example
 - tqdm 
 - yaml
 
-## Contact:
-In case of feedback, errors, suggestions or you want to contribute please contact Christoph Grüner (christoph.gruener@oeaw.ac.at)
-
+## Contributions, Bugs, Suggestions:
+If you have any feedback, problems, suggestions, or ideas and would like to contribute, please contact Christoph Grüner (christoph.gruener(at)oeaw.ac.at).
+If you have found any errors or are experiencing problems with the current version, please create a bug report at https://github.com/Veltly/SCoRe4.
 ## Citation
 
-If you use this library in your work please reference it accordingly.
+If you use this library in your work, please cite the appropriate source.
 
 @article{grüner2025geant4basedlibraryscore4,
       title={Geant4 based library SCoRe4 for Surface Contamination and Roughness Effects simulations in rare event search experiments}, 
